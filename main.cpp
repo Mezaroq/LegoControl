@@ -1,11 +1,10 @@
-#include "mainwindow.h"
-
+#include <ViewModel/ControlProvider.h>
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    ControlProvider p;
+
     return a.exec();
 }
