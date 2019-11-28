@@ -9,6 +9,17 @@
         <file>resources/icons/icon_bar_switch_left.svg</file>
         <file>resources/icons/icon_bar_switch_neutral.svg</file>
         <file>resources/icons/icon_bar_switch_right.svg</file>
-        <file>resources/objects/rail_station_global.png</file>
+        <file>resources/objects/object_rail_section_global.png</file>
+        <file>resources/objects/object_rail_section_01.png</file>
+        <file>resources/objects/object_rail_section_02.png</file>
+        <file>resources/objects/object_rail_section_03.png</file>
+        <file>resources/objects/object_rail_section_04.png</file>
+        <file>resources/objects/object_rail_section_05.png</file>
+        <file>resources/objects/object_rail_section_06.png</file>
+        <file>resources/objects/object_rail_section_07.png</file>
+        <file>resources/objects/object_rail_section_08.png</file>
+        <file>resources/objects/object_rail_section_09.png</file>
+        <file>resources/objects/object_rail_section_10.png</file>
+        <file>resources/objects/object_rail_section_switches.png</file>
     </qresource>
 </RCC>

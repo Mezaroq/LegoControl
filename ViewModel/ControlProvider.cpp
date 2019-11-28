@@ -36,9 +36,19 @@ void ControlProvider::createObjectsData()
     prepareSwitches();
     toolBar->addSeparator();
     prepareLights();
+//    qDebug() << actions;
 
-    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/rail_station_global.png")));
-    scene->addText("Test");
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_switches.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_01.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_02.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_03.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_04.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_05.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_06.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_07.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_08.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_09.png")));
+    scene->addItem(new QGraphicsPixmapItem(QPixmap(":/control/resources/objects/object_rail_section_10.png")));
     scene->setBackgroundBrush(QColor("#539920"));
 }
 
