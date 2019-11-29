@@ -1,0 +1,44 @@
+<RCC>
+    <qresource prefix="/control">
+        <file>resources/icons/icon_bar_application_settings.svg</file>
+        <file>resources/icons/icon_bar_enable_ai.svg</file>
+        <file>resources/icons/icon_bar_light_green.svg</file>
+        <file>resources/icons/icon_bar_light_red.svg</file>
+        <file>resources/icons/icon_bar_run.svg</file>
+        <file>resources/icons/icon_bar_switch_left.svg</file>
+        <file>resources/icons/icon_bar_switch_normal.svg</file>
+        <file>resources/icons/icon_bar_switch_right.svg</file>
+        <file>resources/icons/icon_menu_stop_train.svg</file>
+        <file>resources/objects/object_light_green.png</file>
+        <file>resources/objects/object_light_red.png</file>
+        <file>resources/objects/object_rail_section_0.png</file>
+        <file>resources/objects/object_rail_section_1.png</file>
+        <file>resources/objects/object_rail_section_10.png</file>
+        <file>resources/objects/object_rail_section_2.png</file>
+        <file>resources/objects/object_rail_section_3.png</file>
+        <file>resources/objects/object_rail_section_4.png</file>
+        <file>resources/objects/object_rail_section_5.png</file>
+        <file>resources/objects/object_rail_section_6.png</file>
+        <file>resources/objects/object_rail_section_7.png</file>
+        <file>resources/objects/object_rail_section_8.png</file>
+        <file>resources/objects/object_rail_section_9.png</file>
+        <file>resources/objects/object_switch_0_normal.png</file>
+        <file>resources/objects/object_switch_0_right.png</file>
+        <file>resources/objects/object_switch_1_left.png</file>
+        <file>resources/objects/object_switch_1_normal.png</file>
+        <file>resources/objects/object_switch_2_left.png</file>
+        <file>resources/objects/object_switch_2_normal.png</file>
+        <file>resources/objects/object_switch_3_normal.png</file>
+        <file>resources/objects/object_switch_3_right.png</file>
+        <file>resources/objects/object_switch_4_normal.png</file>
+        <file>resources/objects/object_switch_4_right.png</file>
+        <file>resources/objects/object_switch_5_left.png</file>
+        <file>resources/objects/object_switch_5_normal.png</file>
+        <file>resources/objects/object_switch_6_normal.png</file>
+        <file>resources/objects/object_switch_6_right.png</file>
+        <file>resources/objects/object_switch_7_normal.png</file>
+        <file>resources/objects/object_switch_7_right.png</file>
+        <file>resources/objects/object_switch_8_left.png</file>
+        <file>resources/objects/object_switch_8_normal.png</file>
+    </qresource>
+</RCC>

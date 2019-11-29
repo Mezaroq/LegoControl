@@ -16,16 +16,43 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp
+    Model/ControlAction.cpp \
+    Model/ControlButton.cpp \
+    Model/ControlLabel.cpp \
+    Model/ControlLight.cpp \
+    Model/ControlObject.cpp \
+    Model/ControlRail.cpp \
+    Model/ControlSlider.cpp \
+    Model/ControlSwitch.cpp \
+    View/ControlScene.cpp \
+    View/ControlView.cpp \
+    View/MainWindow.cpp \
+    ViewModel/ControlProvider.cpp \
+    ViewModel/ControlViewModel.cpp \
+    main.cpp
 
 HEADERS += \
-    mainwindow.h
+    Model/ControlAction.h \
+    Model/ControlButton.h \
+    Model/ControlLabel.h \
+    Model/ControlLight.h \
+    Model/ControlObject.h \
+    Model/ControlRail.h \
+    Model/ControlSlider.h \
+    Model/ControlSwitch.h \
+    View/ControlScene.h \
+    View/ControlView.h \
+    View/MainWindow.h \
+    ViewModel/ControlProvider.h \
+    ViewModel/ControlViewModel.h
 
 FORMS += \
-    mainwindow.ui
+    View/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc
