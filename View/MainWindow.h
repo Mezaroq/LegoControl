@@ -4,6 +4,7 @@
 #include <Model/ControlLabel.h>
 #include <Model/ControlSlider.h>
 #include <Model/ControlButton.h>
+#include <Model/ControlLabel.h>
 #include <View/ControlView.h>
 #include <ViewModel/ControlViewModel.h>
 #include <QMainWindow>
@@ -22,9 +23,10 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    QMap<qint8, ControlButton*> getButtons();
-    QMap<qint8, ControlSlider*> getSliders();
-    QMap<qint8, ControlLabel*> getLabels();
+    QMap<int, ControlButton*> getButtons();
+    QMap<int, ControlSlider*> getSliders();
+    QMap<int, ControlLabel*> getLabels();
+    QPushButton* getButtonStopAll();
     QToolBar* getToolBar();
     QAction* getActionRun();
     QAction* getActionEnableAI();

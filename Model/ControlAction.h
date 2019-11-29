@@ -6,11 +6,16 @@
 class ControlAction : public QAction
 {
 public:
-    ControlAction(const QIcon &icon, const QString &text, QObject *parent = nullptr);
-    void setID(qint32 id);
+    enum ActionType{
+        ACTION_SWITCH,
+        ACTION_LIGHT
+    };
+    ControlAction(const QIcon &icon, ActionType actionType, int actionID, QObject *parent = nullptr);
+    static QString getActionName(ActionType actionType, int actionID);
 
 private:
-    qint32 ID;
+    ActionType actionType;
+    int actionID;
 };
 
 #endif // CONTROLACTION_H

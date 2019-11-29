@@ -19,8 +19,11 @@ SOURCES += \
     Model/ControlAction.cpp \
     Model/ControlButton.cpp \
     Model/ControlLabel.cpp \
+    Model/ControlLight.cpp \
     Model/ControlObject.cpp \
+    Model/ControlRail.cpp \
     Model/ControlSlider.cpp \
+    Model/ControlSwitch.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
@@ -32,8 +35,11 @@ HEADERS += \
     Model/ControlAction.h \
     Model/ControlButton.h \
     Model/ControlLabel.h \
+    Model/ControlLight.h \
     Model/ControlObject.h \
+    Model/ControlRail.h \
     Model/ControlSlider.h \
+    Model/ControlSwitch.h \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \

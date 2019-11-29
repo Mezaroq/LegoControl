@@ -6,7 +6,7 @@ ControlLabel::ControlLabel(QWidget *parent) : QLabel(parent)
 
 }
 
-void ControlLabel::setID(qint32 id)
+void ControlLabel::setID(int id)
 {
-    this->ID = id;
+    this->labelID = id;
 }

@@ -1,11 +1,17 @@
 #include "ControlAction.h"
 
-ControlAction::ControlAction(const QIcon &icon, const QString &text, QObject *parent) : QAction(icon, text, parent)
+ControlAction::ControlAction(const QIcon &icon, ControlAction::ActionType actionType, int actionID, QObject *parent) : QAction(icon, getActionName(actionType, actionID), parent)
 {
-
+    this->actionType = actionType;
+    this->actionID = actionID;
 }
 
-void ControlAction::setID(qint32 id)
+QString ControlAction::getActionName(ControlAction::ActionType actionType, int actionID)
 {
-    this->ID = id;
+    switch (actionType) {
+    case ControlAction::ACTION_SWITCH:
+        return "Switch " + QString::number(actionID);
+    case ControlAction::ACTION_LIGHT:
+        return "Light " + QString::number(actionID);
+    }
 }
