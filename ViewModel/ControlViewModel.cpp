@@ -26,7 +26,6 @@ void ControlViewModel::stopAllChannels()
     while (sliderList.hasNext()) {
         sliderList.next();
         sliderList.value()->setValue(0);
-        qDebug() << sliderList.value()->getControlValue();
     }
 }
 
