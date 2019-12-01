@@ -8,6 +8,7 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlLight.h>
 #include <Model/ControlSwitch.h>
+#include <Model/ControlTrain.h>
 #include <View/MainWindow.h>
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
@@ -31,6 +32,7 @@ public:
     void prepareSwitches();
     void prepareLights();
     void prepareRails();
+    void prepareTrains();
 
 private:
     ControlViewModel *viewModel;
@@ -38,6 +40,7 @@ private:
     ControlView *view;
     ControlScene *scene;
     QToolBar *toolBar;
+    QStatusBar *statusBar;
     QPushButton *buttonStopAll;
     QAction *actionRun;
     QAction *actionEnableAI;
@@ -48,6 +51,7 @@ private:
     QMap<int, ControlSwitch*> switches;
     QMap<int, ControlLight*> lights;
     QMap<int, ControlRail*> rails;
+    QMap<int, ControlTrain*> trains;
 };
 
 #endif // CONTROLPROVIDER_H

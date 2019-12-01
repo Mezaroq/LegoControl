@@ -64,6 +64,11 @@ QToolBar *MainWindow::getToolBar()
     return ui->toolBar;
 }
 
+QStatusBar *MainWindow::getStatusBar()
+{
+    return ui->statusbar;
+}
+
 QAction *MainWindow::getActionRun()
 {
     return ui->actionRun;

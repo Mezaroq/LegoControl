@@ -28,6 +28,7 @@ public:
     QMap<int, ControlLabel*> getLabels();
     QPushButton* getButtonStopAll();
     QToolBar* getToolBar();
+    QStatusBar* getStatusBar();
     QAction* getActionRun();
     QAction* getActionEnableAI();
     QAction* getActionApplicationSettings();

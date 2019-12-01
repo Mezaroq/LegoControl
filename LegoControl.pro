@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,9 +24,11 @@ SOURCES += \
     Model/ControlRail.cpp \
     Model/ControlSlider.cpp \
     Model/ControlSwitch.cpp \
+    Model/ControlTrain.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
+    ViewModel/ControlDataProvider.cpp \
     ViewModel/ControlProvider.cpp \
     ViewModel/ControlViewModel.cpp \
     main.cpp
@@ -40,9 +42,11 @@ HEADERS += \
     Model/ControlRail.h \
     Model/ControlSlider.h \
     Model/ControlSwitch.h \
+    Model/ControlTrain.h \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \
+    ViewModel/ControlDataProvider.h \
     ViewModel/ControlProvider.h \
     ViewModel/ControlViewModel.h
 

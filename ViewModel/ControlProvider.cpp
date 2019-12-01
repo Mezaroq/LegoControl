@@ -19,6 +19,7 @@ void ControlProvider::createObjects()
     actionEnableAI = mainWindow.getActionEnableAI();
     actionEpplicationSettings = mainWindow.getActionApplicationSettings();
     toolBar = mainWindow.getToolBar();
+    statusBar = mainWindow.getStatusBar();
     buttons = mainWindow.getButtons();
     sliders = mainWindow.getSliders();
     labels = mainWindow.getLabels();
@@ -28,11 +29,15 @@ void ControlProvider::createConnections()
 {
     connect(buttonStopAll, SIGNAL(clicked()), viewModel, SLOT(stopAllChannels()));
     connect(scene, SIGNAL(controlObjectClicked(ControlObject::ObjectType, int)), viewModel, SLOT(controlObjectClicked(ControlObject::ObjectType, int)));
+    connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
+    connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
+    connect(actionEpplicationSettings, SIGNAL(triggered()), viewModel, SLOT(settingsTriggered()));
 }
 
 void ControlProvider::createObjectsData()
 {
-    scene->setBackgroundBrush(QColor("#539920"));
+//    scene->setBackgroundBrush(QColor("#539920"));
+    scene->setBackgroundBrush(QColor(32, 153, 86));
     view->setScene(scene);
     prepareLabels();
     prepareSliders();
@@ -41,9 +46,14 @@ void ControlProvider::createObjectsData()
     toolBar->addSeparator();
     prepareLights();
     prepareRails();
+    prepareTrains();
     viewModel->setSliders(sliders);
     viewModel->setLights(lights);
     viewModel->setSwitches(switches);
+    viewModel->setRails(rails);
+    viewModel->setTrains(trains);
+    viewModel->setStatusBar(statusBar);
+    statusBar->showMessage("No Device");
 }
 
 void ControlProvider::prepareButtons()
@@ -63,7 +73,7 @@ void ControlProvider::prepareSliders()
         sliderList.next();
         sliderList.value()->setID(sliderList.key());
         sliderList.value()->setLabel(labels.value(sliderList.key()));
-        //add connections to vm (id, value) albo nie bo wysylanie bedzie samo zbieralo dane ze wszyzstkiego wiec nic nie musze wysylac, tylko zrobic gety
+        sliderList.value()->setControlValue();
     }
 }
 
@@ -78,21 +88,22 @@ void ControlProvider::prepareLabels()
 
 void ControlProvider::prepareSwitches()
 {
-    switches.insert(ControlSwitch::SWITCH_01, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_01));
-    switches.insert(ControlSwitch::SWITCH_02, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_02));
-    switches.insert(ControlSwitch::SWITCH_03, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_03));
-    switches.insert(ControlSwitch::SWITCH_04, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_04));
-    switches.insert(ControlSwitch::SWITCH_05, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_05));
-    switches.insert(ControlSwitch::SWITCH_06, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_06));
-    switches.insert(ControlSwitch::SWITCH_07, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_07));
-    switches.insert(ControlSwitch::SWITCH_08, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_08));
-    switches.insert(ControlSwitch::SWITCH_09, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_09));
+    switches.insert(ControlSwitch::SWITCH_1, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_1));
+    switches.insert(ControlSwitch::SWITCH_2, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_2));
+    switches.insert(ControlSwitch::SWITCH_3, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_3));
+    switches.insert(ControlSwitch::SWITCH_4, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_4));
+    switches.insert(ControlSwitch::SWITCH_5, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_5));
+    switches.insert(ControlSwitch::SWITCH_6, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_6));
+    switches.insert(ControlSwitch::SWITCH_7, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_7));
+    switches.insert(ControlSwitch::SWITCH_8, new ControlSwitch(ControlSwitch::TYPE_RIGHT, ControlSwitch::SWITCH_8));
+    switches.insert(ControlSwitch::SWITCH_9, new ControlSwitch(ControlSwitch::TYPE_LEFT, ControlSwitch::SWITCH_9));
 
     QMapIterator<int, ControlSwitch*> switchList(switches);
     while (switchList.hasNext()) {
         switchList.next();
         switchList.value()->setFlag(QGraphicsItem::ItemIsFocusable);
         switchList.value()->setControlAction(new ControlAction(switchList.value()->getIcon(), ControlAction::ACTION_SWITCH, switchList.value()->getSwitchID(), toolBar));
+        connect(switchList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
         toolBar->addAction(switchList.value()->getControlAction());
         scene->addItem(switchList.value());
     }
@@ -100,15 +111,15 @@ void ControlProvider::prepareSwitches()
 
 void ControlProvider::prepareLights()
 {
-    lights.insert(ControlLight::LIGHT_01, new ControlLight(ControlLight::LIGHT_01, QPointF(10.95, 690), 180));
-    lights.insert(ControlLight::LIGHT_02, new ControlLight(ControlLight::LIGHT_02, QPointF(24.09, 258), 0));
-    lights.insert(ControlLight::LIGHT_03, new ControlLight(ControlLight::LIGHT_03, QPointF(40.5, 610), 180));
-    lights.insert(ControlLight::LIGHT_04, new ControlLight(ControlLight::LIGHT_04, QPointF(53.64, 300), 0));
-    lights.insert(ControlLight::LIGHT_05, new ControlLight(ControlLight::LIGHT_05, QPointF(73.2, 590), 180));
-    lights.insert(ControlLight::LIGHT_06, new ControlLight(ControlLight::LIGHT_06, QPointF(86.34, 323), 0));
-    lights.insert(ControlLight::LIGHT_07, new ControlLight(ControlLight::LIGHT_07, QPointF(10.95, 146), 180));
-    lights.insert(ControlLight::LIGHT_08, new ControlLight(ControlLight::LIGHT_08, QPointF(245, 22.99), 90));
-    lights.insert(ControlLight::LIGHT_09, new ControlLight(ControlLight::LIGHT_09, QPointF(315, 9.85), -90));
+    lights.insert(ControlLight::LIGHT_1, new ControlLight(ControlLight::LIGHT_1, QPointF(10.95, 690), 180));
+    lights.insert(ControlLight::LIGHT_2, new ControlLight(ControlLight::LIGHT_2, QPointF(24.09, 258), 0));
+    lights.insert(ControlLight::LIGHT_3, new ControlLight(ControlLight::LIGHT_3, QPointF(40.5, 610), 180));
+    lights.insert(ControlLight::LIGHT_4, new ControlLight(ControlLight::LIGHT_4, QPointF(53.64, 300), 0));
+    lights.insert(ControlLight::LIGHT_5, new ControlLight(ControlLight::LIGHT_5, QPointF(73.2, 590), 180));
+    lights.insert(ControlLight::LIGHT_6, new ControlLight(ControlLight::LIGHT_6, QPointF(86.34, 323), 0));
+    lights.insert(ControlLight::LIGHT_7, new ControlLight(ControlLight::LIGHT_7, QPointF(10.95, 146), 180));
+    lights.insert(ControlLight::LIGHT_8, new ControlLight(ControlLight::LIGHT_8, QPointF(245, 22.99), 90));
+    lights.insert(ControlLight::LIGHT_9, new ControlLight(ControlLight::LIGHT_9, QPointF(315, 9.85), -90));
     lights.insert(ControlLight::LIGHT_10, new ControlLight(ControlLight::LIGHT_10, QPointF(797, 22.99), 90));
     lights.insert(ControlLight::LIGHT_11, new ControlLight(ControlLight::LIGHT_11, QPointF(350, 44.89), -90));
     lights.insert(ControlLight::LIGHT_12, new ControlLight(ControlLight::LIGHT_12, QPointF(762, 58.03), 90));
@@ -127,6 +138,7 @@ void ControlProvider::prepareLights()
         lightList.next();
         lightList.value()->setFlag(QGraphicsItem::ItemIsFocusable);
         lightList.value()->setControlAction(new ControlAction(lightList.value()->getIcon(), ControlAction::ACTION_LIGHT, lightList.value()->getLightID(), toolBar));
+        connect(lightList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
         toolBar->addAction(lightList.value()->getControlAction());
         scene->addItem(lightList.value());
     }
@@ -134,21 +146,34 @@ void ControlProvider::prepareLights()
 
 void ControlProvider::prepareRails()
 {
-    rails.insert(ControlRail::RAIL_SECTION_01, new ControlRail(ControlRail::RAIL_SECTION_01));
-    rails.insert(ControlRail::RAIL_SECTION_02, new ControlRail(ControlRail::RAIL_SECTION_02));
-    rails.insert(ControlRail::RAIL_SECTION_03, new ControlRail(ControlRail::RAIL_SECTION_03));
-    rails.insert(ControlRail::RAIL_SECTION_04, new ControlRail(ControlRail::RAIL_SECTION_04));
-    rails.insert(ControlRail::RAIL_SECTION_05, new ControlRail(ControlRail::RAIL_SECTION_05));
-    rails.insert(ControlRail::RAIL_SECTION_06, new ControlRail(ControlRail::RAIL_SECTION_06));
-    rails.insert(ControlRail::RAIL_SECTION_07, new ControlRail(ControlRail::RAIL_SECTION_07));
-    rails.insert(ControlRail::RAIL_SECTION_08, new ControlRail(ControlRail::RAIL_SECTION_08));
-    rails.insert(ControlRail::RAIL_SECTION_09, new ControlRail(ControlRail::RAIL_SECTION_09));
+    rails.insert(ControlRail::RAIL_SECTION_1, new ControlRail(ControlRail::RAIL_SECTION_1));
+    rails.insert(ControlRail::RAIL_SECTION_2, new ControlRail(ControlRail::RAIL_SECTION_2));
+    rails.insert(ControlRail::RAIL_SECTION_3, new ControlRail(ControlRail::RAIL_SECTION_3));
+    rails.insert(ControlRail::RAIL_SECTION_4, new ControlRail(ControlRail::RAIL_SECTION_4));
+    rails.insert(ControlRail::RAIL_SECTION_5, new ControlRail(ControlRail::RAIL_SECTION_5));
+    rails.insert(ControlRail::RAIL_SECTION_6, new ControlRail(ControlRail::RAIL_SECTION_6));
+    rails.insert(ControlRail::RAIL_SECTION_7, new ControlRail(ControlRail::RAIL_SECTION_7));
+    rails.insert(ControlRail::RAIL_SECTION_8, new ControlRail(ControlRail::RAIL_SECTION_8));
+    rails.insert(ControlRail::RAIL_SECTION_9, new ControlRail(ControlRail::RAIL_SECTION_9));
     rails.insert(ControlRail::RAIL_SECTION_10, new ControlRail(ControlRail::RAIL_SECTION_10));
 
     QMapIterator<int, ControlRail*> railList(rails);
     while (railList.hasNext()) {
         railList.next();
+        connect(railList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
         scene->addItem(railList.value());
     }
     scene->addItem(new QGraphicsPixmapItem(ControlRail::getResource(ControlRail::RAIL_SECTION_11)));
+}
+
+void ControlProvider::prepareTrains()
+{
+    trains.insert(ControlTrain::TRAIN_1, new ControlTrain(ControlTrain::TRAIN_1, sliders.value(ControlSlider::SLIDER_CHANNEL_1)));
+    trains.insert(ControlTrain::TRAIN_2, new ControlTrain(ControlTrain::TRAIN_2, sliders.value(ControlSlider::SLIDER_CHANNEL_2)));
+    trains.insert(ControlTrain::TRAIN_3, new ControlTrain(ControlTrain::TRAIN_3, sliders.value(ControlSlider::SLIDER_CHANNEL_3)));
+    trains.insert(ControlTrain::TRAIN_4, new ControlTrain(ControlTrain::TRAIN_4, sliders.value(ControlSlider::SLIDER_CHANNEL_4)));
+    trains.insert(ControlTrain::TRAIN_5, new ControlTrain(ControlTrain::TRAIN_5, sliders.value(ControlSlider::SLIDER_CHANNEL_5)));
+    trains.insert(ControlTrain::TRAIN_6, new ControlTrain(ControlTrain::TRAIN_6, sliders.value(ControlSlider::SLIDER_CHANNEL_6)));
+    trains.insert(ControlTrain::TRAIN_7, new ControlTrain(ControlTrain::TRAIN_7, sliders.value(ControlSlider::SLIDER_CHANNEL_7)));
+    trains.insert(ControlTrain::TRAIN_8, new ControlTrain(ControlTrain::TRAIN_8, sliders.value(ControlSlider::SLIDER_CHANNEL_8)));
 }

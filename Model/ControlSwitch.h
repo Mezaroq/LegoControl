@@ -9,15 +9,15 @@ class ControlSwitch : public ControlObject
     Q_OBJECT
 public:
     enum SwitchID{
-        SWITCH_01,
-        SWITCH_02,
-        SWITCH_03,
-        SWITCH_04,
-        SWITCH_05,
-        SWITCH_06,
-        SWITCH_07,
-        SWITCH_08,
-        SWITCH_09
+        SWITCH_1,
+        SWITCH_2,
+        SWITCH_3,
+        SWITCH_4,
+        SWITCH_5,
+        SWITCH_6,
+        SWITCH_7,
+        SWITCH_8,
+        SWITCH_9
     };
     enum SwitchType{
         TYPE_LEFT,
@@ -30,10 +30,16 @@ public:
         STATE_RIGHT
     };
 
+    enum SwitchToggle{
+        TOGGLE_OFF,
+        TOGGLE_ON
+    };
+
     ControlSwitch(SwitchType switchType, SwitchID switchID);
     void setControlAction(ControlAction* controlAction);
     void toggle();
     void setToggle(SwitchState switchState);
+    bool getSwitchToggle();
     ControlAction* getControlAction();
     QString getResource();
     QIcon getIcon();
@@ -41,9 +47,13 @@ public:
 
 private:
     SwitchType switchType;
+    SwitchToggle switchToggle;
     SwitchID switchID;
     SwitchState switchState;
     ControlAction *controlAction;
+
+signals:
+    void objectChanged();
 
 public slots:
     void actionToggle(bool state);

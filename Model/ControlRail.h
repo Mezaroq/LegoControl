@@ -5,22 +5,26 @@
 
 class ControlRail : public ControlObject
 {
+    Q_OBJECT
 public:
     enum RailID{
-        RAIL_SECTION_01,
-        RAIL_SECTION_02,
-        RAIL_SECTION_03,
-        RAIL_SECTION_04,
-        RAIL_SECTION_05,
-        RAIL_SECTION_06,
-        RAIL_SECTION_07,
-        RAIL_SECTION_08,
-        RAIL_SECTION_09,
+        RAIL_SECTION_1,
+        RAIL_SECTION_2,
+        RAIL_SECTION_3,
+        RAIL_SECTION_4,
+        RAIL_SECTION_5,
+        RAIL_SECTION_6,
+        RAIL_SECTION_7,
+        RAIL_SECTION_8,
+        RAIL_SECTION_9,
         RAIL_SECTION_10,
         RAIL_SECTION_11
     };
     explicit ControlRail(RailID railID);
     static QString getResource(RailID railID);
+
+signals:
+    void objectChanged();
 
 private:
     RailID railID;

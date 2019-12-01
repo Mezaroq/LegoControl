@@ -9,15 +9,15 @@ class ControlLight : public ControlObject
     Q_OBJECT
 public:
     enum LightID{
-        LIGHT_01,
-        LIGHT_02,
-        LIGHT_03,
-        LIGHT_04,
-        LIGHT_05,
-        LIGHT_06,
-        LIGHT_07,
-        LIGHT_08,
-        LIGHT_09,
+        LIGHT_1,
+        LIGHT_2,
+        LIGHT_3,
+        LIGHT_4,
+        LIGHT_5,
+        LIGHT_6,
+        LIGHT_7,
+        LIGHT_8,
+        LIGHT_9,
         LIGHT_10,
         LIGHT_11,
         LIGHT_12,
@@ -40,6 +40,7 @@ public:
     void setControlAction(ControlAction* controlAction);
     void toggle();
     void setToggle(LightState lightState);
+    bool getLightToggle();
     ControlAction* getControlAction();
     QString getResource();
     QIcon getIcon();
@@ -51,6 +52,9 @@ private:
     ControlAction *controlAction;
     QPointF lightPosition;
     qreal lightRotation;
+
+signals:
+    void objectChanged();
 
 public slots:
     void actionToggle(bool state);
