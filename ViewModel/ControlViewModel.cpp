@@ -58,10 +58,12 @@ void ControlViewModel::prepareCollectedData(QByteArray byteArray)
 //    qDebug() << byteArray.toHex('|');
     QList<QByteArray> listOfBytes = byteArray.toHex('|').split('|');
     QString debugString = "|";
+    int index = 1;
     for (QByteArray byte : listOfBytes) {
-        debugString += QString::number(byte.toShort()) += "|";
+        debugString += QString::number(index++) += QString(":") += QString::number(byte.toShort()) += "|";
     }
-    qDebug() << debugString;
+
+    statusBar->showMessage(debugString);
 }
 
 void ControlViewModel::collectControlData()
