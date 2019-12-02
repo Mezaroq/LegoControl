@@ -38,10 +38,10 @@ public:
         SENSOR_28
     };
     enum SensorType{
-        LEFT_ENTRY_SENSOR,
-        LEFT_STOP_SENSOR,
-        RIGHT_STOP_SENSOR,
-        RIGHT_ENTRY_SENSOR,
+        TAIL_ENTRY_SENSOR,
+        TAIL_STOP_SENSOR,
+        HEAD_STOP_SENSOR,
+        HEAD_ENTRY_SENSOR,
     };
 
     explicit ControlSensor(SensorID sensorID, SensorType sensorType, QObject *parent = nullptr);

@@ -8,8 +8,6 @@ ControlViewModel::ControlViewModel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(controlDataCollected(QByteArray)), dataProvider, SLOT(dataToSerialDeviceReady(QByteArray)));
     //after run check if file exist and load last train positions to rails
 
-    debugPanel = new ControlDebugPanel();
-
     //DEBUG
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()),this, SLOT(settingsTriggered()));
@@ -54,7 +52,6 @@ void ControlViewModel::setTrains(QMap<int, ControlTrain *> trains)
 void ControlViewModel::setSensors(QMap<int, ControlSensor *> sensors)
 {
     this->sensors = sensors;
-    debugPanel->setSensors(sensors);
 }
 
 void ControlViewModel::setStatusBar(QStatusBar *statusBar)
@@ -64,7 +61,35 @@ void ControlViewModel::setStatusBar(QStatusBar *statusBar)
 
 void ControlViewModel::prepareCollectedData(QByteArray byteArray)
 {
-//    qDebug() << byteArray.toHex('|');
+    sensors.value(ControlSensor::SENSOR_1)->setState(byteArray.at(ControlSensor::SENSOR_1));
+    sensors.value(ControlSensor::SENSOR_2)->setState(byteArray.at(ControlSensor::SENSOR_2));
+    sensors.value(ControlSensor::SENSOR_3)->setState(byteArray.at(ControlSensor::SENSOR_3));
+    sensors.value(ControlSensor::SENSOR_4)->setState(byteArray.at(ControlSensor::SENSOR_4));
+    sensors.value(ControlSensor::SENSOR_5)->setState(byteArray.at(ControlSensor::SENSOR_5));
+    sensors.value(ControlSensor::SENSOR_6)->setState(byteArray.at(ControlSensor::SENSOR_6));
+    sensors.value(ControlSensor::SENSOR_7)->setState(byteArray.at(ControlSensor::SENSOR_7));
+    sensors.value(ControlSensor::SENSOR_8)->setState(byteArray.at(ControlSensor::SENSOR_8));
+    sensors.value(ControlSensor::SENSOR_9)->setState(byteArray.at(ControlSensor::SENSOR_9));
+    sensors.value(ControlSensor::SENSOR_10)->setState(byteArray.at(ControlSensor::SENSOR_10));
+    sensors.value(ControlSensor::SENSOR_11)->setState(byteArray.at(ControlSensor::SENSOR_11));
+    sensors.value(ControlSensor::SENSOR_12)->setState(byteArray.at(ControlSensor::SENSOR_12));
+    sensors.value(ControlSensor::SENSOR_13)->setState(byteArray.at(ControlSensor::SENSOR_13));
+    sensors.value(ControlSensor::SENSOR_14)->setState(byteArray.at(ControlSensor::SENSOR_14));
+    sensors.value(ControlSensor::SENSOR_15)->setState(byteArray.at(ControlSensor::SENSOR_15));
+    sensors.value(ControlSensor::SENSOR_16)->setState(byteArray.at(ControlSensor::SENSOR_16));
+    sensors.value(ControlSensor::SENSOR_17)->setState(byteArray.at(ControlSensor::SENSOR_17));
+    sensors.value(ControlSensor::SENSOR_18)->setState(byteArray.at(ControlSensor::SENSOR_18));
+    sensors.value(ControlSensor::SENSOR_19)->setState(byteArray.at(ControlSensor::SENSOR_19));
+    sensors.value(ControlSensor::SENSOR_20)->setState(byteArray.at(ControlSensor::SENSOR_20));
+    sensors.value(ControlSensor::SENSOR_21)->setState(byteArray.at(ControlSensor::SENSOR_21));
+    sensors.value(ControlSensor::SENSOR_22)->setState(byteArray.at(ControlSensor::SENSOR_22));
+    sensors.value(ControlSensor::SENSOR_23)->setState(byteArray.at(ControlSensor::SENSOR_23));
+    sensors.value(ControlSensor::SENSOR_24)->setState(byteArray.at(ControlSensor::SENSOR_24));
+    sensors.value(ControlSensor::SENSOR_25)->setState(byteArray.at(ControlSensor::SENSOR_25));
+    sensors.value(ControlSensor::SENSOR_26)->setState(byteArray.at(ControlSensor::SENSOR_26));
+    sensors.value(ControlSensor::SENSOR_27)->setState(byteArray.at(ControlSensor::SENSOR_27));
+    sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(ControlSensor::SENSOR_28));
+
     QList<QByteArray> listOfBytes = byteArray.toHex('|').split('|');
     QString debugString = "|";
     int index = 1;
@@ -187,22 +212,26 @@ void ControlViewModel::settingsTriggered()
 {
     /// NOW THIS METHOD IS FOR TESTING
 
-    debugPanel->show();
-
     QByteArray byteArray;
-    bool change = false;
+    static bool change = false;
     for (int i = 0; i < 32; i++) {
-        if (change) {
-            byteArray[i] = 1;
-            change = !change;
-        } else {
+        if (!(i % 4)) {
             byteArray[i] = 0;
-            change = !change;
+            continue;
         }
+//        if (change) {
+//            byteArray[i] = 1;
+//            change = !change;
+//        } else {
+//            byteArray[i] = 0;
+//            change = !change;
+//        }
+        byteArray[i] = change;
     }
 
+    change = !change;
+
     prepareCollectedData(byteArray);
-//    collectControlData();
 }
 
 void ControlViewModel::stopAllChannels()

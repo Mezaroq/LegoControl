@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QPushButton>
+#include <QComboBox>
 #include <Model/ControlSensor.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlRail.h>
@@ -15,7 +16,6 @@ class ControlDebugPanel;
 class ControlDebugPanel : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit ControlDebugPanel(QWidget *parent = nullptr);
     void setRails(QMap<int, ControlRail*> rails);
@@ -25,6 +25,14 @@ public:
     void createTrainsConnections();
     void createSensorsConnections();
     ~ControlDebugPanel();
+
+private slots:
+    void on_trainSetButton_clicked();
+    void on_trainRemoveButton_clicked();
+
+    void on_trainRemoveAllButton_clicked();
+
+    void on_railIDComboBox_currentIndexChanged(int index);
 
 private:
     Ui::ControlDebugPanel *ui;

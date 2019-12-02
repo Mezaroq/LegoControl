@@ -4,6 +4,9 @@
 #include <Model/ControlObject.h>
 #include <Model/ControlSensor.h>
 #include <Model/ControlTrain.h>
+#include <Model/ControlSwitch.h>
+#include <Model/ControlLight.h>
+#include <QList>
 
 class ControlRail : public ControlObject
 {
@@ -22,13 +25,25 @@ public:
         RAIL_SECTION_10,
         RAIL_SECTION_11
     };
+    enum TrainFrom{
+        FROM_TAIL,
+        FROM_HEAD,
+        UNDEFINED
+    };
+
     explicit ControlRail(RailID railID);
     static QString getResource(RailID railID);
+    void setTrain(ControlTrain *train);
+    ControlTrain* getTrain(bool remove = false);
+
 
 private:
     RailID railID;
-    ControlTrain *train = nullptr;
     int entryCounter = 0;
+    QList<ControlRail*> leftRails;
+    QList<ControlRail*> rightRails;
+    ControlTrain *train = nullptr;
+    TrainFrom trainFrom = UNDEFINED;
 
 signals:
     void objectChanged();

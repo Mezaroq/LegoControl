@@ -7,6 +7,7 @@ ControlDebugPanel::ControlDebugPanel(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Lego Control Debug Panel");
+    ui->currentIDLineEdit->setText("UNDEFINED");
 }
 
 void ControlDebugPanel::setRails(QMap<int, ControlRail *> rails)
@@ -70,4 +71,34 @@ void ControlDebugPanel::createSensorsConnections()
 ControlDebugPanel::~ControlDebugPanel()
 {
     delete ui;
+}
+
+void ControlDebugPanel::on_trainSetButton_clicked()
+{
+    rails.value(ui->railIDComboBox->currentIndex())->setTrain(trains.value(ui->trainIDComboBox->currentIndex()));
+    ui->currentIDLineEdit->setText(QString("TRAIN_") + QString::number(rails.value(ui->railIDComboBox->currentIndex())->getTrain()->getTrainID() + 1));
+}
+
+void ControlDebugPanel::on_trainRemoveButton_clicked()
+{
+    rails.value(ui->railIDComboBox->currentIndex())->setTrain(nullptr);
+    ui->currentIDLineEdit->setText("UNDEFINED");
+}
+
+void ControlDebugPanel::on_trainRemoveAllButton_clicked()
+{
+    for (ControlRail *rail : rails) {
+        rail->setTrain(nullptr);
+    }
+    ui->currentIDLineEdit->setText("UNDEFINED");
+}
+
+void ControlDebugPanel::on_railIDComboBox_currentIndexChanged(int index)
+{
+    ControlTrain *train = rails.value(index)->getTrain();
+    if (train) {
+        ui->currentIDLineEdit->setText(QString("TRAIN_") + QString::number(train->getTrainID() + 1));
+    } else {
+        ui->currentIDLineEdit->setText("UNDEFINED");
+    }
 }

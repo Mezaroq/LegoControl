@@ -18,13 +18,13 @@ public:
         SPEED_FORWARD_6,
         SPEED_FORWARD_7,
         SPEED_BREAKE,
-        SPEED_REVERSE_1,
-        SPEED_REVERSE_2,
-        SPEED_REVERSE_3,
-        SPEED_REVERSE_4,
-        SPEED_REVERSE_5,
+        SPEED_REVERSE_7 = -7,
         SPEED_REVERSE_6,
-        SPEED_REVERSE_7
+        SPEED_REVERSE_5,
+        SPEED_REVERSE_4,
+        SPEED_REVERSE_3,
+        SPEED_REVERSE_2,
+        SPEED_REVERSE_1
     };
     enum TrainID{
         TRAIN_1,
@@ -37,13 +37,27 @@ public:
         TRAIN_8,
     };
 
+    enum TrainPriority{
+        PRIORITY_1,
+        PRIORITY_2,
+        PRIORITY_3,
+        PRIORITY_4,
+        PRIORITY_5,
+        PRIORITY_6,
+        PRIORITY_7,
+        PRIORITY_8
+    };
+
     explicit ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject *parent = nullptr);
+    void setTrainSpeed(TrainSpeed trainSpeed);
+    void setTrainPriority(TrainPriority trainPriority);
+    TrainID getTrainID();
     int getTrainSpeed();
 
 private:
-    int trainID;
+    TrainID trainID;
+    TrainPriority trainPriority;
     ControlSlider* trainSlider = nullptr;
-
 
 signals:
 

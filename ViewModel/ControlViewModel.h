@@ -8,7 +8,6 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
-#include <View/ControlDebugPanel.h>
 #include <ViewModel/ControlDataProvider.h>
 #include <QThread>
 #include <QMap>
@@ -67,7 +66,6 @@ private:
     QByteArray controlData;
     QSerialPort *serialPort = nullptr;
     ControlDataProvider *dataProvider = nullptr;
-    ControlDebugPanel *debugPanel = nullptr;
 
 signals:
     void controlDataCollected(QByteArray controlData);

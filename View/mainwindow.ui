@@ -2035,6 +2035,7 @@ color: rgb(255, 255, 255);</string>
    <addaction name="separator"/>
    <addaction name="actionEnable_AI"/>
    <addaction name="actionApplication_settings"/>
+   <addaction name="actionDebug_Panel"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionRun">
@@ -2074,6 +2075,15 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="toolTip">
     <string>Application settings</string>
+   </property>
+  </action>
+  <action name="actionDebug_Panel">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/control/resources/icons/icon_bar_debug_panel.svg</normaloff>:/control/resources/icons/icon_bar_debug_panel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Debug Panel</string>
    </property>
   </action>
  </widget>

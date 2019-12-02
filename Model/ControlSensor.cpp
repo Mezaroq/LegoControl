@@ -1,4 +1,5 @@
 #include "ControlSensor.h"
+#include <QDebug>
 
 ControlSensor::ControlSensor(SensorID sensorID, SensorType sensorType, QObject *parent) : QObject(parent)
 {

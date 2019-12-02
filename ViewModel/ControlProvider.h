@@ -10,6 +10,7 @@
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
+#include <View/ControlDebugPanel.h>
 #include <View/MainWindow.h>
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
@@ -38,6 +39,7 @@ public:
 
 private:
     ControlViewModel *viewModel;
+    ControlDebugPanel *debugPanel;
     MainWindow mainWindow;
     ControlView *view;
     ControlScene *scene;
@@ -47,6 +49,7 @@ private:
     QAction *actionRun;
     QAction *actionEnableAI;
     QAction *actionEpplicationSettings;
+    QAction *actionDebugPanel;
     QMap<int, ControlButton*> buttons;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLabel*> labels;

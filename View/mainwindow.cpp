@@ -84,6 +84,11 @@ QAction *MainWindow::getActionApplicationSettings()
     return ui->actionApplication_settings;
 }
 
+QAction *MainWindow::getActionDebugPanel()
+{
+    return ui->actionDebug_Panel;
+}
+
 ControlView *MainWindow::getControlView()
 {
     return ui->graphicsView;

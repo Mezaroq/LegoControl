@@ -305,6 +305,13 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QFrame" name="frame_12">
         <property name="minimumSize">
          <size>
@@ -514,6 +521,13 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -729,6 +743,13 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QFrame" name="frame_22">
         <property name="minimumSize">
          <size>
@@ -938,6 +959,13 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -1153,6 +1181,13 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QFrame" name="frame_18">
         <property name="minimumSize">
          <size>
@@ -1362,6 +1397,13 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
        </widget>
       </item>
       <item>
@@ -1628,7 +1670,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>RAILS</string>
+            <string>SET TRAIN TO RAIL</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -1649,6 +1691,166 @@
           </spacer>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="leftMargin">
+         <number>1</number>
+        </property>
+        <property name="rightMargin">
+         <number>1</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="trainIDLabel">
+          <property name="text">
+           <string>TrainID</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="trainIDComboBox">
+          <item>
+           <property name="text">
+            <string>TRAIN_1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TRAIN_8</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="railIDLabel">
+          <property name="text">
+           <string>RailID</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="railIDComboBox">
+          <item>
+           <property name="text">
+            <string>RAIL_1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_8</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_9</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RAIL_10</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="currentIDLabel">
+          <property name="text">
+           <string>CurrentID</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="currentIDLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_7">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="trainSetButton">
+        <property name="text">
+         <string>Set Train</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="trainRemoveButton">
+        <property name="text">
+         <string>Remove Train</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="trainRemoveAllButton">
+        <property name="text">
+         <string>Remove All Train</string>
+        </property>
        </widget>
       </item>
      </layout>
