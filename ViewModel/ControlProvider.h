@@ -9,6 +9,7 @@
 #include <Model/ControlLight.h>
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTrain.h>
+#include <Model/ControlSensor.h>
 #include <View/MainWindow.h>
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
@@ -33,6 +34,7 @@ public:
     void prepareLights();
     void prepareRails();
     void prepareTrains();
+    void prepareSensors();
 
 private:
     ControlViewModel *viewModel;
@@ -52,6 +54,7 @@ private:
     QMap<int, ControlLight*> lights;
     QMap<int, ControlRail*> rails;
     QMap<int, ControlTrain*> trains;
+    QMap<int, ControlSensor*> sensors;
 };
 
 #endif // CONTROLPROVIDER_H

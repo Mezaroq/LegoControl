@@ -2,6 +2,8 @@
 #define CONTROLRAIL_H
 
 #include <Model/ControlObject.h>
+#include <Model/ControlSensor.h>
+#include <Model/ControlTrain.h>
 
 class ControlRail : public ControlObject
 {
@@ -23,11 +25,16 @@ public:
     explicit ControlRail(RailID railID);
     static QString getResource(RailID railID);
 
+private:
+    RailID railID;
+    ControlTrain *train = nullptr;
+    int entryCounter = 0;
+
 signals:
     void objectChanged();
 
-private:
-    RailID railID;
+public slots:
+    void sensorChanged(ControlSensor::SensorType sensorType);
 };
 
 #endif // CONTROLRAIL_H

@@ -47,12 +47,14 @@ void ControlProvider::createObjectsData()
     prepareLights();
     prepareRails();
     prepareTrains();
+    prepareSensors();
     viewModel->setSliders(sliders);
     viewModel->setLights(lights);
     viewModel->setSwitches(switches);
     viewModel->setRails(rails);
     viewModel->setTrains(trains);
     viewModel->setStatusBar(statusBar);
+    viewModel->setSensors(sensors);
     statusBar->showMessage("No Device");
 }
 
@@ -176,4 +178,46 @@ void ControlProvider::prepareTrains()
     trains.insert(ControlTrain::TRAIN_6, new ControlTrain(ControlTrain::TRAIN_6, sliders.value(ControlSlider::SLIDER_CHANNEL_6)));
     trains.insert(ControlTrain::TRAIN_7, new ControlTrain(ControlTrain::TRAIN_7, sliders.value(ControlSlider::SLIDER_CHANNEL_7)));
     trains.insert(ControlTrain::TRAIN_8, new ControlTrain(ControlTrain::TRAIN_8, sliders.value(ControlSlider::SLIDER_CHANNEL_8)));
+}
+
+void ControlProvider::prepareSensors()
+{
+    sensors.insert(ControlSensor::SENSOR_1, new ControlSensor(ControlSensor::SENSOR_1, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_2, new ControlSensor(ControlSensor::SENSOR_2, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_3, new ControlSensor(ControlSensor::SENSOR_3, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_4, new ControlSensor(ControlSensor::SENSOR_4, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_5, new ControlSensor(ControlSensor::SENSOR_5, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_6, new ControlSensor(ControlSensor::SENSOR_6, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_7, new ControlSensor(ControlSensor::SENSOR_7, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_8, new ControlSensor(ControlSensor::SENSOR_8, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_9, new ControlSensor(ControlSensor::SENSOR_9, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_10, new ControlSensor(ControlSensor::SENSOR_10, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_11, new ControlSensor(ControlSensor::SENSOR_11, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_12, new ControlSensor(ControlSensor::SENSOR_12, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_13, new ControlSensor(ControlSensor::SENSOR_13, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_14, new ControlSensor(ControlSensor::SENSOR_14, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_15, new ControlSensor(ControlSensor::SENSOR_15, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_16, new ControlSensor(ControlSensor::SENSOR_16, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_17, new ControlSensor(ControlSensor::SENSOR_17, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_18, new ControlSensor(ControlSensor::SENSOR_18, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_19, new ControlSensor(ControlSensor::SENSOR_19, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_20, new ControlSensor(ControlSensor::SENSOR_20, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_21, new ControlSensor(ControlSensor::SENSOR_21, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_22, new ControlSensor(ControlSensor::SENSOR_22, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_23, new ControlSensor(ControlSensor::SENSOR_23, ControlSensor::RIGHT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_24, new ControlSensor(ControlSensor::SENSOR_24, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_25, new ControlSensor(ControlSensor::SENSOR_25, ControlSensor::LEFT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_26, new ControlSensor(ControlSensor::SENSOR_26, ControlSensor::LEFT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_27, new ControlSensor(ControlSensor::SENSOR_27, ControlSensor::RIGHT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_28, new ControlSensor(ControlSensor::SENSOR_28, ControlSensor::RIGHT_STOP_SENSOR));
+
+    int sensorID = 0;
+    for (ControlRail *rail : rails) {
+        if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
+            continue;
+        connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
+        connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
+        connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
+        connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
+    }
 }

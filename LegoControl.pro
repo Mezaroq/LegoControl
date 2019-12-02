@@ -22,9 +22,11 @@ SOURCES += \
     Model/ControlLight.cpp \
     Model/ControlObject.cpp \
     Model/ControlRail.cpp \
+    Model/ControlSensor.cpp \
     Model/ControlSlider.cpp \
     Model/ControlSwitch.cpp \
     Model/ControlTrain.cpp \
+    View/ControlDebugPanel.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
@@ -40,9 +42,11 @@ HEADERS += \
     Model/ControlLight.h \
     Model/ControlObject.h \
     Model/ControlRail.h \
+    Model/ControlSensor.h \
     Model/ControlSlider.h \
     Model/ControlSwitch.h \
     Model/ControlTrain.h \
+    View/ControlDebugPanel.h \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \
@@ -51,6 +55,7 @@ HEADERS += \
     ViewModel/ControlViewModel.h
 
 FORMS += \
+    View/controldebugpanel.ui \
     View/mainwindow.ui
 
 # Default rules for deployment.

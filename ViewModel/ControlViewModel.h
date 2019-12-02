@@ -7,6 +7,8 @@
 #include <Model/ControlSwitch.h>
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
+#include <Model/ControlSensor.h>
+#include <View/ControlDebugPanel.h>
 #include <ViewModel/ControlDataProvider.h>
 #include <QThread>
 #include <QMap>
@@ -48,6 +50,7 @@ public:
     void setSwitches(QMap<int, ControlSwitch*> switches);
     void setRails(QMap<int, ControlRail*> rails);
     void setTrains(QMap<int, ControlTrain*> trains);
+    void setSensors(QMap<int, ControlSensor*> sensors);
     void setStatusBar(QStatusBar *statusBar);
     void prepareCollectedData(QByteArray byteArray);
     void collectControlData();
@@ -59,10 +62,12 @@ private:
     QMap<int, ControlSwitch*> switches;
     QMap<int, ControlRail*> rails;
     QMap<int, ControlTrain*> trains;
+    QMap<int, ControlSensor*> sensors;
     QStatusBar *statusBar;
     QByteArray controlData;
     QSerialPort *serialPort = nullptr;
     ControlDataProvider *dataProvider = nullptr;
+    ControlDebugPanel *debugPanel = nullptr;
 
 signals:
     void controlDataCollected(QByteArray controlData);

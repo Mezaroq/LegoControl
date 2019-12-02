@@ -8,6 +8,9 @@ ControlViewModel::ControlViewModel(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(controlDataCollected(QByteArray)), dataProvider, SLOT(dataToSerialDeviceReady(QByteArray)));
     //after run check if file exist and load last train positions to rails
 
+    debugPanel = new ControlDebugPanel();
+
+    //DEBUG
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()),this, SLOT(settingsTriggered()));
 //    timer->start(200);
@@ -46,6 +49,12 @@ void ControlViewModel::setRails(QMap<int, ControlRail *> rails)
 void ControlViewModel::setTrains(QMap<int, ControlTrain *> trains)
 {
     this->trains = trains;
+}
+
+void ControlViewModel::setSensors(QMap<int, ControlSensor *> sensors)
+{
+    this->sensors = sensors;
+    debugPanel->setSensors(sensors);
 }
 
 void ControlViewModel::setStatusBar(QStatusBar *statusBar)
@@ -176,7 +185,9 @@ void ControlViewModel::aiEnabled(bool state)
 
 void ControlViewModel::settingsTriggered()
 {
-    /// NOW THIS METOHD IS FOR TESTING
+    /// NOW THIS METHOD IS FOR TESTING
+
+    debugPanel->show();
 
     QByteArray byteArray;
     bool change = false;
