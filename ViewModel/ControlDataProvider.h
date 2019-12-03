@@ -1,33 +1,34 @@
 #ifndef CONTROLDATAPROVIDER_H
 #define CONTROLDATAPROVIDER_H
 
+#define GET_BIT(k, n)     (k &   (1 << (n)))
 #include <QObject>
 #include <QByteArray>
 #include <QSerialPort>
-#include <QThread>
 #include <QDebug>
 
-class ControlDataProvider : public QThread
+class ControlDataProvider : public QObject
 {
     Q_OBJECT
 public:
     ControlDataProvider(QObject *parent = nullptr);
-    void run() override;
     void setSerialPort(QSerialPort* serialPort);
     void readDataFromSerialDevice();
-    void sendDataToSerialDevice();
+    void sendDataToSerialDevice(QByteArray dataToSerialDevice);
 
 private:
-    static const int READ_DATA_SIZE = 32;
+    static const int DATA_SIZE = 4;
+    static const int SENSORS = 32;
     QSerialPort *serialPort = nullptr;
-    char dataFromSerialDevice[READ_DATA_SIZE];
-    QByteArray dataToSerialDevice;
+    QByteArray dataFromSerialDeviceBuffer;
+    QByteArray dataFromSerialDevice;
 
 signals:
     void dataFromSerialDeviceReady(QByteArray dataFromSerialDevice);
 
 public slots:
     void dataToSerialDeviceReady(QByteArray dataToSerialDevice);
+    void dataFromDeviceReadyRead();
 };
 
 #endif // CONTROLDATAPROVIDER_H

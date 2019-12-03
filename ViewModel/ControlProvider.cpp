@@ -31,7 +31,7 @@ void ControlProvider::createConnections()
 {
     connect(buttonStopAll, SIGNAL(clicked()), viewModel, SLOT(stopAllChannels()));
     connect(scene, SIGNAL(controlObjectClicked(ControlObject::ObjectType, int)), viewModel, SLOT(controlObjectClicked(ControlObject::ObjectType, int)));
-    connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
+    connect(actionRun, SIGNAL(toggled(bool)), viewModel, SLOT(runTriggered(bool)));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
     connect(actionEpplicationSettings, SIGNAL(triggered()), viewModel, SLOT(settingsTriggered()));
     connect(actionDebugPanel, SIGNAL(triggered()), debugPanel, SLOT(show()));

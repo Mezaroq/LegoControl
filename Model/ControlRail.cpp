@@ -70,15 +70,14 @@ void ControlRail::sensorChanged(ControlSensor::SensorType sensorType)
     case ControlSensor::TAIL_STOP_SENSOR:
         if (train && trainFrom == FROM_HEAD) {
             //if train rail id == railID -> train stop and emit trainStopped() signal from this or train??
-            qDebug() << "train from head stop";
+//            qDebug() << "train from head stop";
         }
         break;
     case ControlSensor::HEAD_STOP_SENSOR:
         if (train && trainFrom == FROM_TAIL) {
             //if train rail id == railID -> train stop and emit trainStopped() signal from this or train??
-            qDebug() << "train from tail stop";
+//            qDebug() << "train from tail stop";
         }
         break;
     }
-    qDebug() << train;
 }

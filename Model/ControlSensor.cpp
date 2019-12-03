@@ -14,7 +14,7 @@ ControlSensor::SensorType ControlSensor::getSensorType()
 
 void ControlSensor::setState(bool newState)
 {
-    if ((newState == true) && (state != newState))
+    if ((newState == true) && (state != newState)) //ignore 2x true signal
         emit signalChanged(sensorType);
     state = newState;
 }

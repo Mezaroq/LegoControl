@@ -71,7 +71,7 @@ signals:
     void controlDataCollected(QByteArray controlData);
 
 public slots:
-    void runTriggered();
+    void runTriggered(bool state);
     void aiEnabled(bool state);
     void settingsTriggered();
     void stopAllChannels();
