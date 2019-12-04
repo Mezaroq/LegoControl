@@ -30,6 +30,7 @@ SOURCES += \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
+    ViewModel/AlieViewModel.cpp \
     ViewModel/ControlDataProvider.cpp \
     ViewModel/ControlProvider.cpp \
     ViewModel/ControlViewModel.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \
+    ViewModel/AlieViewModel.h \
     ViewModel/ControlDataProvider.h \
     ViewModel/ControlProvider.h \
     ViewModel/ControlViewModel.h

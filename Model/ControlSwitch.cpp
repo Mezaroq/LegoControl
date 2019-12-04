@@ -95,4 +95,5 @@ void ControlSwitch::actionToggle(bool state)
         }
         break;
     }
+    emit objectChanged();
 }

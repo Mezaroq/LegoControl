@@ -48,15 +48,22 @@ public:
         PRIORITY_8
     };
 
+    enum TrainDirection{
+        DIRECTION_FORWARD = 1,
+        DIRECTION_REVERSE = -1
+    };
+
     explicit ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
     void setTrainPriority(TrainPriority trainPriority);
     TrainID getTrainID();
     int getTrainSpeed();
+    TrainDirection getTrainDirection();
 
 private:
     TrainID trainID;
     TrainPriority trainPriority;
+    TrainDirection trainDirection;
     ControlSlider* trainSlider = nullptr;
 
 signals:

@@ -81,14 +81,14 @@ void ControlDebugPanel::on_trainSetButton_clicked()
 
 void ControlDebugPanel::on_trainRemoveButton_clicked()
 {
-    rails.value(ui->railIDComboBox->currentIndex())->setTrain(nullptr);
+    rails.value(ui->railIDComboBox->currentIndex())->getTrain(true);
     ui->currentIDLineEdit->setText("UNDEFINED");
 }
 
 void ControlDebugPanel::on_trainRemoveAllButton_clicked()
 {
     for (ControlRail *rail : rails) {
-        rail->setTrain(nullptr);
+        rail->getTrain(true);
     }
     ui->currentIDLineEdit->setText("UNDEFINED");
 }

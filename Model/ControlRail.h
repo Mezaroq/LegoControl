@@ -26,27 +26,39 @@ public:
         RAIL_SECTION_11
     };
     enum TrainFrom{
-        FROM_TAIL,
-        FROM_HEAD,
+        FROM_LAST,
+        FROM_NEXT,
         UNDEFINED
     };
 
     explicit ControlRail(RailID railID);
     static QString getResource(RailID railID);
     void setTrain(ControlTrain *train);
+    void setLastRails(QList<ControlRail*> rails);
+    void setNextRails(QList<ControlRail*> rails);
+    void setLastLight(ControlLight *controlLight);
+    void setNextLight(ControlLight *controlLight);
     ControlTrain* getTrain(bool remove = false);
-
+    QList<ControlRail*> getLastRails();
+    QList<ControlRail*> getNextRails();
+    ControlLight* getLastLight();
+    ControlLight* getNextLight();
 
 private:
     RailID railID;
     int entryCounter = 0;
-    QList<ControlRail*> leftRails;
-    QList<ControlRail*> rightRails;
+    QList<ControlRail*> lastRails;
+    QList<ControlRail*> nextRails;
+    ControlLight *lastLight;
+    ControlLight *nextLight;
     ControlTrain *train = nullptr;
     TrainFrom trainFrom = UNDEFINED;
 
 signals:
     void objectChanged();
+    void trainEnters(ControlTrain::TrainID);
+    void trainLeaving(ControlTrain::TrainID);
+    void trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID);
 
 public slots:
     void sensorChanged(ControlSensor::SensorType sensorType);

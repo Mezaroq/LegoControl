@@ -9,7 +9,7 @@ ControlTrain::ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject 
 
 void ControlTrain::setTrainSpeed(ControlTrain::TrainSpeed trainSpeed)
 {
-    trainSlider->setValue(trainSpeed);
+    trainSpeed == SPEED_BREAKE ? trainSlider->setValue(SPEED_NEUTRAL) : trainSlider->setValue(trainSpeed);
 }
 
 void ControlTrain::setTrainPriority(ControlTrain::TrainPriority trainPriority)
@@ -25,4 +25,11 @@ ControlTrain::TrainID ControlTrain::getTrainID()
 int ControlTrain::getTrainSpeed()
 {
     return trainSlider->getControlValue();
+}
+
+ControlTrain::TrainDirection ControlTrain::getTrainDirection()
+{
+    if (getTrainSpeed() >= 0)
+        return DIRECTION_FORWARD;
+    return DIRECTION_REVERSE;
 }

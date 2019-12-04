@@ -1,24 +1,31 @@
 #include "ControlViewModel.h"
+#include <QDir>
 #include <QTimer> //debug timer, delete after debug
 
-ControlViewModel::ControlViewModel(QObject *parent) : QObject(parent)
+ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
     dataProvider = new ControlDataProvider();
     connect(dataProvider, SIGNAL(dataFromSerialDeviceReady(QByteArray)), this, SLOT(dataFromSerialDeviceCollected(QByteArray)));
     connect(this, SIGNAL(controlDataCollected(QByteArray)), dataProvider, SLOT(dataToSerialDeviceReady(QByteArray)));
-    //after run check if file exist and load last train positions to rails
 
-    //DEBUG
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()),this, SLOT(settingsTriggered()));
-//    timer->start(200);
+    lastTrainPosition = new QMessageBox(mainWindow);
+    lastTrainPosition->setText("Load last train position?");
+    lastTrainPosition->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    lastTrainPosition->setIcon(QMessageBox::Question);
+    lastTrainPosition->setDefaultButton(QMessageBox::Yes);
 }
 
 ControlViewModel::~ControlViewModel()
 {
-    if (!dataProvider) {
-        delete dataProvider;
+    if (serialPort)
+        serialPort->disconnect(dataProvider, SIGNAL(readyRead()));
+    QMapIterator<int, ControlTrain*> trainList(trains);
+    while (trainList.hasNext()) {
+        trainList.next();
+        trainList.value()->setTrainSpeed(ControlTrain::SPEED_BREAKE);
     }
+    sendCollectedControlData();
+//    saveLastTrainPosition();
 }
 
 void ControlViewModel::setSliders(QMap<int, ControlSlider *> sliders)
@@ -56,7 +63,7 @@ void ControlViewModel::setStatusBar(QStatusBar *statusBar)
     this->statusBar = statusBar;
 }
 
-void ControlViewModel::prepareCollectedData(QByteArray byteArray)
+void ControlViewModel::setCollectedData(QByteArray byteArray)
 {
     sensors.value(ControlSensor::SENSOR_1)->setState(byteArray.at(10));
     sensors.value(ControlSensor::SENSOR_2)->setState(byteArray.at(11));
@@ -90,7 +97,29 @@ void ControlViewModel::prepareCollectedData(QByteArray byteArray)
     sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(24));
 }
 
-void ControlViewModel::collectControlData()
+void ControlViewModel::loadLastTrainPosition()
+{
+    if (QFileInfo::exists(fileName)) {
+        if (lastTrainPosition->exec() == QMessageBox::Yes) {
+            QFile file(fileName);
+            file.open(QIODevice::ReadOnly);
+            QDataStream in(&file);
+            int railID;
+            int trainID;
+
+            while (!in.atEnd()) {
+                in >> railID;
+                in >> trainID;
+
+                rails.value(railID)->setTrain(trains.value(trainID));
+            }
+            file.close();
+            return;
+        }
+    }
+}
+
+void ControlViewModel::sendCollectedControlData()
 {
     controlData.clear();
     controlData[MAIN_CONTROL] = static_cast<char>(128);
@@ -166,8 +195,23 @@ void ControlViewModel::collectControlData()
                                                 128 * !lights.value( ControlLight::LIGHT_7)->getLightToggle() );
     controlData[LIGHT_CONTROL_7] = 0;
 
-//    emit controlDataCollected(controlData);
-    serialPort->write(controlData);
+    emit controlDataCollected(controlData);
+}
+
+void ControlViewModel::saveLastTrainPosition()
+{
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+
+    QMapIterator<int, ControlRail*> railList(rails);
+    while (railList.hasNext()) {
+        railList.next();
+        if (railList.value()->getTrain() != nullptr) {
+            out << int(railList.key());
+            out << int(railList.value()->getTrain()->getTrainID());
+        }
+    }
 }
 
 void ControlViewModel::runTriggered(bool state)
@@ -183,8 +227,9 @@ void ControlViewModel::runTriggered(bool state)
                         serialPort->clear();
                         statusBar->showMessage(tr("Device: %1").arg(port.serialNumber()));
 
+                        loadLastTrainPosition();
                         dataProvider->setSerialPort(serialPort);
-                        collectControlData();
+                        sendCollectedControlData();
                     } else {
                         statusBar->showMessage(tr("Can't open %1, error code %2") .arg(serialPort->portName()).arg(serialPort->error()));
                     }
@@ -212,7 +257,7 @@ void ControlViewModel::aiEnabled(bool state)
 
 void ControlViewModel::settingsTriggered()
 {
-
+    loadLastTrainPosition();
 }
 
 void ControlViewModel::stopAllChannels()
@@ -240,11 +285,11 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
 
 void ControlViewModel::dataFromSerialDeviceCollected(QByteArray readData)
 {
-    prepareCollectedData(readData);
+    setCollectedData(readData);
 //    if (aiIsEnabled)
 //        qDebug() << "aiControl()";
 //    else
 //        qDebug() << "manualControl()";
 //    statusBar->showMessage(readData.toHex('|'));
-    collectControlData();
+    sendCollectedControlData();
 }

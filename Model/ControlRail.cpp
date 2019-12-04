@@ -14,11 +14,33 @@ QString ControlRail::getResource(ControlRail::RailID railID)
 void ControlRail::setTrain(ControlTrain *train)
 {
     this->train = train;
+    setOpacity(0.5); //rebuild
+}
+
+void ControlRail::setLastRails(QList<ControlRail *> rails)
+{
+    this->lastRails = rails;
+}
+
+void ControlRail::setNextRails(QList<ControlRail *> rails)
+{
+    this->nextRails = rails;
+}
+
+void ControlRail::setLastLight(ControlLight *controlLight)
+{
+    this->lastLight = controlLight;
+}
+
+void ControlRail::setNextLight(ControlLight *controlLight)
+{
+    this->nextLight = controlLight;
 }
 
 ControlTrain *ControlRail::getTrain(bool remove)
 {
     if (remove) {
+        setOpacity(1); //rebuild
         ControlTrain *temp = train;
         train = nullptr;
         return temp;
@@ -26,57 +48,105 @@ ControlTrain *ControlRail::getTrain(bool remove)
     return train;
 }
 
+QList<ControlRail *> ControlRail::getLastRails()
+{
+    return lastRails;
+}
+
+QList<ControlRail *> ControlRail::getNextRails()
+{
+    return nextRails;
+}
+
+ControlLight *ControlRail::getLastLight()
+{
+    return lastLight;
+}
+
+ControlLight *ControlRail::getNextLight()
+{
+    return nextLight;
+}
+
 void ControlRail::sensorChanged(ControlSensor::SensorType sensorType)
 {
     switch (sensorType) {
-    case ControlSensor::TAIL_ENTRY_SENSOR:
-        if (train == nullptr && entryCounter == 0) {
+    case ControlSensor::LAST_ENTRY_SENSOR:
+        if (train != nullptr && trainFrom == UNDEFINED && entryCounter == 0) {
             entryCounter++;
-        } else if(train == nullptr && entryCounter == 1) {
+            if (train)
+                emit (trainLeaving(train->getTrainID()));
+        } else if(train != nullptr && trainFrom == UNDEFINED && entryCounter == 1) {
+            entryCounter = 0;
+            lastRails.first()->setTrain(getTrain(true));
+        } else if (train == nullptr && trainFrom == UNDEFINED && entryCounter == 0) {
             entryCounter++;
-            //set train and remove from previous
-            train = new ControlTrain(ControlTrain::TRAIN_1, new ControlSlider()); //DEBUG
-            trainFrom = FROM_TAIL;
-            setOpacity(0.5);
-        } else if(train != nullptr && entryCounter == 2) {
+            if (lastRails.first()->getTrain())
+                emit trainEnters(lastRails.front()->getTrain()->getTrainID());
+        } else if (train == nullptr && trainFrom == UNDEFINED && entryCounter == 1) {
+            entryCounter++;
+            if (lastRails.first()->getTrain()) {
+                setTrain(lastRails.first()->getTrain(true));
+                trainFrom = FROM_LAST;
+            } else {
+                entryCounter = 0;
+            }
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) {
             entryCounter--;
-        } else if(train != nullptr && entryCounter == 1) {
+            if (train) {
+                emit trainLeaving(train->getTrainID());
+            }
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) {
             entryCounter--;
-            //set train to next rail and remove this
-            train = nullptr;
-            trainFrom = UNDEFINED;
-            setOpacity(1);
+            if (train) {
+                lastRails.first()->setTrain(getTrain(true));
+                trainFrom = UNDEFINED;
+            }
         }
         break;
-    case ControlSensor::HEAD_ENTRY_SENSOR:
-        if (train == nullptr && entryCounter == 0) {
+
+    case ControlSensor::NEXT_ENTRY_SENSOR:
+        if (train != nullptr && trainFrom == UNDEFINED && entryCounter == 0) {
             entryCounter++;
-        } else if(train == nullptr && entryCounter == 1) {
+            if (train)
+                emit (trainLeaving(train->getTrainID()));
+        } else if(train != nullptr && trainFrom == UNDEFINED && entryCounter == 1) {
+            entryCounter = 0;
+            nextRails.first()->setTrain(getTrain(true));
+        } else if (train == nullptr && trainFrom == UNDEFINED && entryCounter == 0) {
             entryCounter++;
-            //set train and remove from previous
-            train = new ControlTrain(ControlTrain::TRAIN_1, new ControlSlider());
-            trainFrom = FROM_HEAD;
-            setOpacity(0.5);
-        } else if(train != nullptr && entryCounter == 2) {
+            if (nextRails.first()->getTrain())
+                emit trainEnters(nextRails.front()->getTrain()->getTrainID());
+        } else if (train == nullptr && trainFrom == UNDEFINED && entryCounter == 1) {
+            entryCounter++;
+            if (nextRails.first()->getTrain()) {
+                setTrain(nextRails.first()->getTrain(true));
+                trainFrom = FROM_NEXT;
+            } else {
+                entryCounter = 0;
+            }
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) {
             entryCounter--;
-        } else if(train != nullptr && entryCounter == 1) {
+            if (train)
+                emit trainLeaving(train->getTrainID());
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) {
             entryCounter--;
-            //set train to next rail and remove this
-            train = nullptr;
-            trainFrom = UNDEFINED;
-            setOpacity(1);
+            if (train) {
+                nextRails.first()->setTrain(getTrain(true));
+                trainFrom = UNDEFINED;
+            }
         }
         break;
-    case ControlSensor::TAIL_STOP_SENSOR:
-        if (train && trainFrom == FROM_HEAD) {
-            //if train rail id == railID -> train stop and emit trainStopped() signal from this or train??
-//            qDebug() << "train from head stop";
+
+    case ControlSensor::LAST_STOP_SENSOR:
+        if (train && trainFrom == FROM_NEXT) {
+            emit trainActivatedStop(train->getTrainID(), railID);
         }
         break;
-    case ControlSensor::HEAD_STOP_SENSOR:
-        if (train && trainFrom == FROM_TAIL) {
-            //if train rail id == railID -> train stop and emit trainStopped() signal from this or train??
-//            qDebug() << "train from tail stop";
+
+    case ControlSensor::NEXT_STOP_SENSOR:
+        if (train && trainFrom == FROM_LAST) {
+            emit trainActivatedStop(train->getTrainID(), railID);
         }
         break;
     }

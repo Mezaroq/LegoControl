@@ -15,6 +15,7 @@
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
 #include <ViewModel/ControlViewModel.h>
+#include <ViewModel/AlieViewModel.h>
 #include <QAction>
 #include <QObject>
 #include <QMap>
@@ -25,9 +26,9 @@ class ControlProvider : QObject
     Q_OBJECT
 public:
     explicit ControlProvider();
-    void createObjects();
-    void createConnections();
-    void createObjectsData();
+    void setObjects();
+    void setConnections();
+    void setObjectsData();
     void prepareButtons();
     void prepareSliders();
     void prepareLabels();
@@ -38,6 +39,7 @@ public:
     void prepareSensors();
 
 private:
+    AlieViewModel *alieAI;
     ControlViewModel *viewModel;
     ControlDebugPanel *debugPanel;
     MainWindow mainWindow;
@@ -58,6 +60,9 @@ private:
     QMap<int, ControlRail*> rails;
     QMap<int, ControlTrain*> trains;
     QMap<int, ControlSensor*> sensors;
+
+public slots:
+    void windowClosed();
 };
 
 #endif // CONTROLPROVIDER_H

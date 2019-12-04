@@ -38,5 +38,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+signals:
+    void closeWindow();
 };
 #endif // MAINWINDOW_H

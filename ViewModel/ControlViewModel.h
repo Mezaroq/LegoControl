@@ -17,6 +17,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QByteArray>
+#include <QMessageBox>
+#include <QMainWindow>
 
 class ControlViewModel : public QObject
 {
@@ -42,7 +44,7 @@ public:
         LIGHT_CONTROL_6,
         LIGHT_CONTROL_7
     };
-    explicit ControlViewModel(QObject *parent = nullptr);
+    explicit ControlViewModel(QMainWindow* mainWindow, QObject *parent = nullptr);
     ~ControlViewModel();
     void setSliders(QMap<int, ControlSlider*> sliders);
     void setLights(QMap<int, ControlLight*> lights);
@@ -51,10 +53,14 @@ public:
     void setTrains(QMap<int, ControlTrain*> trains);
     void setSensors(QMap<int, ControlSensor*> sensors);
     void setStatusBar(QStatusBar *statusBar);
-    void prepareCollectedData(QByteArray byteArray);
-    void collectControlData();
+    void setMainWindow(QMainWindow mainWindow);
+    void setCollectedData(QByteArray byteArray);
+    void saveLastTrainPosition();
+    void loadLastTrainPosition();
+    void sendCollectedControlData();
 
 private:
+    QString fileName = "lastTrainPosition.pos";
     bool aiIsEnabled = false;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLight*> lights;
@@ -66,6 +72,8 @@ private:
     QByteArray controlData;
     QSerialPort *serialPort = nullptr;
     ControlDataProvider *dataProvider = nullptr;
+    QMessageBox* lastTrainPosition;
+    QMainWindow* mainWindow;
 
 signals:
     void controlDataCollected(QByteArray controlData);

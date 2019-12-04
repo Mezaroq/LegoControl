@@ -96,5 +96,6 @@ ControlView *MainWindow::getControlView()
 
 MainWindow::~MainWindow()
 {
+    emit closeWindow();
     delete ui;
 }

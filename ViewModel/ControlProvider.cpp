@@ -3,15 +3,16 @@
 
 ControlProvider::ControlProvider()
 {
-    createObjects();
-    createObjectsData();
-    createConnections();
+    setObjects();
+    setObjectsData();
+    setConnections();
     mainWindow.show();
 }
 
-void ControlProvider::createObjects()
+void ControlProvider::setObjects()
 {
-    viewModel = new ControlViewModel;
+    alieAI = new AlieViewModel();
+    viewModel = new ControlViewModel(&mainWindow);
     debugPanel = new ControlDebugPanel();
     view = mainWindow.getControlView();
     scene = new ControlScene();
@@ -27,8 +28,9 @@ void ControlProvider::createObjects()
     labels = mainWindow.getLabels();
 }
 
-void ControlProvider::createConnections()
+void ControlProvider::setConnections()
 {
+    connect(&mainWindow, SIGNAL(closeWindow()), this, SLOT(windowClosed()));
     connect(buttonStopAll, SIGNAL(clicked()), viewModel, SLOT(stopAllChannels()));
     connect(scene, SIGNAL(controlObjectClicked(ControlObject::ObjectType, int)), viewModel, SLOT(controlObjectClicked(ControlObject::ObjectType, int)));
     connect(actionRun, SIGNAL(toggled(bool)), viewModel, SLOT(runTriggered(bool)));
@@ -38,9 +40,8 @@ void ControlProvider::createConnections()
 
 }
 
-void ControlProvider::createObjectsData()
+void ControlProvider::setObjectsData()
 {
-//    scene->setBackgroundBrush(QColor("#539920"));
     scene->setBackgroundBrush(QColor(32, 153, 86));
     view->setScene(scene);
     prepareLabels();
@@ -59,6 +60,9 @@ void ControlProvider::createObjectsData()
     viewModel->setTrains(trains);
     viewModel->setStatusBar(statusBar);
     viewModel->setSensors(sensors);
+    alieAI->setRails(rails);
+    alieAI->setTrains(trains);
+    alieAI->setSwitches(switches);
     debugPanel->setSensors(sensors);
     debugPanel->setRails(rails);
     debugPanel->setTrains(trains);
@@ -166,10 +170,55 @@ void ControlProvider::prepareRails()
     rails.insert(ControlRail::RAIL_SECTION_9, new ControlRail(ControlRail::RAIL_SECTION_9));
     rails.insert(ControlRail::RAIL_SECTION_10, new ControlRail(ControlRail::RAIL_SECTION_10));
 
+    rails.value(ControlRail::RAIL_SECTION_1)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_10));
+    rails.value(ControlRail::RAIL_SECTION_1)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_4));
+    rails.value(ControlRail::RAIL_SECTION_2)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_10));
+    rails.value(ControlRail::RAIL_SECTION_2)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_4));
+    rails.value(ControlRail::RAIL_SECTION_3)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_10));
+    rails.value(ControlRail::RAIL_SECTION_3)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_4));
+    rails.value(ControlRail::RAIL_SECTION_4)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_1) << rails.value(ControlRail::RAIL_SECTION_2) << rails.value(ControlRail::RAIL_SECTION_3));
+    rails.value(ControlRail::RAIL_SECTION_4)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_5) << rails.value(ControlRail::RAIL_SECTION_6));
+    rails.value(ControlRail::RAIL_SECTION_5)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_4));
+    rails.value(ControlRail::RAIL_SECTION_5)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_7));
+    rails.value(ControlRail::RAIL_SECTION_6)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_4));
+    rails.value(ControlRail::RAIL_SECTION_6)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_7));
+    rails.value(ControlRail::RAIL_SECTION_7)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_5) << rails.value(ControlRail::RAIL_SECTION_6));
+    rails.value(ControlRail::RAIL_SECTION_7)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_8) << rails.value(ControlRail::RAIL_SECTION_9));
+    rails.value(ControlRail::RAIL_SECTION_8)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_7));
+    rails.value(ControlRail::RAIL_SECTION_8)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_10));
+    rails.value(ControlRail::RAIL_SECTION_9)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_7));
+    rails.value(ControlRail::RAIL_SECTION_9)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_10));
+    rails.value(ControlRail::RAIL_SECTION_10)->setLastRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_8) << rails.value(ControlRail::RAIL_SECTION_9));
+    rails.value(ControlRail::RAIL_SECTION_10)->setNextRails(QList<ControlRail*>() << rails.value(ControlRail::RAIL_SECTION_1) << rails.value(ControlRail::RAIL_SECTION_2) << rails.value(ControlRail::RAIL_SECTION_3));
+
+    rails.value(ControlRail::RAIL_SECTION_1)->setLastLight(lights.value(ControlLight::LIGHT_1));
+    rails.value(ControlRail::RAIL_SECTION_1)->setNextLight(lights.value(ControlLight::LIGHT_2));
+    rails.value(ControlRail::RAIL_SECTION_2)->setLastLight(lights.value(ControlLight::LIGHT_3));
+    rails.value(ControlRail::RAIL_SECTION_2)->setNextLight(lights.value(ControlLight::LIGHT_4));
+    rails.value(ControlRail::RAIL_SECTION_3)->setLastLight(lights.value(ControlLight::LIGHT_5));
+    rails.value(ControlRail::RAIL_SECTION_3)->setNextLight(lights.value(ControlLight::LIGHT_6));
+    rails.value(ControlRail::RAIL_SECTION_4)->setLastLight(lights.value(ControlLight::LIGHT_7));
+    rails.value(ControlRail::RAIL_SECTION_4)->setNextLight(lights.value(ControlLight::LIGHT_8));
+    rails.value(ControlRail::RAIL_SECTION_5)->setLastLight(lights.value(ControlLight::LIGHT_9));
+    rails.value(ControlRail::RAIL_SECTION_5)->setNextLight(lights.value(ControlLight::LIGHT_10));
+    rails.value(ControlRail::RAIL_SECTION_6)->setLastLight(lights.value(ControlLight::LIGHT_11));
+    rails.value(ControlRail::RAIL_SECTION_6)->setNextLight(lights.value(ControlLight::LIGHT_12));
+    rails.value(ControlRail::RAIL_SECTION_7)->setLastLight(lights.value(ControlLight::LIGHT_13));
+    rails.value(ControlRail::RAIL_SECTION_7)->setNextLight(lights.value(ControlLight::LIGHT_14));
+    rails.value(ControlRail::RAIL_SECTION_8)->setLastLight(lights.value(ControlLight::LIGHT_15));
+    rails.value(ControlRail::RAIL_SECTION_8)->setNextLight(lights.value(ControlLight::LIGHT_16));
+    rails.value(ControlRail::RAIL_SECTION_9)->setLastLight(lights.value(ControlLight::LIGHT_17));
+    rails.value(ControlRail::RAIL_SECTION_9)->setNextLight(lights.value(ControlLight::LIGHT_18));
+    rails.value(ControlRail::RAIL_SECTION_10)->setLastLight(lights.value(ControlLight::LIGHT_20));
+    rails.value(ControlRail::RAIL_SECTION_10)->setNextLight(lights.value(ControlLight::LIGHT_21));
+
     QMapIterator<int, ControlRail*> railList(rails);
     while (railList.hasNext()) {
         railList.next();
         connect(railList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
+        connect(railList.value(), SIGNAL(trainEnters(ControlTrain::TrainID)), alieAI, SLOT(trainEnters(ControlTrain::TrainID)));
+        connect(railList.value(), SIGNAL(trainLeaving(ControlTrain::TrainID)), alieAI, SLOT(trainLeaving(ControlTrain::TrainID)));
+        connect(railList.value(), SIGNAL(trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(stopSensorActivated(ControlTrain::TrainID, ControlRail::RailID)));
         scene->addItem(railList.value());
     }
     scene->addItem(new QGraphicsPixmapItem(ControlRail::getResource(ControlRail::RAIL_SECTION_11)));
@@ -189,34 +238,34 @@ void ControlProvider::prepareTrains()
 
 void ControlProvider::prepareSensors()
 {
-    sensors.insert(ControlSensor::SENSOR_1, new ControlSensor(ControlSensor::SENSOR_1, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_2, new ControlSensor(ControlSensor::SENSOR_2, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_3, new ControlSensor(ControlSensor::SENSOR_3, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_4, new ControlSensor(ControlSensor::SENSOR_4, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_5, new ControlSensor(ControlSensor::SENSOR_5, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_6, new ControlSensor(ControlSensor::SENSOR_6, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_7, new ControlSensor(ControlSensor::SENSOR_7, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_8, new ControlSensor(ControlSensor::SENSOR_8, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_9, new ControlSensor(ControlSensor::SENSOR_9, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_10, new ControlSensor(ControlSensor::SENSOR_10, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_11, new ControlSensor(ControlSensor::SENSOR_11, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_12, new ControlSensor(ControlSensor::SENSOR_12, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_13, new ControlSensor(ControlSensor::SENSOR_13, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_14, new ControlSensor(ControlSensor::SENSOR_14, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_15, new ControlSensor(ControlSensor::SENSOR_15, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_16, new ControlSensor(ControlSensor::SENSOR_16, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_17, new ControlSensor(ControlSensor::SENSOR_17, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_18, new ControlSensor(ControlSensor::SENSOR_18, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_19, new ControlSensor(ControlSensor::SENSOR_19, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_20, new ControlSensor(ControlSensor::SENSOR_20, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_21, new ControlSensor(ControlSensor::SENSOR_21, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_22, new ControlSensor(ControlSensor::SENSOR_22, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_23, new ControlSensor(ControlSensor::SENSOR_23, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_24, new ControlSensor(ControlSensor::SENSOR_24, ControlSensor::HEAD_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_25, new ControlSensor(ControlSensor::SENSOR_25, ControlSensor::TAIL_ENTRY_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_26, new ControlSensor(ControlSensor::SENSOR_26, ControlSensor::TAIL_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_27, new ControlSensor(ControlSensor::SENSOR_27, ControlSensor::HEAD_STOP_SENSOR));
-    sensors.insert(ControlSensor::SENSOR_28, new ControlSensor(ControlSensor::SENSOR_28, ControlSensor::HEAD_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_1, new ControlSensor(ControlSensor::SENSOR_1, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_2, new ControlSensor(ControlSensor::SENSOR_2, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_3, new ControlSensor(ControlSensor::SENSOR_3, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_4, new ControlSensor(ControlSensor::SENSOR_4, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_5, new ControlSensor(ControlSensor::SENSOR_5, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_6, new ControlSensor(ControlSensor::SENSOR_6, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_7, new ControlSensor(ControlSensor::SENSOR_7, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_8, new ControlSensor(ControlSensor::SENSOR_8, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_9, new ControlSensor(ControlSensor::SENSOR_9, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_10, new ControlSensor(ControlSensor::SENSOR_10, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_11, new ControlSensor(ControlSensor::SENSOR_11, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_12, new ControlSensor(ControlSensor::SENSOR_12, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_13, new ControlSensor(ControlSensor::SENSOR_13, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_14, new ControlSensor(ControlSensor::SENSOR_14, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_15, new ControlSensor(ControlSensor::SENSOR_15, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_16, new ControlSensor(ControlSensor::SENSOR_16, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_17, new ControlSensor(ControlSensor::SENSOR_17, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_18, new ControlSensor(ControlSensor::SENSOR_18, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_19, new ControlSensor(ControlSensor::SENSOR_19, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_20, new ControlSensor(ControlSensor::SENSOR_20, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_21, new ControlSensor(ControlSensor::SENSOR_21, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_22, new ControlSensor(ControlSensor::SENSOR_22, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_23, new ControlSensor(ControlSensor::SENSOR_23, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_24, new ControlSensor(ControlSensor::SENSOR_24, ControlSensor::NEXT_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_25, new ControlSensor(ControlSensor::SENSOR_25, ControlSensor::LAST_ENTRY_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_26, new ControlSensor(ControlSensor::SENSOR_26, ControlSensor::LAST_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_27, new ControlSensor(ControlSensor::SENSOR_27, ControlSensor::NEXT_STOP_SENSOR));
+    sensors.insert(ControlSensor::SENSOR_28, new ControlSensor(ControlSensor::SENSOR_28, ControlSensor::NEXT_ENTRY_SENSOR));
 
     int sensorID = 0;
     for (ControlRail *rail : rails) {
@@ -227,4 +276,9 @@ void ControlProvider::prepareSensors()
         connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
         connect(sensors.value(sensorID++), SIGNAL(signalChanged(ControlSensor::SensorType)), rail, SLOT(sensorChanged(ControlSensor::SensorType)));
     }
+}
+
+void ControlProvider::windowClosed()
+{
+    delete viewModel;
 }

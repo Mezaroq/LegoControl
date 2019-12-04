@@ -12,6 +12,7 @@ class ControlDataProvider : public QObject
     Q_OBJECT
 public:
     ControlDataProvider(QObject *parent = nullptr);
+    ~ControlDataProvider();
     void setSerialPort(QSerialPort* serialPort);
     void readDataFromSerialDevice();
     void sendDataToSerialDevice(QByteArray dataToSerialDevice);
