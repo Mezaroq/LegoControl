@@ -8,6 +8,7 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
+#include <ViewModel/AlieViewModel.h>
 #include <ViewModel/ControlDataProvider.h>
 #include <QThread>
 #include <QMap>
@@ -55,12 +56,14 @@ public:
     void setStatusBar(QStatusBar *statusBar);
     void setMainWindow(QMainWindow mainWindow);
     void setCollectedData(QByteArray byteArray);
+    void setAlieAI(AlieViewModel* alieAI);
     void saveLastTrainPosition();
     void loadLastTrainPosition();
     void sendCollectedControlData();
 
 private:
     QString fileName = "lastTrainPosition.pos";
+    AlieViewModel *alieAI;
     bool aiIsEnabled = false;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLight*> lights;

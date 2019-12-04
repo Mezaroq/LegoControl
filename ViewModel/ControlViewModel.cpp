@@ -97,6 +97,11 @@ void ControlViewModel::setCollectedData(QByteArray byteArray)
     sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(24));
 }
 
+void ControlViewModel::setAlieAI(AlieViewModel *alieAI)
+{
+    this->alieAI = alieAI;
+}
+
 void ControlViewModel::loadLastTrainPosition()
 {
     if (QFileInfo::exists(fileName)) {
@@ -253,11 +258,13 @@ void ControlViewModel::runTriggered(bool state)
 void ControlViewModel::aiEnabled(bool state)
 {
     aiIsEnabled = state;
+    alieAI->setAiEnabled(state);
 }
 
 void ControlViewModel::settingsTriggered()
 {
-    loadLastTrainPosition();
+    alieAI->run();
+//    loadLastTrainPosition();
 }
 
 void ControlViewModel::stopAllChannels()
@@ -286,10 +293,7 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
 void ControlViewModel::dataFromSerialDeviceCollected(QByteArray readData)
 {
     setCollectedData(readData);
-//    if (aiIsEnabled)
-//        qDebug() << "aiControl()";
-//    else
-//        qDebug() << "manualControl()";
-//    statusBar->showMessage(readData.toHex('|'));
+    if (aiIsEnabled)
+        alieAI->run();
     sendCollectedControlData();
 }

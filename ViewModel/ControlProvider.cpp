@@ -60,6 +60,7 @@ void ControlProvider::setObjectsData()
     viewModel->setTrains(trains);
     viewModel->setStatusBar(statusBar);
     viewModel->setSensors(sensors);
+    viewModel->setAlieAI(alieAI);
     alieAI->setRails(rails);
     alieAI->setTrains(trains);
     alieAI->setSwitches(switches);
