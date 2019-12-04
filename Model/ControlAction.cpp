@@ -10,8 +10,8 @@ QString ControlAction::getActionName(ControlAction::ActionType actionType, int a
 {
     switch (actionType) {
     case ControlAction::ACTION_SWITCH:
-        return "Switch " + QString::number(actionID);
+        return "Switch " + QString::number(actionID+1);
     case ControlAction::ACTION_LIGHT:
-        return "Light " + QString::number(actionID);
+        return "Light " + QString::number(actionID+1);
     }
 }

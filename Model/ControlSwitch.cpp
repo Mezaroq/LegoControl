@@ -5,6 +5,7 @@ ControlSwitch::ControlSwitch(ControlSwitch::SwitchType switchType, ControlSwitch
     this->switchType = switchType;
     this->switchID = switchID;
     this->switchState = STATE_NORMAL;
+    this->switchToggle = TOGGLE_OFF;
     setPixmap(getResource());
 }
 
@@ -23,6 +24,11 @@ void ControlSwitch::toggle()
 void ControlSwitch::setToggle(ControlSwitch::SwitchState switchState)
 {
     actionToggle(switchState);
+}
+
+bool ControlSwitch::getSwitchToggle()
+{
+    return switchToggle;
 }
 
 ControlAction *ControlSwitch::getControlAction()
@@ -65,10 +71,12 @@ void ControlSwitch::actionToggle(bool state)
     case ControlSwitch::TYPE_LEFT:
         if (state) {
             switchState = STATE_LEFT;
+            switchToggle = TOGGLE_ON;
             setPixmap(getResource());
             controlAction->setIcon(getIcon());
         } else {
             switchState = STATE_NORMAL;
+            switchToggle = TOGGLE_OFF;
             setPixmap(getResource());
             controlAction->setIcon(getIcon());
         }
@@ -76,13 +84,16 @@ void ControlSwitch::actionToggle(bool state)
     case ControlSwitch::TYPE_RIGHT:
         if (state) {
             switchState = STATE_RIGHT;
+            switchToggle = TOGGLE_ON;
             setPixmap(getResource());
             controlAction->setIcon(getIcon());
         } else {
             switchState = STATE_NORMAL;
+            switchToggle = TOGGLE_OFF;
             setPixmap(getResource());
             controlAction->setIcon(getIcon());
         }
         break;
     }
+    emit objectChanged();
 }

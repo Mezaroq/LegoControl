@@ -45,6 +45,11 @@ void ControlLight::setToggle(ControlLight::LightState lightState)
     actionToggle(lightState);
 }
 
+bool ControlLight::getLightToggle()
+{
+    return lightState;
+}
+
 void ControlLight::toggle()
 {
     controlAction->toggle();
@@ -71,4 +76,5 @@ void ControlLight::actionToggle(bool state)
         setPixmap(getResource());
         controlAction->setIcon(getIcon());
     }
+    emit objectChanged();
 }

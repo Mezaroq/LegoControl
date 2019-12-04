@@ -28,13 +28,18 @@ public:
     QMap<int, ControlLabel*> getLabels();
     QPushButton* getButtonStopAll();
     QToolBar* getToolBar();
+    QStatusBar* getStatusBar();
     QAction* getActionRun();
     QAction* getActionEnableAI();
     QAction* getActionApplicationSettings();
+    QAction* getActionDebugPanel();
     ControlView* getControlView();
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
+
+signals:
+    void closeWindow();
 };
 #endif // MAINWINDOW_H
