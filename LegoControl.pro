@@ -27,7 +27,6 @@ SOURCES += \
     Model/ControlSwitch.cpp \
     Model/ControlTimetable.cpp \
     Model/ControlTrain.cpp \
-    View/ControlDebugPanel.cpp \
     View/ControlDebugger.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
@@ -50,7 +49,6 @@ HEADERS += \
     Model/ControlSwitch.h \
     Model/ControlTimetable.h \
     Model/ControlTrain.h \
-    View/ControlDebugPanel.h \
     View/ControlDebugger.h \
     View/ControlScene.h \
     View/ControlView.h \
@@ -62,7 +60,6 @@ HEADERS += \
 
 FORMS += \
     View/controldebugger.ui \
-    View/controldebugpanel.ui \
     View/mainwindow.ui
 
 # Default rules for deployment.
