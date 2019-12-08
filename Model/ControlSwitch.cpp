@@ -26,6 +26,16 @@ void ControlSwitch::setToggle(ControlSwitch::SwitchState switchState)
     actionToggle(switchState);
 }
 
+void ControlSwitch::setReservation(bool reservation)
+{
+    this->switchReservation = reservation;
+}
+
+bool ControlSwitch::isReserved()
+{
+    return switchReservation;
+}
+
 bool ControlSwitch::getSwitchToggle()
 {
     return switchToggle;

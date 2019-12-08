@@ -13,7 +13,7 @@ void ControlProvider::setObjects()
 {
     alieAI = new AlieViewModel();
     viewModel = new ControlViewModel(&mainWindow);
-    debugPanel = new ControlDebugPanel();
+    debugger = new ControlDebugger();
     view = mainWindow.getControlView();
     scene = new ControlScene();
     buttonStopAll = mainWindow.getButtonStopAll();
@@ -36,8 +36,7 @@ void ControlProvider::setConnections()
     connect(actionRun, SIGNAL(toggled(bool)), viewModel, SLOT(runTriggered(bool)));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
     connect(actionEpplicationSettings, SIGNAL(triggered()), viewModel, SLOT(settingsTriggered()));
-    connect(actionDebugPanel, SIGNAL(triggered()), debugPanel, SLOT(show()));
-
+    connect(actionDebugPanel, SIGNAL(triggered()), debugger, SLOT(show()));
 }
 
 void ControlProvider::setObjectsData()
@@ -64,9 +63,12 @@ void ControlProvider::setObjectsData()
     alieAI->setRails(rails);
     alieAI->setTrains(trains);
     alieAI->setSwitches(switches);
-    debugPanel->setSensors(sensors);
-    debugPanel->setRails(rails);
-    debugPanel->setTrains(trains);
+    debugger->setSensors(sensors);
+    debugger->setRails(rails);
+    debugger->setTrains(trains);
+    debugger->setSwitches(switches);
+    debugger->setTimetables(alieAI->getTimetables());
+    debugger->setDebuggerData();
     statusBar->showMessage("No Device");
 }
 
@@ -217,8 +219,10 @@ void ControlProvider::prepareRails()
     while (railList.hasNext()) {
         railList.next();
         connect(railList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
-        connect(railList.value(), SIGNAL(trainEnters(ControlTrain::TrainID)), alieAI, SLOT(trainEnters(ControlTrain::TrainID)));
-        connect(railList.value(), SIGNAL(trainLeaving(ControlTrain::TrainID)), alieAI, SLOT(trainLeaving(ControlTrain::TrainID)));
+        connect(railList.value(), SIGNAL(trainEnters(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(trainEnters(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(railList.value(), SIGNAL(trainEntered(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(trainEntered(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(railList.value(), SIGNAL(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(railList.value(), SIGNAL(trainLeft(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(trainLeft(ControlTrain::TrainID, ControlRail::RailID)));
         connect(railList.value(), SIGNAL(trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID)), alieAI, SLOT(stopSensorActivated(ControlTrain::TrainID, ControlRail::RailID)));
         scene->addItem(railList.value());
     }
@@ -235,6 +239,12 @@ void ControlProvider::prepareTrains()
     trains.insert(ControlTrain::TRAIN_6, new ControlTrain(ControlTrain::TRAIN_6, sliders.value(ControlSlider::SLIDER_CHANNEL_6)));
     trains.insert(ControlTrain::TRAIN_7, new ControlTrain(ControlTrain::TRAIN_7, sliders.value(ControlSlider::SLIDER_CHANNEL_7)));
     trains.insert(ControlTrain::TRAIN_8, new ControlTrain(ControlTrain::TRAIN_8, sliders.value(ControlSlider::SLIDER_CHANNEL_8)));
+
+    int priority = 0;
+    for (ControlTrain *train : trains) {
+        train->setTrainPriority(ControlTrain::TrainPriority(priority));
+        priority++;
+    }
 }
 
 void ControlProvider::prepareSensors()

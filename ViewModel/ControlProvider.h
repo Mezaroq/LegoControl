@@ -10,10 +10,10 @@
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
-#include <View/ControlDebugPanel.h>
 #include <View/MainWindow.h>
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
+#include <View/ControlDebugger.h>
 #include <ViewModel/ControlViewModel.h>
 #include <ViewModel/AlieViewModel.h>
 #include <QAction>
@@ -41,7 +41,7 @@ public:
 private:
     AlieViewModel *alieAI;
     ControlViewModel *viewModel;
-    ControlDebugPanel *debugPanel;
+    ControlDebugger *debugger;
     MainWindow mainWindow;
     ControlView *view;
     ControlScene *scene;

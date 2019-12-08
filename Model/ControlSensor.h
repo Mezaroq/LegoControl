@@ -47,6 +47,7 @@ public:
     explicit ControlSensor(SensorID sensorID, SensorType sensorType, QObject *parent = nullptr);
     SensorType getSensorType();
     void setState(bool newState);
+    void debugSignal();
 
 private:
     SensorID sensorID;
@@ -56,8 +57,6 @@ private:
 signals:
     void signalChanged(ControlSensor::SensorType sensorType);
 
-public slots:
-    void debugSignalTrue();
 };
 
 #endif // CONTROLSENSOR_H

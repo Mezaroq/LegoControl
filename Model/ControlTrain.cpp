@@ -17,6 +17,18 @@ void ControlTrain::setTrainPriority(ControlTrain::TrainPriority trainPriority)
     this->trainPriority = trainPriority;
 }
 
+void ControlTrain::setWaiting(int mscs)
+{
+    QTimer::singleShot(mscs, this, SLOT(waitingEnded()));
+    trainIsWaiting = true;
+    setTrainSpeed(SPEED_BREAKE);
+}
+
+bool ControlTrain::isWaiting()
+{
+    return trainIsWaiting;
+}
+
 ControlTrain::TrainID ControlTrain::getTrainID()
 {
     return trainID;
@@ -27,9 +39,19 @@ int ControlTrain::getTrainSpeed()
     return trainSlider->getControlValue();
 }
 
-ControlTrain::TrainDirection ControlTrain::getTrainDirection()
+ControlTrain::TrainPriority ControlTrain::getTrainPriority()
+{
+    return trainPriority;
+}
+
+ControlTrain::TrainDirection ControlTrain::getTrainDirectionMultiplier()
 {
     if (getTrainSpeed() >= 0)
         return DIRECTION_FORWARD;
     return DIRECTION_REVERSE;
+}
+
+void ControlTrain::waitingEnded()
+{
+    trainIsWaiting = false;
 }

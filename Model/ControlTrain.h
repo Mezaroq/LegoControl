@@ -2,6 +2,7 @@
 #define CONTROLTRAIN_H
 
 #include <QObject>
+#include <QTimer>
 #include <Model/ControlSlider.h>
 
 class ControlTrain : public QObject
@@ -56,19 +57,23 @@ public:
     explicit ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
     void setTrainPriority(TrainPriority trainPriority);
+    void setWaiting(int mscs);
+    bool isWaiting();
     TrainID getTrainID();
     int getTrainSpeed();
-    TrainDirection getTrainDirection();
+    TrainPriority getTrainPriority();
+    TrainDirection getTrainDirectionMultiplier();
 
 private:
     TrainID trainID;
-    TrainPriority trainPriority;
-    TrainDirection trainDirection;
+    TrainPriority trainPriority = PRIORITY_1;
+    bool trainIsWaiting = false;
     ControlSlider* trainSlider = nullptr;
 
 signals:
 
 public slots:
+    void waitingEnded();
 };
 
 #endif // CONTROLTRAIN_H

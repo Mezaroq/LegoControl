@@ -25,8 +25,10 @@ SOURCES += \
     Model/ControlSensor.cpp \
     Model/ControlSlider.cpp \
     Model/ControlSwitch.cpp \
+    Model/ControlTimetable.cpp \
     Model/ControlTrain.cpp \
     View/ControlDebugPanel.cpp \
+    View/ControlDebugger.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
@@ -46,8 +48,10 @@ HEADERS += \
     Model/ControlSensor.h \
     Model/ControlSlider.h \
     Model/ControlSwitch.h \
+    Model/ControlTimetable.h \
     Model/ControlTrain.h \
     View/ControlDebugPanel.h \
+    View/ControlDebugger.h \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \
@@ -57,6 +61,7 @@ HEADERS += \
     ViewModel/ControlViewModel.h
 
 FORMS += \
+    View/controldebugger.ui \
     View/controldebugpanel.ui \
     View/mainwindow.ui
 
