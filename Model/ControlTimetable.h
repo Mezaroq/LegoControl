@@ -20,6 +20,7 @@ public:
     static ControlRail::RailID generateDestinationPoint(ControlTrain::TrainID trainID, int currentRailID);
     void increaseLoop();
     void setCurrentRailID(ControlRail::RailID currentRailID);
+    void setDirection(ControlTrain::TrainDirection direction);
     bool isEndLoop();
     qint64 getConnectionID();
     ControlTrain::TrainID getTrainID();

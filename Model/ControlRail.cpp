@@ -43,6 +43,11 @@ void ControlRail::setReservation(bool reservation)
     this->railReservation = reservation;
 }
 
+void ControlRail::setTrainFrom(ControlRail::TrainFrom trainFrom)
+{
+    this->trainFrom = trainFrom;
+}
+
 bool ControlRail::isReserved()
 {
     return railReservation;

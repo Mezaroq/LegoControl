@@ -97,9 +97,9 @@ void ControlViewModel::setCollectedData(QByteArray byteArray)
     sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(24));
 }
 
-void ControlViewModel::setAlieAI(AlieViewModel *alieAI)
+void ControlViewModel::setAI(ControlAiViewModel *ai)
 {
-    this->alieAI = alieAI;
+    this->ai = ai;
 }
 
 void ControlViewModel::loadLastTrainPosition()
@@ -258,12 +258,12 @@ void ControlViewModel::runTriggered(bool state)
 void ControlViewModel::aiEnabled(bool state)
 {
     aiIsEnabled = state;
-    alieAI->setAiEnabled(state);
+    ai->setAiEnabled(state);
 }
 
 void ControlViewModel::settingsTriggered()
 {
-    alieAI->run();
+    ai->run();
 //    loadLastTrainPosition();
 }
 
@@ -294,6 +294,6 @@ void ControlViewModel::dataFromSerialDeviceCollected(QByteArray readData)
 {
     setCollectedData(readData);
     if (aiIsEnabled)
-        alieAI->run();
+        ai->run();
     sendCollectedControlData();
 }

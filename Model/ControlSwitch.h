@@ -38,7 +38,7 @@ public:
     ControlSwitch(SwitchType switchType, SwitchID switchID);
     void setControlAction(ControlAction* controlAction);
     void toggle();
-    void setToggle(SwitchState switchState);
+    void setToggle(bool switchState);
     void setReservation(bool reservation);
     bool isReserved();
     bool getSwitchToggle();

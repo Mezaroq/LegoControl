@@ -25,13 +25,14 @@ SOURCES += \
     Model/ControlSensor.cpp \
     Model/ControlSlider.cpp \
     Model/ControlSwitch.cpp \
+    Model/ControlSwitchMap.cpp \
     Model/ControlTimetable.cpp \
     Model/ControlTrain.cpp \
     View/ControlDebugger.cpp \
     View/ControlScene.cpp \
     View/ControlView.cpp \
     View/MainWindow.cpp \
-    ViewModel/AlieViewModel.cpp \
+    ViewModel/ControlAiViewModel.cpp \
     ViewModel/ControlDataProvider.cpp \
     ViewModel/ControlProvider.cpp \
     ViewModel/ControlViewModel.cpp \
@@ -47,13 +48,14 @@ HEADERS += \
     Model/ControlSensor.h \
     Model/ControlSlider.h \
     Model/ControlSwitch.h \
+    Model/ControlSwitchMap.h \
     Model/ControlTimetable.h \
     Model/ControlTrain.h \
     View/ControlDebugger.h \
     View/ControlScene.h \
     View/ControlView.h \
     View/MainWindow.h \
-    ViewModel/AlieViewModel.h \
+    ViewModel/ControlAiViewModel.h \
     ViewModel/ControlDataProvider.h \
     ViewModel/ControlProvider.h \
     ViewModel/ControlViewModel.h

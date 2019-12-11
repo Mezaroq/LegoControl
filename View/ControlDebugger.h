@@ -7,6 +7,7 @@
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlTimetable.h>
+#include <ViewModel/ControlAiViewModel.h>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QMap>
@@ -55,8 +56,8 @@ public:
     };
 
     explicit ControlDebugger(QWidget *parent = nullptr);
-    void setMenu();
     ~ControlDebugger();
+    void setMenu();
     void update();
     void setDebuggerData();
     void setSensors(QMap<int, ControlSensor*> sensors);
@@ -64,6 +65,7 @@ public:
     void setTrains(QMap<int, ControlTrain*> trains);
     void setSwitches(QMap<int, ControlSwitch*> switches);
     void setTimetables(QMap<ControlTrain::TrainID, ControlTimetable *> *timetables);
+    void setAI(ControlAiViewModel *ai);
     QString getTrainPriority(ControlTrain *train);
     QString getTrainIDfromRail(ControlTrain *train);
     QString getTrainFrom(ControlRail::TrainFrom trainFrom);
@@ -75,6 +77,7 @@ public:
 
 private:
     bool debuggerIsRunning = false;
+    bool aiModuleIsEnabled = false;
     QTimer* debuggerTimer;
     QThread *timerThread;
     Ui::ControlDebugger *ui;
@@ -87,15 +90,19 @@ private:
     QTableWidget *railTable;
     QTableWidget *timetableTable;
     QTableWidget *switchTable;
+    ControlAiViewModel *ai;
 
 public slots:
     void sensorClicked(int row, int column);
+    void switchClicked(int row, int column);
+    void timetableClicked(int row, int column);
 
 private slots:
     void debuggerLoop();
     void on_debuggerButton_clicked();
     void on_insertButton_clicked();
     void on_removeButton_clicked();
+    void on_pushButton_toggled(bool checked);
 };
 
 #endif // CONTROLDEBUGGER_H

@@ -1,43 +1,42 @@
-#ifndef ALIEVIEWMODEL_H
-#define ALIEVIEWMODEL_H
+#ifndef AIVIEWMODEL_H
+#define AIVIEWMODEL_H
 
 #include <QObject>
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTimetable.h>
+#include <Model/ControlSwitchMap.h>
 #include <QMap>
 #include <QList>
 
-class AlieViewModel : public QObject
+class ControlAiViewModel : public QObject
 {
     Q_OBJECT
 public:
-    explicit AlieViewModel(QObject *parent = nullptr);
+    explicit ControlAiViewModel(QObject *parent = nullptr);
     void run();
-    void createSwitchMap();
-    QList<ControlSwitch *> getSwitchMap(ControlRail::RailID from, ControlRail::RailID to);
     void setAiEnabled(bool state);
     void setSwitches(QMap<int, ControlSwitch*> switches);
     void setRails(QMap<int, ControlRail*> rails);
     void setTrains(QMap<int, ControlTrain*> trains);
+    void setSwitchMap(ControlSwitchMap *switchMap);
     void generateTimetables();
     void manageMovingTrains();
     void manageStopTrains();
     void setSwitches(ControlRail *from, ControlRail *to);
     void setTrainWay(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
     bool prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop);
-    bool checkIfExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority);
-    bool checkIfRailsAreFree(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
-    bool checkIfSwitchesAreFree(ControlRail *from, ControlRail *to);
+    bool checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority);
+    bool checkIfRailsAreNotReseved(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
     QMap<ControlTrain::TrainID, ControlTimetable*> *getTimetables();
 
 private:
     int debugStep = 1;
     const int WAITING_TIME = 10000;
     const int SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_4;
-    bool alieIsEnabled = false;
-    ControlTimetable *currentTrainTimetable;
+    bool aiIsEnabled = false;
+    ControlSwitchMap *switchMap;
     ControlTimetable *timetable;
     QMap<ControlTrain::TrainID, ControlTimetable*> timetables;
     QMap<int, ControlSwitch*> switches;
@@ -45,7 +44,6 @@ private:
     QMap<int, ControlTrain*> trains;
     QMap<ControlTrain*, ControlTrain::TrainSpeed> movingTrains;
     QMap<ControlTrain::TrainPriority, ControlTrain::TrainID> stopTrains;
-    QMap<QPair<int, int>, QList<ControlSwitch*>> switchMap;
 
 signals:
 
@@ -58,4 +56,4 @@ public slots:
 
 };
 
-#endif // ALIEVIEWMODEL_H
+#endif // AIVIEWMODEL_H

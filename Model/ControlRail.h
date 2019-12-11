@@ -39,6 +39,7 @@ public:
     void setLastLight(ControlLight *controlLight);
     void setNextLight(ControlLight *controlLight);
     void setReservation(bool reservation);
+    void setTrainFrom(TrainFrom trainFrom);
     ControlTrain* getTrain(bool remove = false);
     QList<ControlRail*> getLastRails();
     QList<ControlRail*> getNextRails();

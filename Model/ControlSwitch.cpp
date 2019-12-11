@@ -21,9 +21,9 @@ void ControlSwitch::toggle()
     controlAction->toggle();
 }
 
-void ControlSwitch::setToggle(ControlSwitch::SwitchState switchState)
+void ControlSwitch::setToggle(bool switchState)
 {
-    actionToggle(switchState);
+    controlAction->setChecked(switchState);
 }
 
 void ControlSwitch::setReservation(bool reservation)

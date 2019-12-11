@@ -20,6 +20,8 @@ ControlDebugger::ControlDebugger(QWidget *parent) :
     debuggerTimer->moveToThread(timerThread);
 
     connect(railTable, SIGNAL(cellClicked(int, int)), this, SLOT(sensorClicked(int, int)));
+    connect(switchTable, SIGNAL(cellClicked(int, int)), this, SLOT(switchClicked(int, int)));
+    connect(timetableTable, SIGNAL(cellClicked(int, int)), this, SLOT(timetableClicked(int, int)));
     connect(debuggerTimer, SIGNAL(timeout()), this, SLOT(debuggerLoop()));
     connect(timerThread, SIGNAL(started()), debuggerTimer, SLOT(start()));
     setMenu();
@@ -42,6 +44,64 @@ ControlDebugger::~ControlDebugger()
 }
 
 void ControlDebugger::update()
+{
+    int row = 0;
+    for (ControlTrain *train : trains) {
+        trainTable->item(row, TRAIN_ID)->setText( getTrainID(train->getTrainID()) );
+        trainTable->item(row, TRAIN_PRIORITY)->setText( getTrainPriority(train) );
+        trainTable->item(row, TRAIN_WAITING)->setText( train->isWaiting() ? QString("TRUE") : QString("FALSE") );
+        trainTable->item(row, TRAIN_SPEED)->setText( QString::number(train->getTrainSpeed()) );
+        row++;
+    }
+
+    row = 0;
+    int sensorID = 1;
+    for (ControlRail *rail : rails) {
+        railTable->item(row, RAIL_ID)->setText( getRailID(rail->getRailID()) );
+        railTable->item(row, RAIL_COUNTER)->setText( QString::number(rail->getEntryCounter()) );
+        railTable->item(row, RAIL_RESERVATION)->setText( rail->isReserved() ? QString("TRUE") : QString("FALSE") );
+        railTable->item(row, RAIL_TRAIN_ID)->setText( getTrainIDfromRail(rail->getTrain()) );
+        railTable->item(row, RAIL_TRAIN_FROM)->setText( getTrainFrom(rail->getTrainFrom()) );
+        if ( (row != 3) && (row != 6) && (row != 9)) {
+            railTable->item(row, RAIL_SENSOR_ENTRY_LAST)->setText( getSensorID(ControlSensor::SensorID(sensorID++)) );
+            railTable->item(row, RAIL_SENSOR_STOP_LAST)->setText( getSensorID(ControlSensor::SensorID(sensorID++)) );
+            railTable->item(row, RAIL_SENSOR_ENTRY_NEXT)->setText( getSensorID(ControlSensor::SensorID(sensorID++)) );
+            railTable->item(row, RAIL_SENSOR_STOP_NEXT)->setText( getSensorID(ControlSensor::SensorID(sensorID++)) );
+        }
+        row++;
+    }
+
+    row = 0;
+    for (ControlSwitch *cswitch : switches) {
+        switchTable->item(row, SWITCH_ID)->setText( getSwitchID(cswitch->getSwitchID()) );
+        switchTable->item(row, SWITCH_TOGGLE)->setText( cswitch->getSwitchToggle() ? "TOGGLED" : "NORMAL" );
+        switchTable->item(row, SWITCH_RESERVATION)->setText( cswitch->isReserved() ? "TRUE" : "FALSE" );
+        row++;
+    }
+
+    row = 0;
+    for (ControlTimetable *timetable : *timetables) {
+        timetableTable->item(row, TIMETABLE_ID)->setText( QString::number(timetable->getConnectionID()) );
+        timetableTable->item(row, TIMETABLE_TRAIN_ID)->setText( getTrainID(timetable->getTrainID()) );
+        timetableTable->item(row, TIMETABLE_CURRENT_RAIL_ID)->setText( getRailID(timetable->getCurrentRailID()) );
+        timetableTable->item(row, TIMETABLE_DESTINATION_RAIL_ID)->setText( getRailID(timetable->getDestinationRailID()) );
+        timetableTable->item(row, TIMETABLE_TRAIN_DIRECTION)->setText( timetable->getDirection() == 1 ? "FORWARD" : "REVERSE" );
+        timetableTable->item(row, TIMETABLE_CURRENT_LOOP)->setText( getTimetableLoop(ControlTimetable::Loop(timetable->getCurrentLoop())) );
+        timetableTable->item(row, TIMETABLE_MAX_LOOP)->setText( getTimetableLoop(timetable->getLoop()) );
+
+        for (ControlRail *rail : rails) {
+            if (rail->getTrain()) {
+                if (rail->getTrain()->getTrainID() == timetable->getTrainID()) {
+                    timetable->setCurrentRailID(rail->getRailID());
+                    break;
+                }
+            }
+        }
+        row++;
+    }
+}
+
+void ControlDebugger::setDebuggerData()
 {
     int row = 0;
     for (ControlTrain *train : trains) {
@@ -98,32 +158,15 @@ void ControlDebugger::update()
         row++;
     }
 
-    row = 0;
-
-    for (ControlTimetable *timetable : *timetables) {
-        timetableTable->setItem(row, TIMETABLE_ID, new QTableWidgetItem( QString::number(timetable->getConnectionID()) ));
-        timetableTable->setItem(row, TIMETABLE_TRAIN_ID, new QTableWidgetItem( getTrainID(timetable->getTrainID()) ));
-        timetableTable->setItem(row, TIMETABLE_CURRENT_RAIL_ID, new QTableWidgetItem( getRailID(timetable->getCurrentRailID()) ));
-        timetableTable->setItem(row, TIMETABLE_DESTINATION_RAIL_ID, new QTableWidgetItem( getRailID(timetable->getDestinationRailID()) ));
-        timetableTable->setItem(row, TIMETABLE_TRAIN_DIRECTION, new QTableWidgetItem( timetable->getDirection() == 1 ? "FORWARD" : "REVERSE" ));
-        timetableTable->setItem(row, TIMETABLE_CURRENT_LOOP, new QTableWidgetItem( getTimetableLoop(ControlTimetable::Loop(timetable->getCurrentLoop())) ));
-        timetableTable->setItem(row, TIMETABLE_MAX_LOOP, new QTableWidgetItem( getTimetableLoop(timetable->getLoop()) ));
-
-        for (ControlRail *rail : rails) {
-            if (rail->getTrain()) {
-                if (rail->getTrain()->getTrainID() == timetable->getTrainID()) {
-                    timetable->setCurrentRailID(rail->getRailID());
-                    break;
-                }
-            }
-        }
-        row++;
+    for (int row = 0; row < 3; row++) {
+        timetableTable->setItem(row, TIMETABLE_ID, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_TRAIN_ID, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_CURRENT_RAIL_ID, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_DESTINATION_RAIL_ID, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_TRAIN_DIRECTION, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_CURRENT_LOOP, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_MAX_LOOP, new QTableWidgetItem());
     }
-}
-
-void ControlDebugger::setDebuggerData()
-{
-    update();
 }
 
 void ControlDebugger::setSensors(QMap<int, ControlSensor *> sensors)
@@ -151,6 +194,11 @@ void ControlDebugger::setTimetables(QMap<ControlTrain::TrainID, ControlTimetable
     this->timetables = timetables;
 }
 
+void ControlDebugger::setAI(ControlAiViewModel *ai)
+{
+    this->ai = ai;
+}
+
 QString ControlDebugger::getTrainPriority(ControlTrain *train)
 {
     return QString("PRIORITY_") + QString::number(train->getTrainPriority()+1);
@@ -160,7 +208,7 @@ QString ControlDebugger::getTrainIDfromRail(ControlTrain *train)
 {
     if (train)
         return getTrainID(train->getTrainID());
-    return "UNDEFINED";
+    return "";
 }
 
 QString ControlDebugger::getTrainFrom(ControlRail::TrainFrom trainFrom)
@@ -171,7 +219,7 @@ QString ControlDebugger::getTrainFrom(ControlRail::TrainFrom trainFrom)
     case ControlRail::FROM_NEXT:
         return "FROM_NEXT";
     case ControlRail::UNDEFINED:
-        return "UNDEFINED";
+        return "";
     }
 }
 
@@ -202,16 +250,44 @@ QString ControlDebugger::getSwitchID(ControlSwitch::SwitchID id)
 
 void ControlDebugger::sensorClicked(int row, int column)
 {
-    QTableWidgetItem *item = railTable->item(row, column);
-    if (item) {
-        if (item->text().contains("S_")) {
-            sensors.value(item->text().remove(0, 2).toInt() - 1)->debugSignal();
+    if (column == 2) {
+        ControlRail *rail = rails.value(row);
+        rail->setReservation(!rail->isReserved());
+    } else {
+        QTableWidgetItem *item = railTable->item(row, column);
+        if (item) {
+            if (item->text().contains("S_")) {
+                sensors.value(item->text().remove(0, 2).toInt() - 1)->debugSignal();
+            }
+        }
+    }
+}
+
+void ControlDebugger::switchClicked(int row, int column)
+{
+    if (column == 2) {
+        ControlSwitch *cswitch = switches.value(row);
+        cswitch->setReservation(!cswitch->isReserved());
+    }
+}
+
+void ControlDebugger::timetableClicked(int row, int column)
+{
+    if (column == 4) {
+        ControlTimetable *timetable = timetables->value(ControlTrain::TrainID(row));
+        if (timetable) {
+            if (timetable->getDirection() == ControlTrain::DIRECTION_FORWARD)
+                timetable->setDirection(ControlTrain::DIRECTION_REVERSE);
+            else
+                timetable->setDirection(ControlTrain::DIRECTION_FORWARD);
         }
     }
 }
 
 void ControlDebugger::debuggerLoop()
 {
+    if (aiModuleIsEnabled)
+        ai->run();
     update();
 }
 
@@ -231,9 +307,21 @@ void ControlDebugger::on_debuggerButton_clicked()
 void ControlDebugger::on_insertButton_clicked()
 {
     rails.value(ui->railComboBox->currentIndex())->setTrain(trains.value(ui->trainComboBox->currentIndex()));
+    rails.value(ui->railComboBox->currentIndex())->setReservation(true);
 }
 
 void ControlDebugger::on_removeButton_clicked()
 {
     rails.value(ui->railComboBox->currentIndex())->getTrain(true);
+    rails.value(ui->railComboBox->currentIndex())->setReservation(false);
+    rails.value(ui->railComboBox->currentIndex())->setTrainFrom(ControlRail::UNDEFINED);
+}
+
+void ControlDebugger::on_pushButton_toggled(bool checked)
+{
+    if (checked)
+        ui->pushButton->setText("Disable ai module");
+    else
+        ui->pushButton->setText("Enable ai module");
+    aiModuleIsEnabled = checked;
 }
