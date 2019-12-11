@@ -20,7 +20,6 @@ void ControlProvider::setObjects()
     buttonStopAll = mainWindow.getButtonStopAll();
     actionRun = mainWindow.getActionRun();
     actionEnableAI = mainWindow.getActionEnableAI();
-    actionEpplicationSettings = mainWindow.getActionApplicationSettings();
     actionDebugPanel = mainWindow.getActionDebugPanel();
     toolBar = mainWindow.getToolBar();
     statusBar = mainWindow.getStatusBar();
@@ -34,9 +33,8 @@ void ControlProvider::setConnections()
     connect(&mainWindow, SIGNAL(closeWindow()), this, SLOT(windowClosed()));
     connect(buttonStopAll, SIGNAL(clicked()), viewModel, SLOT(stopAllChannels()));
     connect(scene, SIGNAL(controlObjectClicked(ControlObject::ObjectType, int)), viewModel, SLOT(controlObjectClicked(ControlObject::ObjectType, int)));
-    connect(actionRun, SIGNAL(toggled(bool)), viewModel, SLOT(runTriggered(bool)));
+    connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
-    connect(actionEpplicationSettings, SIGNAL(triggered()), viewModel, SLOT(settingsTriggered()));
     connect(actionDebugPanel, SIGNAL(triggered()), debugger, SLOT(show()));
 }
 
@@ -63,10 +61,12 @@ void ControlProvider::setObjectsData()
     viewModel->setStatusBar(statusBar);
     viewModel->setSensors(sensors);
     viewModel->setAI(ai);
+    viewModel->setSerialPortInformation();
     ai->setRails(rails);
     ai->setTrains(trains);
     ai->setSwitches(switches);
     ai->setSwitchMap(switchMap);
+    ai->setLights(lights);
     debugger->setSensors(sensors);
     debugger->setRails(rails);
     debugger->setTrains(trains);
@@ -74,7 +74,6 @@ void ControlProvider::setObjectsData()
     debugger->setTimetables(ai->getTimetables());
     debugger->setDebuggerData();
     debugger->setAI(ai);
-    statusBar->showMessage("No Device");
 }
 
 void ControlProvider::prepareButtons()
@@ -245,10 +244,10 @@ void ControlProvider::prepareTrains()
     trains.insert(ControlTrain::TRAIN_7, new ControlTrain(ControlTrain::TRAIN_7, sliders.value(ControlSlider::SLIDER_CHANNEL_7)));
     trains.insert(ControlTrain::TRAIN_8, new ControlTrain(ControlTrain::TRAIN_8, sliders.value(ControlSlider::SLIDER_CHANNEL_8)));
 
-    int priority = 0;
+    int priority = 7;
     for (ControlTrain *train : trains) {
         train->setTrainPriority(ControlTrain::TrainPriority(priority));
-        priority++;
+        priority--;
     }
 }
 

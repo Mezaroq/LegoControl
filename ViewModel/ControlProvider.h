@@ -51,7 +51,6 @@ private:
     QPushButton *buttonStopAll;
     QAction *actionRun;
     QAction *actionEnableAI;
-    QAction *actionEpplicationSettings;
     QAction *actionDebugPanel;
     ControlSwitchMap *switchMap;
     QMap<int, ControlButton*> buttons;

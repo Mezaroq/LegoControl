@@ -79,11 +79,6 @@ QAction *MainWindow::getActionEnableAI()
     return ui->actionEnable_AI;
 }
 
-QAction *MainWindow::getActionApplicationSettings()
-{
-    return ui->actionApplication_settings;
-}
-
 QAction *MainWindow::getActionDebugPanel()
 {
     return ui->actionDebug_Panel;

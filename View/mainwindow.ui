@@ -2037,14 +2037,10 @@ color: rgb(255, 255, 255);</string>
    <addaction name="actionRun"/>
    <addaction name="separator"/>
    <addaction name="actionEnable_AI"/>
-   <addaction name="actionApplication_settings"/>
    <addaction name="actionDebug_Panel"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionRun">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="checked">
     <bool>false</bool>
    </property>
@@ -2072,18 +2068,6 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="toolTip">
     <string>Enable AI</string>
-   </property>
-  </action>
-  <action name="actionApplication_settings">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/control/resources/icons/icon_bar_application_settings.svg</normaloff>:/control/resources/icons/icon_bar_application_settings.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Application settings</string>
-   </property>
-   <property name="toolTip">
-    <string>Application settings</string>
    </property>
   </action>
   <action name="actionDebug_Panel">

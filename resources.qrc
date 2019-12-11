@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/control">
-        <file>resources/icons/icon_bar_application_settings.svg</file>
         <file>resources/icons/icon_bar_enable_ai.svg</file>
         <file>resources/icons/icon_bar_light_green.svg</file>
         <file>resources/icons/icon_bar_light_red.svg</file>

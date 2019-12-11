@@ -88,6 +88,8 @@ void ControlDebugger::update()
         timetableTable->item(row, TIMETABLE_TRAIN_DIRECTION)->setText( timetable->getDirection() == 1 ? "FORWARD" : "REVERSE" );
         timetableTable->item(row, TIMETABLE_CURRENT_LOOP)->setText( getTimetableLoop(ControlTimetable::Loop(timetable->getCurrentLoop())) );
         timetableTable->item(row, TIMETABLE_MAX_LOOP)->setText( getTimetableLoop(timetable->getLoop()) );
+        timetableTable->item(row, TIMETABLE_LOOP_COUNTER)->setText( QString::number(timetable->getLoopCounter()) );
+        timetableTable->item(row, TIMETABLE_IGNORE_FLAG)->setText( timetable->isIgnoreTrain() ? QString("TRUE") : QString("FALSE") );
 
         for (ControlRail *rail : rails) {
             if (rail->getTrain()) {
@@ -166,6 +168,8 @@ void ControlDebugger::setDebuggerData()
         timetableTable->setItem(row, TIMETABLE_TRAIN_DIRECTION, new QTableWidgetItem());
         timetableTable->setItem(row, TIMETABLE_CURRENT_LOOP, new QTableWidgetItem());
         timetableTable->setItem(row, TIMETABLE_MAX_LOOP, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_LOOP_COUNTER, new QTableWidgetItem());
+        timetableTable->setItem(row, TIMETABLE_IGNORE_FLAG, new QTableWidgetItem());
     }
 }
 

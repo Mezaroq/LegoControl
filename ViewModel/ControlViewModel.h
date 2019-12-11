@@ -60,6 +60,7 @@ public:
     void saveLastTrainPosition();
     void loadLastTrainPosition();
     void sendCollectedControlData();
+    void setSerialPortInformation();
 
 private:
     QString fileName = "lastTrainPosition.pos";
@@ -82,9 +83,8 @@ signals:
     void controlDataCollected(QByteArray controlData);
 
 public slots:
-    void runTriggered(bool state);
+    void runTriggered();
     void aiEnabled(bool state);
-    void settingsTriggered();
     void stopAllChannels();
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
     void dataFromSerialDeviceCollected(QByteArray readData);

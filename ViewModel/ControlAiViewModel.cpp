@@ -22,6 +22,21 @@ void ControlAiViewModel::setAiEnabled(bool state)
     } else {
         timetables.clear();
         stopTrains.clear();
+        for (ControlTrain *train : trains) {
+            train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
+        }
+        for (ControlLight *light : lights) {
+            light->setToggle(ControlLight::STATE_RED);
+        }
+        for (ControlSwitch *cswitch : switches) {
+            cswitch->setReservation(false);
+            cswitch->setToggle(false);
+        }
+        for (ControlRail *rail : rails) {
+            if (rail->getTrain())
+                continue;
+            rail->setReservation(false);
+        }
     }
 
     this->aiIsEnabled = state;
@@ -40,6 +55,11 @@ void ControlAiViewModel::setRails(QMap<int, ControlRail *> rails)
 void ControlAiViewModel::setTrains(QMap<int, ControlTrain *> trains)
 {
     this->trains = trains;
+}
+
+void ControlAiViewModel::setLights(QMap<int, ControlLight *> lights)
+{
+    this->lights = lights;
 }
 
 void ControlAiViewModel::setSwitchMap(ControlSwitchMap *switchMap)
@@ -78,22 +98,21 @@ void ControlAiViewModel::manageMovingTrains()
 void ControlAiViewModel::manageStopTrains()
 {
     for (auto trainID : stopTrains) {
+        qDebug() << "Stop train ID:" << trainID;
         if (trains.value(trainID)->isWaiting())
             continue;
 
         timetable = timetables.value(trainID);
-        if (timetable->getCurrentRailID() == timetable->getDestinationRailID()) {
-            if (timetable->isEndLoop()) {
+        if (timetable->isEndLoop()) {
+            if (timetable->getCurrentRailID() == timetable->getDestinationRailID()) {
                 trains.value(trainID)->setWaiting(WAITING_TIME);
                 timetable = ControlTimetable::generateTimetable(trainID, timetable->getCurrentRailID());
                 timetables.insert(trainID, timetable);
                 continue;
-            } else {
-                timetable->increaseLoop();
             }
         }
 
-        if (prepareTrainWay(trains.value(trainID), rails.value(timetable->getCurrentRailID()), rails.value(timetable->getDestinationRailID()), timetable->getDirection(), timetable->isEndLoop())) {
+        if (prepareTrainWay(trains.value(trainID), rails.value(timetable->getCurrentRailID()), rails.value(timetable->getDestinationRailID()), timetable->getDirection(), timetable->isEndLoop(), timetable->isIgnoreTrain())) {
             trains.value(trainID)->setTrainSpeed(ControlTrain::TrainSpeed(SPEED * timetable->getDirection()));
             stopTrains.remove(trains.value(trainID)->getTrainPriority());
         } else {
@@ -102,18 +121,13 @@ void ControlAiViewModel::manageStopTrains()
     }
 }
 
-void ControlAiViewModel::setSwitches(ControlRail *from, ControlRail *to)
-{
-
-}
-
-bool ControlAiViewModel::prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop)
+bool ControlAiViewModel::prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop, bool ignoreFlag)
 {
 //    qDebug() << "Switches are free:" << switchMap->checkSwitchesAreNotReserved(from->getRailID(), to->getRailID(), direction);
 //    qDebug() << "Rails are free" << checkIfRailsAreNotReseved(direction, from, to, isEndLoop);
-//    qDebug() << "Not Exist Train with higher priority:" << checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority());
+//    qDebug() << "Not Exist Train with higher priority:" << checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority(), ignoreFlag);
 
-    if (checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority())) {
+    if (checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority(), ignoreFlag)) {
         if (checkIfRailsAreNotReseved(direction, from, to, isEndLoop)) {
             if (switchMap->checkSwitchesAreNotReserved(from->getRailID(), to->getRailID(), direction)) {
                 setTrainWay(direction, from, to, isEndLoop);
@@ -178,8 +192,13 @@ void ControlAiViewModel::setTrainWay(ControlTrain::TrainDirection direction, Con
     }
 }
 
-bool ControlAiViewModel::checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority)
+bool ControlAiViewModel::checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority, bool ignoreFlag)
 {
+    if (ignoreFlag) {
+        timetables.value(from->getTrain()->getTrainID())->setIgnoreTrain(false);
+        return true;
+    }
+
     switch (direction) {
     case ControlTrain::DIRECTION_FORWARD:
         for (ControlRail *rail : from->getNextRails().first()->getNextRails()) {
@@ -229,9 +248,13 @@ bool ControlAiViewModel::checkIfRailsAreNotReseved(ControlTrain::TrainDirection 
         for (ControlRail *rail : from->getNextRails().first()->getNextRails()) {
             if (isEndLoop) {
                 if (rail->getRailID() == to->getRailID()) {
-                    if (rail->isReserved())
+                    if (rail->isReserved()) {
+                        if (to->getTrain()) {
+                            if (timetables.value(to->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_REVERSE)
+                                timetables.value(to->getTrain()->getTrainID())->setIgnoreTrain(true);
+                        }
                         return false;
-                    else
+                    } else
                         return true;
                 } else if (!rail->isReserved()) {
                     endLoopFreeRail = true;
@@ -250,9 +273,13 @@ bool ControlAiViewModel::checkIfRailsAreNotReseved(ControlTrain::TrainDirection 
         for (ControlRail *rail : from->getLastRails().first()->getLastRails()) {
             if (isEndLoop) {
                 if (rail->getRailID() == to->getRailID()) {
-                    if (rail->isReserved())
+                    if (rail->isReserved()) {
+                        if (to->getTrain()) {
+                            if (timetables.value(to->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_FORWARD)
+                                timetables.value(to->getTrain()->getTrainID())->setIgnoreTrain(true);
+                        }
                         return false;
-                    else
+                    } else
                         return true;
                 } else if (!rail->isReserved()) {
                     endLoopFreeRail = true;
@@ -340,6 +367,7 @@ void ControlAiViewModel::stopSensorActivated(ControlTrain::TrainID trainID, Cont
     if (aiIsEnabled) {
         timetable = timetables.value(trainID);
         timetable->setCurrentRailID(railID);
+        timetable->increaseLoopCounter();
         stopTrains.insert(trains.value(trainID)->getTrainPriority(), trainID);
     }
 }

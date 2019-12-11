@@ -5,6 +5,7 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSwitch.h>
+#include <Model/ControlLight.h>
 #include <Model/ControlTimetable.h>
 #include <Model/ControlSwitchMap.h>
 #include <QMap>
@@ -20,19 +21,18 @@ public:
     void setSwitches(QMap<int, ControlSwitch*> switches);
     void setRails(QMap<int, ControlRail*> rails);
     void setTrains(QMap<int, ControlTrain*> trains);
+    void setLights(QMap<int, ControlLight*> lights);
     void setSwitchMap(ControlSwitchMap *switchMap);
     void generateTimetables();
     void manageMovingTrains();
     void manageStopTrains();
-    void setSwitches(ControlRail *from, ControlRail *to);
     void setTrainWay(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
-    bool prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop);
-    bool checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority);
+    bool prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop, bool ignoreFlag);
+    bool checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority, bool ignoreFlag);
     bool checkIfRailsAreNotReseved(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
     QMap<ControlTrain::TrainID, ControlTimetable*> *getTimetables();
 
 private:
-    int debugStep = 1;
     const int WAITING_TIME = 10000;
     const int SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_4;
     bool aiIsEnabled = false;
@@ -42,6 +42,7 @@ private:
     QMap<int, ControlSwitch*> switches;
     QMap<int, ControlRail*> rails;
     QMap<int, ControlTrain*> trains;
+    QMap<int, ControlLight*> lights;
     QMap<ControlTrain*, ControlTrain::TrainSpeed> movingTrains;
     QMap<ControlTrain::TrainPriority, ControlTrain::TrainID> stopTrains;
 

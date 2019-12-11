@@ -52,7 +52,9 @@ public:
         TIMETABLE_DESTINATION_RAIL_ID,
         TIMETABLE_TRAIN_DIRECTION,
         TIMETABLE_CURRENT_LOOP,
-        TIMETABLE_MAX_LOOP
+        TIMETABLE_MAX_LOOP,
+        TIMETABLE_LOOP_COUNTER,
+        TIMETABLE_IGNORE_FLAG
     };
 
     explicit ControlDebugger(QWidget *parent = nullptr);

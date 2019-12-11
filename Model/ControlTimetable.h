@@ -21,6 +21,9 @@ public:
     void increaseLoop();
     void setCurrentRailID(ControlRail::RailID currentRailID);
     void setDirection(ControlTrain::TrainDirection direction);
+    void increaseLoopCounter();
+    void setIgnoreTrain(bool state);
+    bool isIgnoreTrain();
     bool isEndLoop();
     qint64 getConnectionID();
     ControlTrain::TrainID getTrainID();
@@ -29,16 +32,19 @@ public:
     Loop getLoop();
     int getCurrentLoop();
     ControlTrain::TrainDirection getDirection();
+    int getLoopCounter();
 
 private:
+    const int MAX_LOOP_COUNTER = 3;
+    bool ignoreTrainWithHigherPriority = false;
+    int loopCounter = 0;
     int currentLoop = 1;
     qint64 connectionID;
     ControlTrain::TrainID trainID;
     ControlRail::RailID currentRailID;
     ControlRail::RailID destinationRailID;
-    Loop loop;
     ControlTrain::TrainDirection direction;
-
+    Loop loop;
 };
 
 #endif // CONTROLTIMETABLE_H

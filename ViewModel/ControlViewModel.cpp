@@ -203,6 +203,17 @@ void ControlViewModel::sendCollectedControlData()
     emit controlDataCollected(controlData);
 }
 
+void ControlViewModel::setSerialPortInformation()
+{
+    for (QSerialPortInfo port : QSerialPortInfo::availablePorts()) {
+        if (port.serialNumber() == "NXP-77") {
+            statusBar->showMessage(tr("Device: %1 (disconnected)").arg(port.serialNumber()));
+            return;
+        }
+    }
+    statusBar->showMessage(tr("No Device"));
+}
+
 void ControlViewModel::saveLastTrainPosition()
 {
     QFile file(fileName);
@@ -219,52 +230,41 @@ void ControlViewModel::saveLastTrainPosition()
     }
 }
 
-void ControlViewModel::runTriggered(bool state)
+void ControlViewModel::runTriggered()
 {
-    if (state) {
-        if (!serialPort) {
-            QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-            for (QSerialPortInfo port : ports) {
-                if (port.serialNumber() == "NXP-77") {
-                    serialPort = new QSerialPort(port);
-                    if (serialPort->open(QIODevice::ReadWrite)) {
-                        serialPort->setBaudRate(serialPort->Baud115200, serialPort->AllDirections);
-                        serialPort->clear();
-                        statusBar->showMessage(tr("Device: %1").arg(port.serialNumber()));
-
-                        loadLastTrainPosition();
-                        dataProvider->setSerialPort(serialPort);
-                        sendCollectedControlData();
-                    } else {
-                        statusBar->showMessage(tr("Can't open %1, error code %2") .arg(serialPort->portName()).arg(serialPort->error()));
-                    }
-                    return;
-                }
-            }
-            statusBar->showMessage("No Device");
-            serialPort = nullptr;
-        }
-    } else {
-        if (serialPort) {
+    if (serialPort) {
+        if (serialPort->isOpen()) {
             serialPort->close();
-            statusBar->showMessage(tr("Device disconnected"));
+            statusBar->showMessage(tr("Device: %1 (disconnected)").arg(serialPort->portName()));
             delete serialPort;
             serialPort = nullptr;
         }
-    }
+    } else {
+        QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+        for (QSerialPortInfo port : ports) {
+            if (port.serialNumber() == "NXP-77") {
+                serialPort = new QSerialPort(port);
+                if (serialPort->open(QIODevice::ReadWrite)) {
+                    serialPort->setBaudRate(serialPort->Baud115200, serialPort->AllDirections);
+                    serialPort->clear();
+                    statusBar->showMessage(tr("Device: %1 (connected)").arg(port.serialNumber()));
 
+                    loadLastTrainPosition();
+                    dataProvider->setSerialPort(serialPort);
+                    sendCollectedControlData();
+                } else {
+                    statusBar->showMessage(tr("Can't open %1, error code %2") .arg(serialPort->portName()).arg(serialPort->error()));
+                }
+                return;
+            }
+        }
+    }
 }
 
 void ControlViewModel::aiEnabled(bool state)
 {
     aiIsEnabled = state;
     ai->setAiEnabled(state);
-}
-
-void ControlViewModel::settingsTriggered()
-{
-    ai->run();
-//    loadLastTrainPosition();
 }
 
 void ControlViewModel::stopAllChannels()

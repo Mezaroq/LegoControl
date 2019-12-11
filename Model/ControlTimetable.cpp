@@ -20,8 +20,13 @@ ControlTimetable *ControlTimetable::generateTimetable(ControlTrain::TrainID trai
 {
     int loops = (qrand() % LOOP_5) + 1;
     ControlRail::RailID railID = generateDestinationPoint(trainID, currentRailID);
+    ControlTrain::TrainDirection trainDirection;
     ControlTrain::TrainDirection directions[2] = {ControlTrain::DIRECTION_FORWARD, ControlTrain::DIRECTION_REVERSE};
-    ControlTrain::TrainDirection trainDirection = directions[qrand() % 2];
+    if (trainID == ControlTrain::TRAIN_3) {
+        trainDirection = ControlTrain::DIRECTION_FORWARD;
+    } else {
+        trainDirection = directions[qrand() % 2];
+    }
 
     ControlTimetable *timetable = new ControlTimetable(trainID, railID, Loop(loops), trainDirection);
     return timetable;
@@ -73,6 +78,27 @@ void ControlTimetable::setDirection(ControlTrain::TrainDirection direction)
     this->direction = direction;
 }
 
+void ControlTimetable::increaseLoopCounter()
+{
+    if (currentLoop != loop) {
+        loopCounter++;
+        if (loopCounter == MAX_LOOP_COUNTER) {
+            loopCounter = 0;
+            increaseLoop();
+        }
+    }
+}
+
+void ControlTimetable::setIgnoreTrain(bool state)
+{
+    this->ignoreTrainWithHigherPriority = state;
+}
+
+bool ControlTimetable::isIgnoreTrain()
+{
+    return ignoreTrainWithHigherPriority;
+}
+
 bool ControlTimetable::isEndLoop()
 {
     return (currentLoop == loop);
@@ -111,4 +137,9 @@ int ControlTimetable::getCurrentLoop()
 ControlTrain::TrainDirection ControlTimetable::getDirection()
 {
     return direction;
+}
+
+int ControlTimetable::getLoopCounter()
+{
+    return loopCounter;
 }

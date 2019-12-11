@@ -31,7 +31,6 @@ public:
     QStatusBar* getStatusBar();
     QAction* getActionRun();
     QAction* getActionEnableAI();
-    QAction* getActionApplicationSettings();
     QAction* getActionDebugPanel();
     ControlView* getControlView();
     ~MainWindow();
