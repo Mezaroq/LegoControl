@@ -39,14 +39,14 @@ public:
     };
 
     enum TrainPriority{
-        PRIORITY_1,
-        PRIORITY_2,
-        PRIORITY_3,
-        PRIORITY_4,
-        PRIORITY_5,
-        PRIORITY_6,
+        PRIORITY_8,
         PRIORITY_7,
-        PRIORITY_8
+        PRIORITY_6,
+        PRIORITY_5,
+        PRIORITY_4,
+        PRIORITY_3,
+        PRIORITY_2,
+        PRIORITY_1
     };
 
     enum TrainDirection{
@@ -62,7 +62,7 @@ public:
     TrainID getTrainID();
     int getTrainSpeed();
     TrainPriority getTrainPriority();
-    TrainDirection getTrainDirectionMultiplier();
+    TrainDirection getTrainDirectionFromSpeed();
 
 private:
     TrainID trainID;

@@ -15,6 +15,10 @@ class ControlAiViewModel : public QObject
 {
     Q_OBJECT
 public:
+    enum SpeedType{
+        ENTERS,
+        LEAVING
+    };
     explicit ControlAiViewModel(QObject *parent = nullptr);
     void run();
     void setAiEnabled(bool state);
@@ -26,6 +30,9 @@ public:
     void generateTimetables();
     void manageMovingTrains();
     void manageStopTrains();
+    void antiBlocker();
+    void manageTrainSpeed(ControlTrain::TrainID trainID, SpeedType speedType);
+    void supportManualDriving(ControlTrain::TrainID trainID, ControlRail::RailID railID);
     void setTrainWay(ControlTrain::TrainDirection direction, ControlRail *from, ControlRail *to, bool isEndLoop);
     bool prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop, bool ignoreFlag);
     bool checkIfNotExistTrainWithHigherPriority(ControlTrain::TrainDirection direction, ControlRail *from, ControlTrain::TrainPriority priority, bool ignoreFlag);
@@ -34,7 +41,9 @@ public:
 
 private:
     const int WAITING_TIME = 10000;
-    const int SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_4;
+    const int STARTING_SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_4;
+    const int NORMAL_SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_5;
+    const int SLOWDOWN_SPEED = ControlTrain::TrainSpeed::SPEED_FORWARD_3;
     bool aiIsEnabled = false;
     ControlSwitchMap *switchMap;
     ControlTimetable *timetable;

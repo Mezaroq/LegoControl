@@ -205,7 +205,7 @@ void ControlDebugger::setAI(ControlAiViewModel *ai)
 
 QString ControlDebugger::getTrainPriority(ControlTrain *train)
 {
-    return QString("PRIORITY_") + QString::number(train->getTrainPriority()+1);
+    return QString("PRIORITY_") + QString::number(8-(train->getTrainPriority()));
 }
 
 QString ControlDebugger::getTrainIDfromRail(ControlTrain *train)

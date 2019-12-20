@@ -59,11 +59,13 @@ public:
     void setAI(ControlAiViewModel* ai);
     void saveLastTrainPosition();
     void loadLastTrainPosition();
-    void sendCollectedControlData();
+    void collectControlData();
     void setSerialPortInformation();
 
 private:
-    QString fileName = "lastTrainPosition.pos";
+    const int senderID = 8136;
+    const int receiverID = 8137;
+    const QString fileName = "lastTrainPosition.pos";
     ControlAiViewModel *ai;
     bool aiIsEnabled = false;
     QMap<int, ControlSlider*> sliders;
@@ -74,7 +76,8 @@ private:
     QMap<int, ControlSensor*> sensors;
     QStatusBar *statusBar;
     QByteArray controlData;
-    QSerialPort *serialPort = nullptr;
+    QSerialPort *sender;
+    QSerialPort *receiver;
     ControlDataProvider *dataProvider = nullptr;
     QMessageBox* lastTrainPosition;
     QMainWindow* mainWindow;
@@ -87,7 +90,8 @@ public slots:
     void aiEnabled(bool state);
     void stopAllChannels();
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
-    void dataFromSerialDeviceCollected(QByteArray readData);
+    void dataFromSenderReady(QByteArray readData);
+    void collectDataToReceiver();
 };
 
 #endif // CONTROLVIEWMODEL_H

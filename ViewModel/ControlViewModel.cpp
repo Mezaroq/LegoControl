@@ -5,8 +5,8 @@
 ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
     dataProvider = new ControlDataProvider();
-    connect(dataProvider, SIGNAL(dataFromSerialDeviceReady(QByteArray)), this, SLOT(dataFromSerialDeviceCollected(QByteArray)));
-    connect(this, SIGNAL(controlDataCollected(QByteArray)), dataProvider, SLOT(dataToSerialDeviceReady(QByteArray)));
+    connect(dataProvider, SIGNAL(dataFromSenderReady(QByteArray)), this, SLOT(dataFromSenderReady(QByteArray)));
+    connect(dataProvider, SIGNAL(receiverReady()), this, SLOT(collectDataToReceiver()));
 
     lastTrainPosition = new QMessageBox(mainWindow);
     lastTrainPosition->setText("Load last train position?");
@@ -17,15 +17,17 @@ ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : Q
 
 ControlViewModel::~ControlViewModel()
 {
-    if (serialPort)
-        serialPort->disconnect(dataProvider, SIGNAL(readyRead()));
+    if (receiver)
+        receiver->disconnect(dataProvider, SIGNAL(readyRead()));
+    if (sender)
+        receiver->disconnect(dataProvider, SIGNAL(readyRead()));
     QMapIterator<int, ControlTrain*> trainList(trains);
     while (trainList.hasNext()) {
         trainList.next();
         trainList.value()->setTrainSpeed(ControlTrain::SPEED_BREAKE);
     }
-    sendCollectedControlData();
-//    saveLastTrainPosition();
+    collectDataToReceiver();
+    saveLastTrainPosition();
 }
 
 void ControlViewModel::setSliders(QMap<int, ControlSlider *> sliders)
@@ -117,6 +119,7 @@ void ControlViewModel::loadLastTrainPosition()
                 in >> trainID;
 
                 rails.value(railID)->setTrain(trains.value(trainID));
+                rails.value(railID)->setReservation(true);
             }
             file.close();
             return;
@@ -124,7 +127,7 @@ void ControlViewModel::loadLastTrainPosition()
     }
 }
 
-void ControlViewModel::sendCollectedControlData()
+void ControlViewModel::collectControlData()
 {
     controlData.clear();
     controlData[MAIN_CONTROL] = static_cast<char>(128);
@@ -199,19 +202,25 @@ void ControlViewModel::sendCollectedControlData()
                                                  64 * lights.value( ControlLight::LIGHT_7)->getLightToggle() +
                                                 128 * !lights.value( ControlLight::LIGHT_7)->getLightToggle() );
     controlData[LIGHT_CONTROL_7] = 0;
-
-    emit controlDataCollected(controlData);
 }
 
 void ControlViewModel::setSerialPortInformation()
 {
+    bool senderStatus = false;
+    bool receiverStatus = false;
+
+    QList<QString> deviceList;
     for (QSerialPortInfo port : QSerialPortInfo::availablePorts()) {
         if (port.serialNumber() == "NXP-77") {
-            statusBar->showMessage(tr("Device: %1 (disconnected)").arg(port.serialNumber()));
-            return;
+            if (port.vendorIdentifier() == senderID) {
+                senderStatus = true;
+            } else if (port.vendorIdentifier() == receiverID) {
+                receiverStatus = true;
+            }
         }
     }
-    statusBar->showMessage(tr("No Device"));
+
+    statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
 }
 
 void ControlViewModel::saveLastTrainPosition()
@@ -232,32 +241,57 @@ void ControlViewModel::saveLastTrainPosition()
 
 void ControlViewModel::runTriggered()
 {
-    if (serialPort) {
-        if (serialPort->isOpen()) {
-            serialPort->close();
-            statusBar->showMessage(tr("Device: %1 (disconnected)").arg(serialPort->portName()));
-            delete serialPort;
-            serialPort = nullptr;
-        }
-    } else {
-        QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-        for (QSerialPortInfo port : ports) {
-            if (port.serialNumber() == "NXP-77") {
-                serialPort = new QSerialPort(port);
-                if (serialPort->open(QIODevice::ReadWrite)) {
-                    serialPort->setBaudRate(serialPort->Baud115200, serialPort->AllDirections);
-                    serialPort->clear();
-                    statusBar->showMessage(tr("Device: %1 (connected)").arg(port.serialNumber()));
+    bool senderStatus = false;
+    bool receiverStatus = false;
+    loadLastTrainPosition(); /// TEST
 
-                    loadLastTrainPosition();
-                    dataProvider->setSerialPort(serialPort);
-                    sendCollectedControlData();
-                } else {
-                    statusBar->showMessage(tr("Can't open %1, error code %2") .arg(serialPort->portName()).arg(serialPort->error()));
+    if (sender) {
+        if (sender->isOpen()) {
+            if (receiver) {
+                if (receiver->isOpen()) {
+                    return;
                 }
-                return;
             }
         }
+        delete sender;
+        sender = nullptr;
+        if (receiver) {
+            delete receiver;
+            receiver = nullptr;
+        }
+    }
+
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    for (QSerialPortInfo port : ports) {
+        if (port.serialNumber() == "NXP-77") {
+            if (port.vendorIdentifier() == senderID) {
+                if (sender != nullptr) {
+                    sender = new QSerialPort(port);
+                    if (sender->open(QIODevice::ReadWrite)) {
+                        sender->setBaudRate(sender->Baud115200, sender->AllDirections);
+                        sender->clear();
+                        dataProvider->setSender(sender);
+                        senderStatus = true;
+                    }
+                }
+            } else if (port.vendorIdentifier() == receiverID) {
+                if (receiver != nullptr) {
+                    receiver = new QSerialPort(port);
+                    if (receiver->open(QIODevice::ReadWrite)) {
+                        receiver->setBaudRate(receiver->Baud115200, receiver->AllDirections);
+                        receiver->clear();
+                        dataProvider->setReceiver(receiver);
+                        receiverStatus = true;
+                        collectDataToReceiver();
+                    }
+                }
+            }
+        }
+
+        if (sender && receiver)
+            statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(connected)" : "(disconnected)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(connected)" : "(disconnected)"));
+        else
+            statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
     }
 }
 
@@ -290,10 +324,15 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
     }
 }
 
-void ControlViewModel::dataFromSerialDeviceCollected(QByteArray readData)
+void ControlViewModel::dataFromSenderReady(QByteArray readData)
 {
     setCollectedData(readData);
     if (aiIsEnabled)
         ai->run();
-    sendCollectedControlData();
+}
+
+void ControlViewModel::collectDataToReceiver()
+{
+    collectControlData();
+    dataProvider->sendDataToReceiver(controlData);
 }

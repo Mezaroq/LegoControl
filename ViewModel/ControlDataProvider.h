@@ -13,23 +13,29 @@ class ControlDataProvider : public QObject
 public:
     ControlDataProvider(QObject *parent = nullptr);
     ~ControlDataProvider();
-    void setSerialPort(QSerialPort* serialPort);
-    void readDataFromSerialDevice();
-    void sendDataToSerialDevice(QByteArray dataToSerialDevice);
+    void setSender(QSerialPort* sender);
+    void setReceiver(QSerialPort *receiver);
+    void sendDataToReceiver(QByteArray data);
 
 private:
-    static const int DATA_SIZE = 4;
+    static const int SENDER_DATA_SIZE = 4;
     static const int SENSORS = 32;
-    QSerialPort *serialPort = nullptr;
     QByteArray dataFromSerialDeviceBuffer;
     QByteArray dataFromSerialDevice;
 
+    /// NEW
+    QByteArray dataFromSender;
+    QByteArray dataFromSenderBuffer;
+    QSerialPort *sender = nullptr;
+    QSerialPort *receiver = nullptr;
+
 signals:
-    void dataFromSerialDeviceReady(QByteArray dataFromSerialDevice);
+    void dataFromSenderReady(QByteArray dataFromSerialDevice);
+    void receiverReady();
 
 public slots:
-    void dataToSerialDeviceReady(QByteArray dataToSerialDevice);
-    void dataFromDeviceReadyRead();
+    void dataFromSenderReady();
+    void dataFromReceiverReady();
 };
 
 #endif // CONTROLDATAPROVIDER_H

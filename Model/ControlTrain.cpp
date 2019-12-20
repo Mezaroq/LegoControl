@@ -44,7 +44,7 @@ ControlTrain::TrainPriority ControlTrain::getTrainPriority()
     return trainPriority;
 }
 
-ControlTrain::TrainDirection ControlTrain::getTrainDirectionMultiplier()
+ControlTrain::TrainDirection ControlTrain::getTrainDirectionFromSpeed()
 {
     if (getTrainSpeed() >= 0)
         return DIRECTION_FORWARD;

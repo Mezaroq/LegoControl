@@ -48,6 +48,17 @@ void ControlRail::setTrainFrom(ControlRail::TrainFrom trainFrom)
     this->trainFrom = trainFrom;
 }
 
+void ControlRail::clearEntryCounter()
+{
+    this->entryCounter = 0;
+}
+
+void ControlRail::clearStopSensorStatus()
+{
+    trainFrom = UNDEFINED;
+    entryCounter = 0;
+}
+
 bool ControlRail::isReserved()
 {
     return railReservation;
@@ -124,12 +135,12 @@ void ControlRail::sensorChanged(ControlSensor::SensorType sensorType)
             } else {
                 entryCounter = 0;
             }
-        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) {
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) { // DO USUNIECIA
             entryCounter--;
             if (train) {
                 emit trainLeaving(train->getTrainID(), railID);
             }
-        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) {
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) { // DO USUNIECIA
             entryCounter--;
             if (train) {
                 emit trainLeft(train->getTrainID(), railID);
@@ -161,11 +172,11 @@ void ControlRail::sensorChanged(ControlSensor::SensorType sensorType)
             } else {
                 entryCounter = 0;
             }
-        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) {
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 2) { // DO USUNIECIA
             entryCounter--;
             if (train)
                 emit trainLeaving(train->getTrainID(), railID);
-        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) {
+        } else if (train != nullptr && (trainFrom == FROM_LAST || trainFrom == FROM_NEXT) && entryCounter == 1) { // DO USUNIECIA
             entryCounter--;
             if (train) {
                 emit trainLeft(train->getTrainID(), railID);

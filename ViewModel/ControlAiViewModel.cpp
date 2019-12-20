@@ -10,12 +10,16 @@ void ControlAiViewModel::run()
 {
     manageMovingTrains();
     manageStopTrains();
+    antiBlocker();
 }
 
 void ControlAiViewModel::setAiEnabled(bool state)
 {
     if (state && timetables.isEmpty()) {
         generateTimetables();
+        for (ControlRail* rail : rails) {
+            rail->clearStopSensorStatus();
+        }
         for (ControlTimetable *timetable : timetables) {
             stopTrains.insert(trains.value(timetable->getTrainID())->getTrainPriority(), timetable->getTrainID());
         }
@@ -33,6 +37,8 @@ void ControlAiViewModel::setAiEnabled(bool state)
             cswitch->setToggle(false);
         }
         for (ControlRail *rail : rails) {
+            rail->setTrainFrom(ControlRail::UNDEFINED);
+            rail->clearEntryCounter();
             if (rail->getTrain())
                 continue;
             rail->setReservation(false);
@@ -67,6 +73,47 @@ void ControlAiViewModel::setSwitchMap(ControlSwitchMap *switchMap)
     this->switchMap = switchMap;
 }
 
+void ControlAiViewModel::supportManualDriving(ControlTrain::TrainID trainID, ControlRail::RailID railID)
+{
+    ControlRail *rail = rails.value(railID);
+    ControlTrain *train = trains.value(trainID);
+
+    switch (train->getTrainDirectionFromSpeed()) {
+    case ControlTrain::DIRECTION_FORWARD:
+        if (rail->getNextRails().first()->getTrain() || !rail->getNextLight()->getLightToggle()) {
+            train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
+            rail->getNextLight()->setToggle(ControlLight::STATE_RED);
+        } else {
+            for (ControlRail *nextRail : rail->getNextRails().first()->getNextRails()) {
+                if (nextRail->getTrain()) {
+                    if (nextRail->getTrain()->getTrainDirectionFromSpeed() == ControlTrain::DIRECTION_REVERSE) {
+                        train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
+                        rail->getNextLight()->setToggle(ControlLight::STATE_RED);
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    case ControlTrain::DIRECTION_REVERSE:
+        if (rail->getLastRails().first()->getTrain() || !rail->getLastLight()->getLightToggle()) {
+            train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
+            rail->getLastLight()->setToggle(ControlLight::STATE_RED);
+        } else {
+            for (ControlRail *nextRail : rail->getLastRails().first()->getLastRails()) {
+                if (nextRail->getTrain()) {
+                    if (nextRail->getTrain()->getTrainDirectionFromSpeed() == ControlTrain::DIRECTION_FORWARD) {
+                        train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
+                        rail->getLastLight()->setToggle(ControlLight::STATE_RED);
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    }
+}
+
 void ControlAiViewModel::generateTimetables()
 {
     timetables.insert(ControlTrain::TRAIN_1, ControlTimetable::generateTimetable(ControlTrain::TRAIN_1, -1));
@@ -98,7 +145,7 @@ void ControlAiViewModel::manageMovingTrains()
 void ControlAiViewModel::manageStopTrains()
 {
     for (auto trainID : stopTrains) {
-        qDebug() << "Stop train ID:" << trainID;
+        qDebug() << "Stop train ID:" << trainID+1;
         if (trains.value(trainID)->isWaiting())
             continue;
 
@@ -113,11 +160,106 @@ void ControlAiViewModel::manageStopTrains()
         }
 
         if (prepareTrainWay(trains.value(trainID), rails.value(timetable->getCurrentRailID()), rails.value(timetable->getDestinationRailID()), timetable->getDirection(), timetable->isEndLoop(), timetable->isIgnoreTrain())) {
-            trains.value(trainID)->setTrainSpeed(ControlTrain::TrainSpeed(SPEED * timetable->getDirection()));
+            trains.value(trainID)->setTrainSpeed(ControlTrain::TrainSpeed(STARTING_SPEED * timetable->getDirection()));
             stopTrains.remove(trains.value(trainID)->getTrainPriority());
         } else {
             trains.value(trainID)->setTrainSpeed(ControlTrain::SPEED_BREAKE);
         }
+    }
+}
+
+void ControlAiViewModel::antiBlocker()
+{
+    if (!aiIsEnabled)
+        return;
+
+    int counter = 0;
+    ControlTrain *train = nullptr;
+    ControlRail *from = nullptr;
+
+    for (auto trainID : stopTrains) {
+        if (!trains.value(trainID)->isWaiting()) {
+            timetable = timetables.value(trainID);
+            switch (timetable->getDirection()) {
+            case ControlTrain::DIRECTION_FORWARD:
+            {
+                from = rails.value(timetable->getCurrentRailID());
+                for (ControlRail *rail : from->getNextRails().first()->getNextRails()) {
+                    if (rail->getTrain()) {
+                        if (timetables.value(rail->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_REVERSE) {
+                            counter++;
+                        }
+                    }
+                }
+                if (counter == from->getNextRails().first()->getNextRails().size()) {
+                    for (ControlRail *rail : from->getNextRails().first()->getNextRails()) {
+                        if (rail->getTrain() && train == nullptr) {
+                            train = rail->getTrain();
+                        } else if (rail->getTrain()) {
+                            if (rail->getTrain()->getTrainPriority() < train->getTrainPriority())
+                                train = rail->getTrain();
+                        }
+                    }
+                    timetables.value(train->getTrainID())->setIgnoreTrain(true);
+                }
+                break;
+            }
+            case ControlTrain::DIRECTION_REVERSE:
+            {
+                from = rails.value(timetable->getCurrentRailID());
+                for (ControlRail *rail : from->getLastRails().first()->getLastRails()) {
+                    if (rail->getTrain()) {
+                        if (timetables.value(rail->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_FORWARD) {
+                            counter++;
+                        }
+                    }
+                }
+                if (counter == from->getLastRails().first()->getLastRails().size()) {
+                    for (ControlRail *rail : from->getLastRails().first()->getLastRails()) {
+                        if (rail->getTrain()) {
+                            if (train != nullptr) {
+                                if (rail->getTrain()->getTrainPriority() > train->getTrainPriority()) {
+                                    train = rail->getTrain();
+                                    //                                    continue;
+                                }
+                            }
+                            train = rail->getTrain();
+                        }
+                    }
+                    timetables.value(train->getTrainID())->setIgnoreTrain(true);
+                }
+                break;
+            }
+            }
+        }
+        counter = 0;
+        train = nullptr;
+        from = nullptr;
+    }
+}
+
+void ControlAiViewModel::manageTrainSpeed(ControlTrain::TrainID trainID, SpeedType speedType)
+{
+    ControlTrain *train = trains.value(trainID);
+
+    switch (trainID) {
+    case ControlTrain::TRAIN_1:
+    case ControlTrain::TRAIN_2:
+        if (speedType == ENTERS) {
+            movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_3 * train->getTrainDirectionFromSpeed()));
+        } else {
+            movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_5 * train->getTrainDirectionFromSpeed()));
+        }
+        break;
+    case ControlTrain::TRAIN_3:
+        if (speedType == ENTERS) {
+            movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_3 * train->getTrainDirectionFromSpeed()));
+        } else {
+            movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_5 * train->getTrainDirectionFromSpeed()));
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -204,7 +346,7 @@ bool ControlAiViewModel::checkIfNotExistTrainWithHigherPriority(ControlTrain::Tr
         for (ControlRail *rail : from->getNextRails().first()->getNextRails()) {
             ControlTrain *train = rail->getTrain();
             if (train) {
-                if (train->getTrainPriority() > priority) {
+                if (train->getTrainPriority() < priority) {
                     timetable = timetables.value(train->getTrainID());
                     if (timetable->getDirection() == ControlTrain::DIRECTION_REVERSE) {
                         if (timetable->getDestinationRailID() != rail->getRailID() || (timetable->getDestinationRailID() == rail->getRailID() && !timetable->isEndLoop()) ) {
@@ -219,7 +361,7 @@ bool ControlAiViewModel::checkIfNotExistTrainWithHigherPriority(ControlTrain::Tr
         for (ControlRail *rail : from->getLastRails().first()->getLastRails()) {
             ControlTrain *train = rail->getTrain();
             if (train) {
-                if (train->getTrainPriority() > priority) {
+                if (train->getTrainPriority() < priority) {
                     timetable = timetables.value(train->getTrainID());
                     if (timetable->getDirection() == ControlTrain::DIRECTION_FORWARD) {
                         if (timetable->getDestinationRailID() != rail->getRailID() || (timetable->getDestinationRailID() == rail->getRailID() && !timetable->isEndLoop()) ) {
@@ -250,8 +392,8 @@ bool ControlAiViewModel::checkIfRailsAreNotReseved(ControlTrain::TrainDirection 
                 if (rail->getRailID() == to->getRailID()) {
                     if (rail->isReserved()) {
                         if (to->getTrain()) {
-                            if (timetables.value(to->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_REVERSE)
-                                timetables.value(to->getTrain()->getTrainID())->setIgnoreTrain(true);
+                            if (timetables.value(to->getTrain()->getTrainID())->getDirection() == ControlTrain::DIRECTION_REVERSE)  //  REMOVE
+                                timetables.value(to->getTrain()->getTrainID())->setIgnoreTrain(true);                               //  REMOVE, ponizej tez
                         }
                         return false;
                     } else
@@ -305,8 +447,7 @@ QMap<ControlTrain::TrainID, ControlTimetable *> *ControlAiViewModel::getTimetabl
 void ControlAiViewModel::trainEnters(ControlTrain::TrainID trainID, ControlRail::RailID railID)
 {
     if (aiIsEnabled) {
-        ControlTrain *train = trains.value(trainID);
-        movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_3 * train->getTrainDirectionMultiplier()));
+        manageTrainSpeed(trainID, ENTERS);
     }
 }
 
@@ -334,8 +475,7 @@ void ControlAiViewModel::trainEntered(ControlTrain::TrainID trainID, ControlRail
 void ControlAiViewModel::trainLeaving(ControlTrain::TrainID trainID, ControlRail::RailID railID)
 {
     if (aiIsEnabled) {
-        ControlTrain *train = trains.value(trainID);
-        movingTrains.insert(train, ControlTrain::TrainSpeed(ControlTrain::SPEED_FORWARD_5 * train->getTrainDirectionMultiplier()));
+        manageTrainSpeed(trainID, LEAVING);
     }
 }
 
@@ -365,9 +505,13 @@ void ControlAiViewModel::trainLeft(ControlTrain::TrainID trainID, ControlRail::R
 void ControlAiViewModel::stopSensorActivated(ControlTrain::TrainID trainID, ControlRail::RailID railID)
 {
     if (aiIsEnabled) {
+        qDebug() << "click";
+        rails.value(railID)->clearStopSensorStatus();
         timetable = timetables.value(trainID);
         timetable->setCurrentRailID(railID);
         timetable->increaseLoopCounter();
         stopTrains.insert(trains.value(trainID)->getTrainPriority(), trainID);
+    } else {
+        supportManualDriving(trainID, railID);
     }
 }
