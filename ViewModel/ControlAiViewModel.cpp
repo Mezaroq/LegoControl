@@ -216,14 +216,11 @@ void ControlAiViewModel::antiBlocker()
                 }
                 if (counter == from->getLastRails().first()->getLastRails().size()) {
                     for (ControlRail *rail : from->getLastRails().first()->getLastRails()) {
-                        if (rail->getTrain()) {
-                            if (train != nullptr) {
-                                if (rail->getTrain()->getTrainPriority() > train->getTrainPriority()) {
-                                    train = rail->getTrain();
-                                    //                                    continue;
-                                }
-                            }
+                        if (rail->getTrain() && train == nullptr) {
                             train = rail->getTrain();
+                        } else if (rail->getTrain()) {
+                            if (rail->getTrain()->getTrainPriority() < train->getTrainPriority())
+                                train = rail->getTrain();
                         }
                     }
                     timetables.value(train->getTrainID())->setIgnoreTrain(true);

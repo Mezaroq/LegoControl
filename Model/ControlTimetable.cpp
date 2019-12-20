@@ -37,8 +37,8 @@ ControlRail::RailID ControlTimetable::generateDestinationPoint(ControlTrain::Tra
     QList<ControlRail::RailID> passengerStations;
     QList<ControlRail::RailID> freightStations;
 
-    passengerStations << ControlRail::RAIL_SECTION_2 << ControlRail::RAIL_SECTION_3 << ControlRail::RAIL_SECTION_5 << ControlRail::RAIL_SECTION_8;
-    freightStations << ControlRail::RAIL_SECTION_5 << ControlRail::RAIL_SECTION_9;
+    passengerStations << ControlRail::RAIL_SECTION_2 << ControlRail::RAIL_SECTION_3 << ControlRail::RAIL_SECTION_6 << ControlRail::RAIL_SECTION_8;
+    freightStations << ControlRail::RAIL_SECTION_1 << ControlRail::RAIL_SECTION_5 << ControlRail::RAIL_SECTION_9;
 
     switch (trainID) {
     case ControlTrain::TRAIN_1:
