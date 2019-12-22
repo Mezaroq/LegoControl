@@ -8,42 +8,53 @@ ControlDataProvider::ControlDataProvider(QObject *parent) : QObject(parent)
 
 ControlDataProvider::~ControlDataProvider()
 {
-    if (serialPort) {
-        serialPort->close();
+    if (sender) {
+        sender->close();
+    }
+    if (receiver) {
+        sender->close();
     }
 }
 
-void ControlDataProvider::setSerialPort(QSerialPort *serialPort)
+void ControlDataProvider::setSender(QSerialPort *sender)
 {
-    this->serialPort = serialPort;
-    connect(serialPort, SIGNAL(readyRead()), this, SLOT(dataFromDeviceReadyRead()));
+    this->sender = sender;
+    connect(sender, SIGNAL(readyRead()), this, SLOT(dataFromSenderReady()));
 }
 
-void ControlDataProvider::sendDataToSerialDevice(QByteArray dataToSerialDevice)
+void ControlDataProvider::setReceiver(QSerialPort *receiver)
 {
-    if (serialPort)
-        serialPort->write(dataToSerialDevice);
+    this->receiver = receiver;
+    connect(receiver, SIGNAL(readyRead()), this, SLOT(dataFromReceiverReady()));
 }
 
-void ControlDataProvider::dataToSerialDeviceReady(QByteArray dataToSerialDevice)
+void ControlDataProvider::sendDataToReceiver(QByteArray data)
 {
-    sendDataToSerialDevice(dataToSerialDevice);
+    if (receiver) {
+        receiver->write(data);
+    }
 }
 
-void ControlDataProvider::dataFromDeviceReadyRead()
+void ControlDataProvider::dataFromSenderReady()
 {
-    if (serialPort->size() >= DATA_SIZE) {
-        dataFromSerialDevice = serialPort->readAll();
-        uint32_t *ptrData=reinterpret_cast<uint32_t*>(dataFromSerialDevice.data());
+    if (sender->size() >= SENDER_DATA_SIZE) {
+        dataFromSender = sender->readAll();
+
+        uint32_t *ptrData=reinterpret_cast<uint32_t*>(dataFromSender.data());
 
         for (int i = 0; i < SENSORS; i++) {
             if( GET_BIT(ptrData[0], i)) {
-                dataFromSerialDeviceBuffer[i] = 1;
+                dataFromSenderBuffer[i] = 0;
             } else {
-                dataFromSerialDeviceBuffer[i] = 0;
+                dataFromSenderBuffer[i] = 1;
             }
         }
-
-        emit dataFromSerialDeviceReady(dataFromSerialDeviceBuffer);
+        emit dataFromSenderReady(dataFromSenderBuffer);
     }
+}
+
+void ControlDataProvider::dataFromReceiverReady()
+{
+    receiver->clear();
+    emit receiverReady();
 }

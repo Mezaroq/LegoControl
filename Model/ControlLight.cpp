@@ -42,7 +42,7 @@ void ControlLight::setControlAction(ControlAction *controlAction)
 
 void ControlLight::setToggle(ControlLight::LightState lightState)
 {
-    actionToggle(lightState);
+    controlAction->setChecked(lightState);
 }
 
 bool ControlLight::getLightToggle()

@@ -38,15 +38,24 @@ public:
     void setNextRails(QList<ControlRail*> rails);
     void setLastLight(ControlLight *controlLight);
     void setNextLight(ControlLight *controlLight);
+    void setReservation(bool reservation);
+    void setTrainFrom(TrainFrom trainFrom);
+    void clearEntryCounter();
+    void clearStopSensorStatus();
     ControlTrain* getTrain(bool remove = false);
     QList<ControlRail*> getLastRails();
     QList<ControlRail*> getNextRails();
     ControlLight* getLastLight();
     ControlLight* getNextLight();
+    RailID getRailID();
+    bool isReserved();
+    int getEntryCounter();
+    TrainFrom getTrainFrom();
 
 private:
     RailID railID;
     int entryCounter = 0;
+    bool railReservation = false;
     QList<ControlRail*> lastRails;
     QList<ControlRail*> nextRails;
     ControlLight *lastLight;
@@ -56,8 +65,10 @@ private:
 
 signals:
     void objectChanged();
-    void trainEnters(ControlTrain::TrainID);
-    void trainLeaving(ControlTrain::TrainID);
+    void trainEntered(ControlTrain::TrainID, ControlRail::RailID);
+    void trainEnters(ControlTrain::TrainID, ControlRail::RailID);
+    void trainLeaving(ControlTrain::TrainID, ControlRail::RailID);
+    void trainLeft(ControlTrain::TrainID, ControlRail::RailID);
     void trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID);
 
 public slots:

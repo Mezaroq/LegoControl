@@ -8,6 +8,7 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
+#include <ViewModel/ControlAiViewModel.h>
 #include <ViewModel/ControlDataProvider.h>
 #include <QThread>
 #include <QMap>
@@ -55,12 +56,17 @@ public:
     void setStatusBar(QStatusBar *statusBar);
     void setMainWindow(QMainWindow mainWindow);
     void setCollectedData(QByteArray byteArray);
+    void setAI(ControlAiViewModel* ai);
     void saveLastTrainPosition();
     void loadLastTrainPosition();
-    void sendCollectedControlData();
+    void collectControlData();
+    void setSerialPortInformation();
 
 private:
-    QString fileName = "lastTrainPosition.pos";
+    const int senderID = 8136;
+    const int receiverID = 8137;
+    const QString fileName = "lastTrainPosition.pos";
+    ControlAiViewModel *ai;
     bool aiIsEnabled = false;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLight*> lights;
@@ -70,7 +76,8 @@ private:
     QMap<int, ControlSensor*> sensors;
     QStatusBar *statusBar;
     QByteArray controlData;
-    QSerialPort *serialPort = nullptr;
+    QSerialPort *sender;
+    QSerialPort *receiver;
     ControlDataProvider *dataProvider = nullptr;
     QMessageBox* lastTrainPosition;
     QMainWindow* mainWindow;
@@ -79,12 +86,12 @@ signals:
     void controlDataCollected(QByteArray controlData);
 
 public slots:
-    void runTriggered(bool state);
+    void runTriggered();
     void aiEnabled(bool state);
-    void settingsTriggered();
     void stopAllChannels();
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
-    void dataFromSerialDeviceCollected(QByteArray readData);
+    void dataFromSenderReady(QByteArray readData);
+    void collectDataToReceiver();
 };
 
 #endif // CONTROLVIEWMODEL_H

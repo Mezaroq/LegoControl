@@ -10,12 +10,13 @@
 #include <Model/ControlSwitch.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
-#include <View/ControlDebugPanel.h>
+#include <Model/ControlSwitchMap.h>
 #include <View/MainWindow.h>
 #include <View/ControlScene.h>
 #include <View/ControlView.h>
+#include <View/ControlDebugger.h>
 #include <ViewModel/ControlViewModel.h>
-#include <ViewModel/AlieViewModel.h>
+#include <ViewModel/ControlAiViewModel.h>
 #include <QAction>
 #include <QObject>
 #include <QMap>
@@ -39,9 +40,9 @@ public:
     void prepareSensors();
 
 private:
-    AlieViewModel *alieAI;
+    ControlAiViewModel *ai;
     ControlViewModel *viewModel;
-    ControlDebugPanel *debugPanel;
+    ControlDebugger *debugger;
     MainWindow mainWindow;
     ControlView *view;
     ControlScene *scene;
@@ -50,8 +51,8 @@ private:
     QPushButton *buttonStopAll;
     QAction *actionRun;
     QAction *actionEnableAI;
-    QAction *actionEpplicationSettings;
     QAction *actionDebugPanel;
+    ControlSwitchMap *switchMap;
     QMap<int, ControlButton*> buttons;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLabel*> labels;

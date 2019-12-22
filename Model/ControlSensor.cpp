@@ -19,7 +19,7 @@ void ControlSensor::setState(bool newState)
     state = newState;
 }
 
-void ControlSensor::debugSignalTrue()
+void ControlSensor::debugSignal()
 {
     emit signalChanged(sensorType);
 }

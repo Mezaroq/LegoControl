@@ -2,6 +2,7 @@
 #define CONTROLTRAIN_H
 
 #include <QObject>
+#include <QTimer>
 #include <Model/ControlSlider.h>
 
 class ControlTrain : public QObject
@@ -38,14 +39,14 @@ public:
     };
 
     enum TrainPriority{
-        PRIORITY_1,
-        PRIORITY_2,
-        PRIORITY_3,
-        PRIORITY_4,
-        PRIORITY_5,
-        PRIORITY_6,
+        PRIORITY_8,
         PRIORITY_7,
-        PRIORITY_8
+        PRIORITY_6,
+        PRIORITY_5,
+        PRIORITY_4,
+        PRIORITY_3,
+        PRIORITY_2,
+        PRIORITY_1
     };
 
     enum TrainDirection{
@@ -56,19 +57,23 @@ public:
     explicit ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
     void setTrainPriority(TrainPriority trainPriority);
+    void setWaiting(int mscs);
+    bool isWaiting();
     TrainID getTrainID();
     int getTrainSpeed();
-    TrainDirection getTrainDirection();
+    TrainPriority getTrainPriority();
+    TrainDirection getTrainDirectionFromSpeed();
 
 private:
     TrainID trainID;
-    TrainPriority trainPriority;
-    TrainDirection trainDirection;
+    TrainPriority trainPriority = PRIORITY_1;
+    bool trainIsWaiting = false;
     ControlSlider* trainSlider = nullptr;
 
 signals:
 
 public slots:
+    void waitingEnded();
 };
 
 #endif // CONTROLTRAIN_H
