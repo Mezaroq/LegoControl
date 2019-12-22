@@ -109,20 +109,20 @@ void ControlViewModel::loadLastTrainPosition()
     if (QFileInfo::exists(fileName)) {
         if (lastTrainPosition->exec() == QMessageBox::Yes) {
             QFile file(fileName);
-            file.open(QIODevice::ReadOnly);
-            QDataStream in(&file);
-            int railID;
-            int trainID;
+            if (file.open(QIODevice::ReadOnly)) {
+                QDataStream in(&file);
+                int railID;
+                int trainID;
 
-            while (!in.atEnd()) {
-                in >> railID;
-                in >> trainID;
+                while (!in.atEnd()) {
+                    in >> railID;
+                    in >> trainID;
 
-                rails.value(railID)->setTrain(trains.value(trainID));
-                rails.value(railID)->setReservation(true);
+                    rails.value(railID)->setTrain(trains.value(trainID));
+                    rails.value(railID)->setReservation(true);
+                }
+                file.close();
             }
-            file.close();
-            return;
         }
     }
 }
@@ -241,25 +241,21 @@ void ControlViewModel::saveLastTrainPosition()
 
 void ControlViewModel::runTriggered()
 {
-    bool senderStatus = false;
-    bool receiverStatus = false;
-    loadLastTrainPosition(); /// TEST
-
-    if (sender) {
-        if (sender->isOpen()) {
-            if (receiver) {
-                if (receiver->isOpen()) {
-                    return;
-                }
-            }
+    if (sender && receiver) {
+        return;
+    } else {
+        if (sender) {
+            sender->close();
+            delete sender;
         }
-        delete sender;
-        sender = nullptr;
         if (receiver) {
+            receiver->close();
             delete receiver;
-            receiver = nullptr;
         }
     }
+
+    bool senderStatus = false;
+    bool receiverStatus = false;
 
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     for (QSerialPortInfo port : ports) {
