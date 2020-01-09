@@ -20,6 +20,7 @@
 #include <QByteArray>
 #include <QMessageBox>
 #include <QMainWindow>
+#include <QGraphicsBlurEffect>
 
 class ControlViewModel : public QObject
 {
@@ -57,17 +58,18 @@ public:
     void setMainWindow(QMainWindow mainWindow);
     void setCollectedData(QByteArray byteArray);
     void setAI(ControlAiViewModel* ai);
-    void saveLastTrainPosition();
-    void loadLastTrainPosition();
     void collectControlData();
     void setSerialPortInformation();
+    void loadTrainPosition();
 
 private:
     const int senderID = 8136;
     const int receiverID = 8137;
-    const QString fileName = "lastTrainPosition.pos";
-    ControlAiViewModel *ai;
+    const int MAX_TRAINS = 3;
+    int insertedTrains = 0;
     bool aiIsEnabled = false;
+    bool trainSelectionMode = false;
+    ControlAiViewModel *ai;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLight*> lights;
     QMap<int, ControlSwitch*> switches;
@@ -79,7 +81,8 @@ private:
     QSerialPort *sender;
     QSerialPort *receiver;
     ControlDataProvider *dataProvider = nullptr;
-    QMessageBox* lastTrainPosition;
+    QMessageBox* loadTrains;
+    QMessageBox* resetTrains;
     QMainWindow* mainWindow;
 
 signals:
@@ -92,6 +95,7 @@ public slots:
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
     void dataFromSenderReady(QByteArray readData);
     void collectDataToReceiver();
+    void resetTrainsTriggered();
 };
 
 #endif // CONTROLVIEWMODEL_H

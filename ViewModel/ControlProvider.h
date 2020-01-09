@@ -52,6 +52,7 @@ private:
     QAction *actionRun;
     QAction *actionEnableAI;
     QAction *actionDebugPanel;
+    QAction *actionReset;
     ControlSwitchMap *switchMap;
     QMap<int, ControlButton*> buttons;
     QMap<int, ControlSlider*> sliders;

@@ -2037,6 +2037,7 @@ color: rgb(255, 255, 255);</string>
    <addaction name="actionRun"/>
    <addaction name="separator"/>
    <addaction name="actionEnable_AI"/>
+   <addaction name="actionReset"/>
    <addaction name="actionDebug_Panel"/>
    <addaction name="separator"/>
   </widget>
@@ -2077,6 +2078,18 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="text">
     <string>Debug Panel</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/control/resources/icons/icon_bar_reset_trains.svg</normaloff>:/control/resources/icons/icon_bar_reset_trains.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset trains and data from sensors</string>
    </property>
   </action>
  </widget>

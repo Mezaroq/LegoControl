@@ -233,6 +233,45 @@ void ControlAiViewModel::antiBlocker()
         train = nullptr;
         from = nullptr;
     }
+
+
+    for (auto trainID : stopTrains) {
+        if (!trains.value(trainID)->isWaiting()) {
+            timetable = timetables.value(trainID);
+            switch (timetable->getDirection()) {
+            case ControlTrain::DIRECTION_FORWARD:
+                if (timetable->isEndLoop()) {
+                    for (ControlRail *rail : rails.value(timetable->getCurrentRailID())->getNextRails().first()->getNextRails()) {
+                        if (timetable->getDestinationRailID() == rail->getRailID()) {
+                            if (rail->getTrain() != nullptr) {
+                                ControlTimetable *currentTimetable = timetables.value(rail->getTrain()->getTrainID());
+                                if (currentTimetable->getDirection() == ControlTrain::DIRECTION_REVERSE && currentTimetable->isEndLoop() && currentTimetable->getDestinationRailID() == timetable->getCurrentRailID()) {
+                                    currentTimetable->setDirection(ControlTrain::DIRECTION_FORWARD);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                break;
+            case ControlTrain::DIRECTION_REVERSE:
+                if (timetable->isEndLoop()) {
+                    for (ControlRail *rail : rails.value(timetable->getCurrentRailID())->getLastRails().first()->getLastRails()) {
+                        if (timetable->getDestinationRailID() == rail->getRailID()) {
+                            if (rail->getTrain() != nullptr) {
+                                ControlTimetable *currentTimetable = timetables.value(rail->getTrain()->getTrainID());
+                                if (currentTimetable->getDirection() == ControlTrain::DIRECTION_FORWARD && currentTimetable->isEndLoop() && currentTimetable->getDestinationRailID() == timetable->getCurrentRailID()) {
+                                    currentTimetable->setDirection(ControlTrain::DIRECTION_REVERSE);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 }
 
 void ControlAiViewModel::manageTrainSpeed(ControlTrain::TrainID trainID, SpeedType speedType)
