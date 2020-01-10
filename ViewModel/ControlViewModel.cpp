@@ -103,79 +103,78 @@ void ControlViewModel::setAI(ControlAiViewModel *ai)
 void ControlViewModel::collectControlData()
 {
     controlData.clear();
-    controlData.insert(MAIN_CONTROL, static_cast<char>(128));
+    controlData[MAIN_CONTROL] = static_cast<char>(128);
 
-    controlData.insert(TRAIN_CONTROL_1, static_cast<char>(trains.value(ControlTrain::TRAIN_1)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_2, static_cast<char>(trains.value(ControlTrain::TRAIN_2)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_3, static_cast<char>(trains.value(ControlTrain::TRAIN_3)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_4, static_cast<char>(trains.value(ControlTrain::TRAIN_4)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_5, static_cast<char>(trains.value(ControlTrain::TRAIN_5)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_6, static_cast<char>(trains.value(ControlTrain::TRAIN_6)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_7, static_cast<char>(trains.value(ControlTrain::TRAIN_7)->getTrainSpeed()));
-    controlData.insert(TRAIN_CONTROL_8, static_cast<char>(trains.value(ControlTrain::TRAIN_8)->getTrainSpeed()));
+    controlData[TRAIN_CONTROL_1] = static_cast<char>(trains.value(ControlTrain::TRAIN_1)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_2] = static_cast<char>(trains.value(ControlTrain::TRAIN_2)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_3] = static_cast<char>(trains.value(ControlTrain::TRAIN_3)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_4] = static_cast<char>(trains.value(ControlTrain::TRAIN_4)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_5] = static_cast<char>(trains.value(ControlTrain::TRAIN_5)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_6] = static_cast<char>(trains.value(ControlTrain::TRAIN_6)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_7] = static_cast<char>(trains.value(ControlTrain::TRAIN_7)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_8] = static_cast<char>(trains.value(ControlTrain::TRAIN_8)->getTrainSpeed());
 
-    controlData.insert(SWITCH_CONTROL_1, static_cast<char>( switches.value(ControlSwitch::SWITCH_1)->getSwitchToggle() +
-                                                       2 * !switches.value(ControlSwitch::SWITCH_3)->getSwitchToggle() +
-                                                        4 * switches.value(ControlSwitch::SWITCH_4)->getSwitchToggle() +
-                                                       8 * !switches.value(ControlSwitch::SWITCH_2)->getSwitchToggle() +
-                                                       16 * switches.value(ControlSwitch::SWITCH_5)->getSwitchToggle() +
-                                                      32 * !switches.value(ControlSwitch::SWITCH_9)->getSwitchToggle() +
-                                                      64 * !switches.value(ControlSwitch::SWITCH_6)->getSwitchToggle() +
-                                                      128 * switches.value(ControlSwitch::SWITCH_7)->getSwitchToggle() ));
-    controlData.insert(SWITCH_CONTROL_2, static_cast<char>( switches.value(ControlSwitch::SWITCH_8)->getSwitchToggle() ));
+    controlData[SWITCH_CONTROL_1] = static_cast<char>( switches.value(ControlSwitch::SWITCH_1)->getSwitchToggle() +
+                                                   2 * !switches.value(ControlSwitch::SWITCH_3)->getSwitchToggle() +
+                                                   4 * switches.value(ControlSwitch::SWITCH_4)->getSwitchToggle() +
+                                                   8 * !switches.value(ControlSwitch::SWITCH_2)->getSwitchToggle() +
+                                                  16 * switches.value(ControlSwitch::SWITCH_5)->getSwitchToggle() +
+                                                  32 * !switches.value(ControlSwitch::SWITCH_9)->getSwitchToggle() +
+                                                  64 * !switches.value(ControlSwitch::SWITCH_6)->getSwitchToggle() +
+                                                 128 * switches.value(ControlSwitch::SWITCH_7)->getSwitchToggle() );
+    controlData[SWITCH_CONTROL_2] = static_cast<char>( switches.value(ControlSwitch::SWITCH_8)->getSwitchToggle() );
 
-    controlData.insert(LIGHT_CONTROL_1, static_cast<char>( lights.value( ControlLight::LIGHT_17)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_17)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_15)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_15)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_14)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_14)->getLightToggle() +
-                                                     64 * 0 +
-                                                    128 * 0 ));
-    controlData.insert(LIGHT_CONTROL_2, static_cast<char>( lights.value( ControlLight::LIGHT_10)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_10)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_12)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_12)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_13)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_13)->getLightToggle() +
-                                                     64 * 0 +
-                                                    128 * 0 ));
+    controlData[LIGHT_CONTROL_1] = static_cast<char>( lights.value( ControlLight::LIGHT_17)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_17)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_15)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_15)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_14)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_14)->getLightToggle() +
+                                                 64 * 0 +
+                                                128 * 0 );
+    controlData[LIGHT_CONTROL_2] = static_cast<char>( lights.value( ControlLight::LIGHT_10)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_10)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_12)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_12)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_13)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_13)->getLightToggle() +
+                                                 64 * 0 +
+                                                128 * 0 );
 
-    controlData.insert(LIGHT_CONTROL_3, static_cast<char>( lights.value( ControlLight::LIGHT_20)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_20)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_18)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_18)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_16)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_16)->getLightToggle() +
-                                                     64 *  lights.value( ControlLight::LIGHT_19)->getLightToggle() +
-                                                    128 * !lights.value( ControlLight::LIGHT_19)->getLightToggle() ));
-    controlData.insert(LIGHT_CONTROL_4, static_cast<char>( lights.value( ControlLight::LIGHT_8)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_8)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_9)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_9)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_11)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_11)->getLightToggle() +
-                                                     64 * 0 +
-                                                    128 * 0 ));
+    controlData[LIGHT_CONTROL_3] = static_cast<char>( lights.value( ControlLight::LIGHT_20)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_20)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_18)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_18)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_16)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_16)->getLightToggle() +
+                                                 64 * lights.value( ControlLight::LIGHT_19)->getLightToggle() +
+                                                128 * !lights.value( ControlLight::LIGHT_19)->getLightToggle() );
+    controlData[LIGHT_CONTROL_4] = static_cast<char>( lights.value( ControlLight::LIGHT_8)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_8)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_9)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_9)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_11)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_11)->getLightToggle() +
+                                                 64 * 0 +
+                                                128 * 0 );
 
-    controlData.insert(LIGHT_CONTROL_5, static_cast<char>( lights.value( ControlLight::LIGHT_21)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_21)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_1)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_1)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_3)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_3)->getLightToggle() +
-                                                     64 *  lights.value( ControlLight::LIGHT_5)->getLightToggle() +
-                                                    128 * !lights.value( ControlLight::LIGHT_5)->getLightToggle() ));
-    controlData.insert(LIGHT_CONTROL_6, static_cast<char>( lights.value( ControlLight::LIGHT_6)->getLightToggle() +
-                                                      2 * !lights.value( ControlLight::LIGHT_6)->getLightToggle() +
-                                                      4 *  lights.value( ControlLight::LIGHT_4)->getLightToggle() +
-                                                      8 * !lights.value( ControlLight::LIGHT_4)->getLightToggle() +
-                                                     16 *  lights.value( ControlLight::LIGHT_2)->getLightToggle() +
-                                                     32 * !lights.value( ControlLight::LIGHT_2)->getLightToggle() +
-                                                     64 *  lights.value( ControlLight::LIGHT_7)->getLightToggle() +
-                                                    128 * !lights.value( ControlLight::LIGHT_7)->getLightToggle() ));
-
-    controlData.insert(LIGHT_CONTROL_7, static_cast<char>(0));
+    controlData[LIGHT_CONTROL_5] = static_cast<char>( lights.value( ControlLight::LIGHT_21)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_21)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_1)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_1)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_3)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_3)->getLightToggle() +
+                                                 64 * lights.value( ControlLight::LIGHT_5)->getLightToggle() +
+                                                128 * !lights.value( ControlLight::LIGHT_5)->getLightToggle() );
+    controlData[LIGHT_CONTROL_6] = static_cast<char>( lights.value( ControlLight::LIGHT_6)->getLightToggle() +
+                                                  2 * !lights.value( ControlLight::LIGHT_6)->getLightToggle() +
+                                                  4 * lights.value( ControlLight::LIGHT_4)->getLightToggle() +
+                                                  8 * !lights.value( ControlLight::LIGHT_4)->getLightToggle() +
+                                                 16 * lights.value( ControlLight::LIGHT_2)->getLightToggle() +
+                                                 32 * !lights.value( ControlLight::LIGHT_2)->getLightToggle() +
+                                                 64 * lights.value( ControlLight::LIGHT_7)->getLightToggle() +
+                                                128 * !lights.value( ControlLight::LIGHT_7)->getLightToggle() );
+    controlData[LIGHT_CONTROL_7] = 0;
 }
 
 void ControlViewModel::setSerialPortInformation()
