@@ -14,16 +14,7 @@ ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : Q
 
 ControlViewModel::~ControlViewModel()
 {
-    if (receiver)
-        receiver->disconnect(dataProvider, SIGNAL(readyRead()));
-    if (sender)
-        receiver->disconnect(dataProvider, SIGNAL(readyRead()));
-    QMapIterator<int, ControlTrain*> trainList(trains);
-    while (trainList.hasNext()) {
-        trainList.next();
-        trainList.value()->setTrainSpeed(ControlTrain::SPEED_BREAKE);
-    }
-    collectDataToReceiver();
+    delete dataProvider;
 }
 
 void ControlViewModel::setSliders(QMap<int, ControlSlider *> sliders)
