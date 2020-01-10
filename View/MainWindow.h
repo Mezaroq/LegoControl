@@ -32,6 +32,7 @@ public:
     QAction* getActionRun();
     QAction* getActionEnableAI();
     QAction* getActionDebugPanel();
+    QAction* getActionReset();
     ControlView* getControlView();
     ~MainWindow();
 

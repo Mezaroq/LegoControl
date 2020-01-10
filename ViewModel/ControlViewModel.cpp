@@ -8,11 +8,8 @@ ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : Q
     connect(dataProvider, SIGNAL(dataFromSenderReady(QByteArray)), this, SLOT(dataFromSenderReady(QByteArray)));
     connect(dataProvider, SIGNAL(receiverReady()), this, SLOT(collectDataToReceiver()));
 
-    lastTrainPosition = new QMessageBox(mainWindow);
-    lastTrainPosition->setText("Load last train position?");
-    lastTrainPosition->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
-    lastTrainPosition->setIcon(QMessageBox::Question);
-    lastTrainPosition->setDefaultButton(QMessageBox::Yes);
+    loadTrains = new QMessageBox(mainWindow);
+    resetTrains = new QMessageBox(mainWindow);
 }
 
 ControlViewModel::~ControlViewModel()
@@ -27,7 +24,6 @@ ControlViewModel::~ControlViewModel()
         trainList.value()->setTrainSpeed(ControlTrain::SPEED_BREAKE);
     }
     collectDataToReceiver();
-    saveLastTrainPosition();
 }
 
 void ControlViewModel::setSliders(QMap<int, ControlSlider *> sliders)
@@ -102,29 +98,6 @@ void ControlViewModel::setCollectedData(QByteArray byteArray)
 void ControlViewModel::setAI(ControlAiViewModel *ai)
 {
     this->ai = ai;
-}
-
-void ControlViewModel::loadLastTrainPosition()
-{
-    if (QFileInfo::exists(fileName)) {
-        if (lastTrainPosition->exec() == QMessageBox::Yes) {
-            QFile file(fileName);
-            if (file.open(QIODevice::ReadOnly)) {
-                QDataStream in(&file);
-                int railID;
-                int trainID;
-
-                while (!in.atEnd()) {
-                    in >> railID;
-                    in >> trainID;
-
-                    rails.value(railID)->setTrain(trains.value(trainID));
-                    rails.value(railID)->setReservation(true);
-                }
-                file.close();
-            }
-        }
-    }
 }
 
 void ControlViewModel::collectControlData()
@@ -223,37 +196,24 @@ void ControlViewModel::setSerialPortInformation()
     statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
 }
 
-void ControlViewModel::saveLastTrainPosition()
+void ControlViewModel::loadTrainPosition()
 {
-    QFile file(fileName);
-    file.open(QIODevice::WriteOnly);
-    QDataStream out(&file);
+    loadTrains->setText("Set current trains position,\n(select highlight rail using mouse)\nTrain 1 -> Train 2 -> Train 3");
+    loadTrains->setStandardButtons(QMessageBox::Ok);
+    loadTrains->setIcon(QMessageBox::Icon::Information);
 
-    QMapIterator<int, ControlRail*> railList(rails);
-    while (railList.hasNext()) {
-        railList.next();
-        if (railList.value()->getTrain() != nullptr) {
-            out << int(railList.key());
-            out << int(railList.value()->getTrain()->getTrainID());
+    if (QMessageBox::Ok == loadTrains->exec()) {
+        for (ControlRail *rail : rails) {
+            if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
+                continue;
+            rail->graphicsEffect()->setEnabled(true);
         }
+        trainSelectionMode = true;
     }
 }
 
 void ControlViewModel::runTriggered()
 {
-    if (sender && receiver) {
-        return;
-    } else {
-        if (sender) {
-            sender->close();
-            delete sender;
-        }
-        if (receiver) {
-            receiver->close();
-            delete receiver;
-        }
-    }
-
     bool senderStatus = false;
     bool receiverStatus = false;
 
@@ -289,6 +249,9 @@ void ControlViewModel::runTriggered()
         else
             statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
     }
+
+    if (senderStatus & receiverStatus)
+        loadTrainPosition();
 }
 
 void ControlViewModel::aiEnabled(bool state)
@@ -307,7 +270,30 @@ void ControlViewModel::stopAllChannels()
 }
 
 void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType, int objectID)
-{
+{   
+    if (trainSelectionMode) {
+        if (objectType == ControlObject::OBJECT_RAIL) {
+            if (objectID != ControlRail::RAIL_SECTION_4 && objectID != ControlRail::RAIL_SECTION_7 && objectID != ControlRail::RAIL_SECTION_10) {
+                if (rails.value(objectID)->getTrain() == nullptr) {
+                    rails.value(objectID)->graphicsEffect()->setEnabled(false);
+                    rails.value(objectID)->setReservation(true);
+                    rails.value(objectID)->setTrain(trains.value(insertedTrains++));
+
+                    if (insertedTrains == MAX_TRAINS) {
+                        trainSelectionMode = false;
+                        insertedTrains = 0;
+                        for (ControlRail *rail : rails) {
+                            if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
+                                continue;
+                            rail->graphicsEffect()->setEnabled(false);
+                        }
+                    }
+                }
+            }
+        }
+        return;
+    }
+
     switch (objectType) {
     case ControlObject::OBJECT_LIGHT:
         lights.value(objectID)->toggle();
@@ -331,4 +317,43 @@ void ControlViewModel::collectDataToReceiver()
 {
     collectControlData();
     dataProvider->sendDataToReceiver(controlData);
+}
+
+void ControlViewModel::resetTrainsTriggered()
+{
+    loadTrains->setText("Reset sensors data? Press Reset \nReset all? Press Yes to All \nReset all and set Trains? Press Ok");
+    loadTrains->setStandardButtons(QMessageBox::Button::Reset | QMessageBox::Button::YesAll | QMessageBox::Button::Ok | QMessageBox::Button::Cancel);
+    loadTrains->setIcon(QMessageBox::Icon::Question);
+
+    switch (loadTrains->exec()) {
+    case QMessageBox::Reset:
+        for (auto rail : rails) {
+            rail->clearStopSensorStatus();
+        }
+        break;
+    case QMessageBox::YesAll:
+        for (auto rail : rails) {
+            rail->clearStopSensorStatus();
+            rail->getTrain(true);
+            rail->setReservation(false);
+        }
+        break;
+    case QMessageBox::Ok:
+        for (auto rail : rails) {
+            rail->clearStopSensorStatus();
+            rail->getTrain(true);
+            rail->setReservation(false);
+        }
+        for (ControlRail *rail : rails) {
+            if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
+                continue;
+            rail->graphicsEffect()->setEnabled(true);
+        }
+        insertedTrains = 0;
+        trainSelectionMode = true;
+
+        break;
+    default:
+        break;
+    }
 }

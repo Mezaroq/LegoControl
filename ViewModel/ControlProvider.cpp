@@ -21,6 +21,7 @@ void ControlProvider::setObjects()
     actionRun = mainWindow.getActionRun();
     actionEnableAI = mainWindow.getActionEnableAI();
     actionDebugPanel = mainWindow.getActionDebugPanel();
+    actionReset = mainWindow.getActionReset();
     toolBar = mainWindow.getToolBar();
     statusBar = mainWindow.getStatusBar();
     buttons = mainWindow.getButtons();
@@ -36,6 +37,7 @@ void ControlProvider::setConnections()
     connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
     connect(actionDebugPanel, SIGNAL(triggered()), debugger, SLOT(show()));
+    connect(actionReset, SIGNAL(triggered()), viewModel, SLOT(resetTrainsTriggered()));
 }
 
 void ControlProvider::setObjectsData()
@@ -231,6 +233,16 @@ void ControlProvider::prepareRails()
         scene->addItem(railList.value());
     }
     scene->addItem(new QGraphicsPixmapItem(ControlRail::getResource(ControlRail::RAIL_SECTION_11)));
+
+    for (ControlRail *rail : rails) {
+        if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
+            continue;
+        QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
+        effect->setBlurRadius(1.65);
+        rail->setGraphicsEffect(effect);
+        rail->graphicsEffect()->setEnabled(false);
+        rail->setFlag(QGraphicsItem::ItemIsFocusable);
+    }
 }
 
 void ControlProvider::prepareTrains()

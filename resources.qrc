@@ -40,5 +40,6 @@
         <file>resources/objects/object_switch_8_left.png</file>
         <file>resources/objects/object_switch_8_normal.png</file>
         <file>resources/icons/icon_bar_debug_panel.svg</file>
+        <file>resources/icons/icon_bar_reset_trains.svg</file>
     </qresource>
 </RCC>
