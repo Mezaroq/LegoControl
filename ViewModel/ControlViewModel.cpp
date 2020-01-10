@@ -288,9 +288,11 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
 
 void ControlViewModel::readSensorsData(QByteArray data)
 {
+    mutex.lock();
     setSensorsData(data);
     if (aiIsEnabled)
         ai->run();
+    mutex.unlock();
 }
 
 void ControlViewModel::sendControlData()

@@ -21,11 +21,13 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include <QGraphicsBlurEffect>
+#include <QMutex>
 
 class ControlViewModel : public QObject
 {
     Q_OBJECT
     QThread controllerThread;
+    QMutex mutex;
 public:
     enum Control{
         MAIN_CONTROL,
