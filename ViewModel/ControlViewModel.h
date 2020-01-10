@@ -9,7 +9,7 @@
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
 #include <ViewModel/ControlAiViewModel.h>
-#include <ViewModel/ControlDataProvider.h>
+#include <ViewModel/ControlDataController.h>
 #include <QThread>
 #include <QMap>
 #include <QDebug>
@@ -25,6 +25,7 @@
 class ControlViewModel : public QObject
 {
     Q_OBJECT
+    QThread controllerThread;
 public:
     enum Control{
         MAIN_CONTROL,
@@ -56,7 +57,7 @@ public:
     void setSensors(QMap<int, ControlSensor*> sensors);
     void setStatusBar(QStatusBar *statusBar);
     void setMainWindow(QMainWindow mainWindow);
-    void setCollectedData(QByteArray byteArray);
+    void setSensorsData(QByteArray byteArray);
     void setAI(ControlAiViewModel* ai);
     void collectControlData();
     void setSerialPortInformation();
@@ -78,12 +79,13 @@ private:
     QMap<int, ControlSensor*> sensors;
     QStatusBar *statusBar;
     QByteArray controlData;
-    QSerialPort *sender;
-    QSerialPort *receiver;
-    ControlDataProvider *dataProvider = nullptr;
+    ControlDataController *dataController = nullptr;
     QMessageBox* loadTrains;
     QMessageBox* resetTrains;
     QMainWindow* mainWindow;
+
+protected:
+    void setDataController();
 
 signals:
     void controlDataCollected(QByteArray controlData);
@@ -93,9 +95,10 @@ public slots:
     void aiEnabled(bool state);
     void stopAllChannels();
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
-    void dataFromSenderReady(QByteArray readData);
-    void collectDataToReceiver();
+    void readSensorsData(QByteArray data);
+    void sendControlData();
     void resetTrainsTriggered();
+    void controllerConnected();
 };
 
 #endif // CONTROLVIEWMODEL_H

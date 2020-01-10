@@ -4,9 +4,7 @@
 
 ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
-    dataProvider = new ControlDataProvider();
-    connect(dataProvider, SIGNAL(dataFromSenderReady(QByteArray)), this, SLOT(dataFromSenderReady(QByteArray)));
-    connect(dataProvider, SIGNAL(receiverReady()), this, SLOT(collectDataToReceiver()));
+    setDataController();
 
     loadTrains = new QMessageBox(mainWindow);
     resetTrains = new QMessageBox(mainWindow);
@@ -14,7 +12,9 @@ ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : Q
 
 ControlViewModel::~ControlViewModel()
 {
-    delete dataProvider;
+    controllerThread.terminate();
+    controllerThread.exit();
+    delete dataController;
 }
 
 void ControlViewModel::setSliders(QMap<int, ControlSlider *> sliders)
@@ -52,7 +52,7 @@ void ControlViewModel::setStatusBar(QStatusBar *statusBar)
     this->statusBar = statusBar;
 }
 
-void ControlViewModel::setCollectedData(QByteArray byteArray)
+void ControlViewModel::setSensorsData(QByteArray byteArray)
 {
     sensors.value(ControlSensor::SENSOR_1)->setState(byteArray.at(10));
     sensors.value(ControlSensor::SENSOR_2)->setState(byteArray.at(11));
@@ -203,46 +203,35 @@ void ControlViewModel::loadTrainPosition()
     }
 }
 
+void ControlViewModel::setDataController()
+{
+    dataController = new ControlDataController();
+    dataController->moveToThread(&controllerThread);
+    connect(&controllerThread, &QThread::finished, dataController, &QObject::deleteLater);
+    connect(dataController, SIGNAL(controllerConnected()), this, SLOT(controllerConnected()));
+    connect(dataController, SIGNAL(receiverSignal()), this, SLOT(sendControlData()));
+    connect(dataController, SIGNAL(sensorsData(QByteArray)), this, SLOT(readSensorsData(QByteArray)));
+    controllerThread.start(QThread::HighPriority);
+
+}
+
 void ControlViewModel::runTriggered()
 {
     bool senderStatus = false;
     bool receiverStatus = false;
 
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    for (QSerialPortInfo port : ports) {
-        if (port.serialNumber() == "NXP-77") {
-            if (port.vendorIdentifier() == senderID) {
-                if (sender != nullptr) {
-                    sender = new QSerialPort(port);
-                    if (sender->open(QIODevice::ReadWrite)) {
-                        sender->setBaudRate(sender->Baud115200, sender->AllDirections);
-                        sender->clear();
-                        dataProvider->setSender(sender);
-                        senderStatus = true;
-                    }
-                }
-            } else if (port.vendorIdentifier() == receiverID) {
-                if (receiver != nullptr) {
-                    receiver = new QSerialPort(port);
-                    if (receiver->open(QIODevice::ReadWrite)) {
-                        receiver->setBaudRate(receiver->Baud115200, receiver->AllDirections);
-                        receiver->clear();
-                        dataProvider->setReceiver(receiver);
-                        receiverStatus = true;
-                        collectDataToReceiver();
-                    }
-                }
-            }
+    for (QSerialPortInfo port : QSerialPortInfo::availablePorts()) {
+        if (port.serialNumber() == "NXP-7S") {
+            senderStatus = true;
+        } else if (port.serialNumber() == "NXP-77") {
+            receiverStatus = true;
         }
-
-        if (sender && receiver)
-            statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(connected)" : "(disconnected)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(connected)" : "(disconnected)"));
-        else
-            statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
     }
 
     if (senderStatus & receiverStatus)
-        loadTrainPosition();
+        dataController->connectController();
+    else
+        statusBar->showMessage(QString("Sender: ") + QString(senderStatus ? "(disconnected)" : "(empty)") + " " + QString("Receiver: ") + QString(receiverStatus ? "(disconnected)" : "(empty)"));
 }
 
 void ControlViewModel::aiEnabled(bool state)
@@ -297,17 +286,17 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
     }
 }
 
-void ControlViewModel::dataFromSenderReady(QByteArray readData)
+void ControlViewModel::readSensorsData(QByteArray data)
 {
-    setCollectedData(readData);
+    setSensorsData(data);
     if (aiIsEnabled)
         ai->run();
 }
 
-void ControlViewModel::collectDataToReceiver()
+void ControlViewModel::sendControlData()
 {
     collectControlData();
-    dataProvider->sendDataToReceiver(controlData);
+    dataController->sendData(controlData);
 }
 
 void ControlViewModel::resetTrainsTriggered()
@@ -347,4 +336,10 @@ void ControlViewModel::resetTrainsTriggered()
     default:
         break;
     }
+}
+
+void ControlViewModel::controllerConnected()
+{
+    statusBar->showMessage("Controller connected");
+    loadTrainPosition();
 }

@@ -33,7 +33,7 @@ SOURCES += \
     View/ControlView.cpp \
     View/MainWindow.cpp \
     ViewModel/ControlAiViewModel.cpp \
-    ViewModel/ControlDataProvider.cpp \
+    ViewModel/ControlDataController.cpp \
     ViewModel/ControlProvider.cpp \
     ViewModel/ControlViewModel.cpp \
     main.cpp
@@ -56,7 +56,7 @@ HEADERS += \
     View/ControlView.h \
     View/MainWindow.h \
     ViewModel/ControlAiViewModel.h \
-    ViewModel/ControlDataProvider.h \
+    ViewModel/ControlDataController.h \
     ViewModel/ControlProvider.h \
     ViewModel/ControlViewModel.h
 
