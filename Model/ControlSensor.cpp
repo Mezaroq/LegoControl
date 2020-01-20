@@ -7,11 +7,6 @@ ControlSensor::ControlSensor(SensorID sensorID, SensorType sensorType, QObject *
     this->sensorType = sensorType;
 }
 
-ControlSensor::SensorType ControlSensor::getSensorType()
-{
-    return sensorType;
-}
-
 void ControlSensor::setState(bool newState)
 {
     if ((newState == true) && (state != newState)) //ignore 2x true signal

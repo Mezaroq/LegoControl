@@ -29,9 +29,6 @@ private:
     int controlValue;
     ControlLabel *label = nullptr;
 
-signals:
-    void controlValueChanged(int id, int value);
-
 public slots:
     void sliderValueChanged(int value);
 };

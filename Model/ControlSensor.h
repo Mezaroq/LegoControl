@@ -45,7 +45,6 @@ public:
     };
 
     explicit ControlSensor(SensorID sensorID, SensorType sensorType, QObject *parent = nullptr);
-    SensorType getSensorType();
     void setState(bool newState);
     void debugSignal();
 

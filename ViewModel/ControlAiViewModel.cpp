@@ -17,9 +17,6 @@ void ControlAiViewModel::setAiEnabled(bool state)
 {
     if (state && timetables.isEmpty()) {
         generateTimetables();
-        for (ControlRail* rail : rails) {
-            rail->clearStopSensorStatus();
-        }
         for (ControlTimetable *timetable : timetables) {
             stopTrains.insert(trains.value(timetable->getTrainID())->getTrainPriority(), timetable->getTrainID());
         }
@@ -37,8 +34,6 @@ void ControlAiViewModel::setAiEnabled(bool state)
             cswitch->setToggle(false);
         }
         for (ControlRail *rail : rails) {
-            rail->setTrainFrom(ControlRail::UNDEFINED);
-            rail->clearEntryCounter();
             if (rail->getTrain())
                 continue;
             rail->setReservation(false);
@@ -80,7 +75,7 @@ void ControlAiViewModel::supportManualDriving(ControlTrain::TrainID trainID, Con
 
     switch (train->getTrainDirectionFromSpeed()) {
     case ControlTrain::DIRECTION_FORWARD:
-        if (rail->getNextRails().first()->getTrain() || !rail->getNextLight()->getLightToggle()) {
+        if (rail->getNextRails().first()->getTrain() || !rail->getNextLight()->getLightState()) {
             train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
             rail->getNextLight()->setToggle(ControlLight::STATE_RED);
         } else {
@@ -96,7 +91,7 @@ void ControlAiViewModel::supportManualDriving(ControlTrain::TrainID trainID, Con
         }
         break;
     case ControlTrain::DIRECTION_REVERSE:
-        if (rail->getLastRails().first()->getTrain() || !rail->getLastLight()->getLightToggle()) {
+        if (rail->getLastRails().first()->getTrain() || !rail->getLastLight()->getLightState()) {
             train->setTrainSpeed(ControlTrain::SPEED_BREAKE);
             rail->getLastLight()->setToggle(ControlLight::STATE_RED);
         } else {
@@ -502,8 +497,6 @@ void ControlAiViewModel::trainLeft(ControlTrain::TrainID trainID, ControlRail::R
 void ControlAiViewModel::stopSensorActivated(ControlTrain::TrainID trainID, ControlRail::RailID railID)
 {
     if (aiIsEnabled) {
-        qDebug() << "click";
-        rails.value(railID)->clearStopSensorStatus();
         timetable = timetables.value(trainID);
         timetable->setCurrentRailID(railID);
         timetable->increaseLoopCounter();

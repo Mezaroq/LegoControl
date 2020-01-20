@@ -56,24 +56,24 @@ public:
 
     explicit ControlTrain(TrainID trainID, ControlSlider *trainSlider, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
-    void setTrainPriority(TrainPriority trainPriority);
-    void setWaiting(int mscs);
-    bool isWaiting();
+    void setTrainPriority(TrainPriority trainPriority); // move to timetable
+    void setWaiting(int mscs); // move to timetable
+    bool isWaiting(); // move to timetable
     TrainID getTrainID();
     int getTrainSpeed();
-    TrainPriority getTrainPriority();
+    TrainPriority getTrainPriority(); // move to timetable / remove
     TrainDirection getTrainDirectionFromSpeed();
 
 private:
     TrainID trainID;
-    TrainPriority trainPriority = PRIORITY_1;
-    bool trainIsWaiting = false;
+    TrainPriority trainPriority = PRIORITY_1; // remove
+    bool trainIsWaiting = false; // remove
     ControlSlider* trainSlider = nullptr;
 
 signals:
 
 public slots:
-    void waitingEnded();
+    void waitingEnded(); // remove
 };
 
 #endif // CONTROLTRAIN_H

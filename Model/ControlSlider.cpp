@@ -32,5 +32,4 @@ void ControlSlider::sliderValueChanged(int value)
 {
     label->setText(QString::number(value));
     setControlValue();
-    emit controlValueChanged(sliderID, controlValue);
 }

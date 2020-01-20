@@ -41,7 +41,7 @@ public:
     void setToggle(bool switchState);
     void setReservation(bool reservation);
     bool isReserved();
-    bool getSwitchToggle();
+    bool getSwitchState();
     ControlAction* getControlAction();
     QString getResource();
     QIcon getIcon();

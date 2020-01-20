@@ -26,8 +26,6 @@
 class ControlViewModel : public QObject
 {
     Q_OBJECT
-    QThread controllerThread;
-    QMutex mutex;
 public:
     enum Control{
         MAIN_CONTROL,
@@ -66,8 +64,6 @@ public:
     void loadTrainPosition();
 
 private:
-    const int senderID = 8136;
-    const int receiverID = 8137;
     const int MAX_TRAINS = 3;
     int insertedTrains = 0;
     bool aiIsEnabled = false;
@@ -97,8 +93,7 @@ public slots:
     void aiEnabled(bool state);
     void stopAllChannels();
     void controlObjectClicked(ControlObject::ObjectType objectType, int objectID);
-    void readSensorsData(QByteArray data);
-    void sendControlData();
+    void sensorsData(QByteArray data);
     void resetTrainsTriggered();
     void controllerConnected();
 };

@@ -36,7 +36,7 @@ bool ControlSwitch::isReserved()
     return switchReservation;
 }
 
-bool ControlSwitch::getSwitchToggle()
+bool ControlSwitch::getSwitchState()
 {
     return switchToggle;
 }

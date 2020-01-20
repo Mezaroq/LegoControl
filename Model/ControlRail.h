@@ -40,8 +40,6 @@ public:
     void setNextLight(ControlLight *controlLight);
     void setReservation(bool reservation);
     void setTrainFrom(TrainFrom trainFrom);
-    void clearEntryCounter();
-    void clearStopSensorStatus();
     ControlTrain* getTrain(bool remove = false);
     QList<ControlRail*> getLastRails();
     QList<ControlRail*> getNextRails();

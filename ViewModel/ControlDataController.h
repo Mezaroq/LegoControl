@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-#include <QDataStream>
+#include <QDebug>
 
 class ControlDataController : public QObject
 {
@@ -13,23 +13,20 @@ class ControlDataController : public QObject
 public:
     explicit ControlDataController(QObject *parent = nullptr);
     ~ControlDataController();
-    void connectController();
+    void connectController(QSerialPortInfo port);
+    void sendData(QByteArray data);
 
 private:
     const int DATA_SIZE = 4;
     const int SENSORS = 32;
-    QSerialPort *sender = nullptr; //one plate: controller
-    QSerialPort *receiver = nullptr;//one plate: remove
+    QSerialPort *controller = nullptr;
 
 signals:
     void controllerConnected();
-    void receiverSignal(); //one plate: remove
-    void sensorsData(QByteArray);//one plate: controllerData
+    void sensorsData(QByteArray);
 
 public slots:
-    void senderReady(); //one plate: controllerReady
-    void receiverReady(); //one plate: remove
-    void sendData(QByteArray data);
+    void controllerReady();
 };
 
 #endif // DATACONTROLLER_H

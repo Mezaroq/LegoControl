@@ -74,7 +74,7 @@ void ControlDebugger::update()
     row = 0;
     for (ControlSwitch *cswitch : switches) {
         switchTable->item(row, SWITCH_ID)->setText( getSwitchID(cswitch->getSwitchID()) );
-        switchTable->item(row, SWITCH_TOGGLE)->setText( cswitch->getSwitchToggle() ? "TOGGLED" : "NORMAL" );
+        switchTable->item(row, SWITCH_TOGGLE)->setText( cswitch->getSwitchState() ? "TOGGLED" : "NORMAL" );
         switchTable->item(row, SWITCH_RESERVATION)->setText( cswitch->isReserved() ? "TRUE" : "FALSE" );
         row++;
     }
@@ -151,7 +151,7 @@ void ControlDebugger::setDebuggerData()
     row = 0;
     for (ControlSwitch *cswitch : switches) {
         switchTable->setItem(row, SWITCH_ID, new QTableWidgetItem( getSwitchID(cswitch->getSwitchID()) ));
-        switchTable->setItem(row, SWITCH_TOGGLE, new QTableWidgetItem( cswitch->getSwitchToggle() ? "TOGGLED" : "NORMAL" ));
+        switchTable->setItem(row, SWITCH_TOGGLE, new QTableWidgetItem( cswitch->getSwitchState() ? "TOGGLED" : "NORMAL" ));
         switchTable->setItem(row, SWITCH_RESERVATION, new QTableWidgetItem( cswitch->isReserved() ? "TRUE" : "FALSE" ));
 
         switchTable->item(row, SWITCH_ID)->setTextAlignment(Qt::AlignCenter);

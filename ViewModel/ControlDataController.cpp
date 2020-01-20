@@ -7,64 +7,41 @@ ControlDataController::ControlDataController(QObject *parent) : QObject(parent)
 
 ControlDataController::~ControlDataController()
 {
-    if (sender)
-        sender->close();
-    if (receiver)
-        receiver->close();
-//    if (controller) //one plate
-//        controller->close();
+    if (controller)
+        controller->close();
 }
 
-void ControlDataController::connectController()
+void ControlDataController::connectController(QSerialPortInfo port)
 {
-    bool senderStatus = false, receiverStatus = false;
-    for (auto port : QSerialPortInfo::availablePorts()) {
-        if (port.serialNumber() == "NXP-7S") { //SENDER
-            sender = new QSerialPort(port);
-            if (sender->open(QIODevice::ReadWrite)) {
-                sender->setBaudRate(QSerialPort::Baud115200);
-                sender->clear();
-                connect(sender, SIGNAL(readyRead()), this, SLOT(senderReady()));
-                senderStatus = true;
-            }
-        } else if (port.serialNumber() == "NXP-77") { //RECEIVER
-            receiver = new QSerialPort(port);
-            if (receiver->open(QIODevice::ReadWrite)) {
-                receiver->setBaudRate(QSerialPort::Baud115200);
-                receiver->clear();
-                connect(receiver, SIGNAL(readyRead()), this, SLOT(receiverReady()));
-                receiverStatus = true;
-            }
+    if (port.vendorIdentifier() == 8137) {
+        controller = new QSerialPort(port);
+        if (controller->open(QIODevice::ReadWrite)) {
+            controller->setBaudRate(QSerialPort::Baud115200);
+            controller->clear();
+            connect(controller, SIGNAL(readyRead()), this, SLOT(controllerReady()));
+            emit controllerConnected();
         }
     }
-    if (senderStatus & receiverStatus) {
-        emit controllerConnected();
-    }
 }
 
-void ControlDataController::senderReady()
+void ControlDataController::controllerReady()
 {
     QByteArray data;
-    uint32_t *buffer = reinterpret_cast<uint32_t*>(sender->read(DATA_SIZE).data());
+    uint32_t *buffer = reinterpret_cast<uint32_t*>(controller->readAll().data());
 
     for (int sensor = 0; sensor < SENSORS; sensor++) {
         if (GET_BIT(buffer[0], sensor)) {
             data[sensor] = 0;
         } else {
-            data[sensor] = 1;
+            data[sensor] = 0;
         }
     }
 
+//    qDebug() << data.toHex('|');
     emit sensorsData(data);
-}
-
-void ControlDataController::receiverReady()
-{
-    receiver->clear();
-    emit receiverSignal();
 }
 
 void ControlDataController::sendData(QByteArray data)
 {
-    receiver->write(data);
+    controller->write(data);
 }

@@ -40,7 +40,7 @@ public:
     void setControlAction(ControlAction* controlAction);
     void toggle();
     void setToggle(LightState lightState);
-    bool getLightToggle();
+    bool getLightState();
     ControlAction* getControlAction();
     QString getResource();
     QIcon getIcon();
