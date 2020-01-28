@@ -39,14 +39,14 @@ public:
     };
 
     enum TrainPriority{
-        PRIORITY_8,
-        PRIORITY_7,
-        PRIORITY_6,
-        PRIORITY_5,
-        PRIORITY_4,
-        PRIORITY_3,
+        PRIORITY_0,
+        PRIORITY_1,
         PRIORITY_2,
-        PRIORITY_1
+        PRIORITY_3,
+        PRIORITY_4,
+        PRIORITY_5,
+        PRIORITY_6,
+        PRIORITY_7
     };
 
     enum TrainDirection{

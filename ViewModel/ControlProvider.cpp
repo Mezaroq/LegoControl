@@ -53,8 +53,8 @@ void ControlProvider::setObjectsData()
     prepareRails();
     prepareTrains();
     prepareSensors();
-    switchMap->setSwitches(switches);
-    switchMap->setRails(rails);
+    switchMap->setSwitches(switches); //remove
+    switchMap->setRails(rails); //remove
     viewModel->setSliders(sliders);
     viewModel->setLights(lights);
     viewModel->setSwitches(switches);
@@ -62,7 +62,6 @@ void ControlProvider::setObjectsData()
     viewModel->setTrains(trains);
     viewModel->setStatusBar(statusBar);
     viewModel->setSensors(sensors);
-    viewModel->setAI(ai);
     viewModel->setSerialPortInformation();
     ai->setRails(rails);
     ai->setTrains(trains);
@@ -95,7 +94,6 @@ void ControlProvider::prepareSliders()
         sliderList.next();
         sliderList.value()->setID(sliderList.key());
         sliderList.value()->setLabel(labels.value(sliderList.key()));
-        sliderList.value()->setControlValue();
     }
 }
 
@@ -221,16 +219,14 @@ void ControlProvider::prepareRails()
     rails.value(ControlRail::RAIL_SECTION_10)->setLastLight(lights.value(ControlLight::LIGHT_20));
     rails.value(ControlRail::RAIL_SECTION_10)->setNextLight(lights.value(ControlLight::LIGHT_21));
 
-    QMapIterator<int, ControlRail*> railList(rails);
-    while (railList.hasNext()) {
-        railList.next();
-        connect(railList.value(), SIGNAL(objectChanged()), scene, SLOT(update()));
-        connect(railList.value(), SIGNAL(trainEnters(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEnters(ControlTrain::TrainID, ControlRail::RailID)));
-        connect(railList.value(), SIGNAL(trainEntered(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEntered(ControlTrain::TrainID, ControlRail::RailID)));
-        connect(railList.value(), SIGNAL(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)));
-        connect(railList.value(), SIGNAL(trainLeft(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeft(ControlTrain::TrainID, ControlRail::RailID)));
-        connect(railList.value(), SIGNAL(trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(stopSensorActivated(ControlTrain::TrainID, ControlRail::RailID)));
-        scene->addItem(railList.value());
+    for (auto rail : rails) {
+        connect(rail, SIGNAL(objectChanged()), scene, SLOT(update()));
+        connect(rail, SIGNAL(trainEnters(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEnters(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(rail, SIGNAL(trainEntered(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEntered(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(rail, SIGNAL(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(rail, SIGNAL(trainLeft(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeft(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(rail, SIGNAL(trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(stopSensorActivated(ControlTrain::TrainID, ControlRail::RailID)));
+        scene->addItem(rail);
     }
     scene->addItem(new QGraphicsPixmapItem(ControlRail::getResource(ControlRail::RAIL_SECTION_11)));
 
@@ -256,10 +252,9 @@ void ControlProvider::prepareTrains()
     trains.insert(ControlTrain::TRAIN_7, new ControlTrain(ControlTrain::TRAIN_7, sliders.value(ControlSlider::SLIDER_CHANNEL_7)));
     trains.insert(ControlTrain::TRAIN_8, new ControlTrain(ControlTrain::TRAIN_8, sliders.value(ControlSlider::SLIDER_CHANNEL_8)));
 
-    int priority = 7;
+    int priority = 0;
     for (ControlTrain *train : trains) {
-        train->setTrainPriority(ControlTrain::TrainPriority(priority));
-        priority--;
+        train->setTrainPriority(ControlTrain::TrainPriority(priority++));
     }
 }
 

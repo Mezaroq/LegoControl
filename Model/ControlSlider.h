@@ -21,12 +21,9 @@ public:
     explicit ControlSlider(QWidget *parent = nullptr);
     void setID(int id);
     void setLabel(ControlLabel *label);
-    void setControlValue();
-    int getControlValue();
 
 private:
     int sliderID;
-    int controlValue;
     ControlLabel *label = nullptr;
 
 public slots:

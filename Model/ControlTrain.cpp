@@ -36,7 +36,9 @@ ControlTrain::TrainID ControlTrain::getTrainID()
 
 int ControlTrain::getTrainSpeed()
 {
-    return trainSlider->getControlValue();
+    if (trainSlider->value() == SPEED_NEUTRAL)
+        return SPEED_BREAKE;
+    return trainSlider->value();
 }
 
 ControlTrain::TrainPriority ControlTrain::getTrainPriority()

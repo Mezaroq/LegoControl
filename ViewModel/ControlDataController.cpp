@@ -33,11 +33,10 @@ void ControlDataController::controllerReady()
         if (GET_BIT(buffer[0], sensor)) {
             data[sensor] = 0;
         } else {
-            data[sensor] = 0;
+            data[sensor] = 1;
         }
     }
 
-//    qDebug() << data.toHex('|');
     emit sensorsData(data);
 }
 

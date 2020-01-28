@@ -1,6 +1,4 @@
 #include "ControlViewModel.h"
-#include <QDir>
-#include <QTimer> //debug timer, delete after debug
 
 ControlViewModel::ControlViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
@@ -52,51 +50,41 @@ void ControlViewModel::setStatusBar(QStatusBar *statusBar)
 
 void ControlViewModel::setSensorsData(QByteArray byteArray)
 {
-    sensors.value(ControlSensor::SENSOR_1)->setState(byteArray.at(10));
-    sensors.value(ControlSensor::SENSOR_4)->setState(byteArray.at(13));
-    sensors.value(ControlSensor::SENSOR_5)->setState(byteArray.at(3));
-    sensors.value(ControlSensor::SENSOR_8)->setState(byteArray.at(5));
-    sensors.value(ControlSensor::SENSOR_9)->setState(byteArray.at(14));
-    sensors.value(ControlSensor::SENSOR_12)->setState(byteArray.at(4));
-
-    sensors.value(ControlSensor::SENSOR_13)->setState(byteArray.at(16));
-    sensors.value(ControlSensor::SENSOR_16)->setState(byteArray.at(19));
-    sensors.value(ControlSensor::SENSOR_17)->setState(byteArray.at(20));
-    sensors.value(ControlSensor::SENSOR_20)->setState(byteArray.at(23));
-
-    sensors.value(ControlSensor::SENSOR_21)->setState(byteArray.at(31));
-    sensors.value(ControlSensor::SENSOR_24)->setState(byteArray.at(29));
-    sensors.value(ControlSensor::SENSOR_25)->setState(byteArray.at(26));
-    sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(24));
+    sensors.value(ControlSensor::SENSOR_1)->setState(byteArray.at(13));
+    sensors.value(ControlSensor::SENSOR_4)->setState(byteArray.at(10));
+    sensors.value(ControlSensor::SENSOR_5)->setState(byteArray.at(4));
+    sensors.value(ControlSensor::SENSOR_8)->setState(byteArray.at(2));
+    sensors.value(ControlSensor::SENSOR_9)->setState(byteArray.at(9));
+    sensors.value(ControlSensor::SENSOR_12)->setState(byteArray.at(3));
+    sensors.value(ControlSensor::SENSOR_13)->setState(byteArray.at(24));
+    sensors.value(ControlSensor::SENSOR_16)->setState(byteArray.at(27));
+    sensors.value(ControlSensor::SENSOR_17)->setState(byteArray.at(28));
+    sensors.value(ControlSensor::SENSOR_20)->setState(byteArray.at(31));
+    sensors.value(ControlSensor::SENSOR_21)->setState(byteArray.at(16));
+    sensors.value(ControlSensor::SENSOR_24)->setState(byteArray.at(18));
+    sensors.value(ControlSensor::SENSOR_25)->setState(byteArray.at(21));
+    sensors.value(ControlSensor::SENSOR_28)->setState(byteArray.at(23));
 
 
-    sensors.value(ControlSensor::SENSOR_2)->setState(byteArray.at(11));
-    sensors.value(ControlSensor::SENSOR_3)->setState(byteArray.at(12));
-    sensors.value(ControlSensor::SENSOR_6)->setState(byteArray.at(15));
-    sensors.value(ControlSensor::SENSOR_7)->setState(byteArray.at(0));
-    sensors.value(ControlSensor::SENSOR_10)->setState(byteArray.at(2));
-    sensors.value(ControlSensor::SENSOR_11)->setState(byteArray.at(1));
-
-    sensors.value(ControlSensor::SENSOR_14)->setState(byteArray.at(17));
-    sensors.value(ControlSensor::SENSOR_15)->setState(byteArray.at(18));
-    sensors.value(ControlSensor::SENSOR_18)->setState(byteArray.at(21));
-    sensors.value(ControlSensor::SENSOR_19)->setState(byteArray.at(22));
-
-    sensors.value(ControlSensor::SENSOR_22)->setState(byteArray.at(30));
-    sensors.value(ControlSensor::SENSOR_23)->setState(byteArray.at(28));
-    sensors.value(ControlSensor::SENSOR_26)->setState(byteArray.at(27));
-    sensors.value(ControlSensor::SENSOR_27)->setState(byteArray.at(25));
-}
-
-void ControlViewModel::setAI(ControlAiViewModel *ai)
-{
-    this->ai = ai;
+    sensors.value(ControlSensor::SENSOR_2)->setState(byteArray.at(12));
+    sensors.value(ControlSensor::SENSOR_3)->setState(byteArray.at(11));
+    sensors.value(ControlSensor::SENSOR_6)->setState(byteArray.at(8));
+    sensors.value(ControlSensor::SENSOR_7)->setState(byteArray.at(7));
+    sensors.value(ControlSensor::SENSOR_10)->setState(byteArray.at(5));
+    sensors.value(ControlSensor::SENSOR_11)->setState(byteArray.at(6));
+    sensors.value(ControlSensor::SENSOR_14)->setState(byteArray.at(25));
+    sensors.value(ControlSensor::SENSOR_15)->setState(byteArray.at(26));
+    sensors.value(ControlSensor::SENSOR_18)->setState(byteArray.at(29));
+    sensors.value(ControlSensor::SENSOR_19)->setState(byteArray.at(30));
+    sensors.value(ControlSensor::SENSOR_22)->setState(byteArray.at(17));
+    sensors.value(ControlSensor::SENSOR_23)->setState(byteArray.at(19));
+    sensors.value(ControlSensor::SENSOR_26)->setState(byteArray.at(20));
+    sensors.value(ControlSensor::SENSOR_27)->setState(byteArray.at(22));
 }
 
 void ControlViewModel::collectControlData()
 {
     controlData.clear();
-    controlData[MAIN_CONTROL] = static_cast<char>(128);
 
     controlData[TRAIN_CONTROL_1] = static_cast<char>(trains.value(ControlTrain::TRAIN_1)->getTrainSpeed());
     controlData[TRAIN_CONTROL_2] = static_cast<char>(trains.value(ControlTrain::TRAIN_2)->getTrainSpeed());
@@ -167,7 +155,9 @@ void ControlViewModel::collectControlData()
                                                  32 * !lights.value( ControlLight::LIGHT_2)->getLightState() +
                                                  64 * lights.value( ControlLight::LIGHT_7)->getLightState() +
                                                 128 * !lights.value( ControlLight::LIGHT_7)->getLightState() );
-    controlData[LIGHT_CONTROL_7] = 0;
+
+    controlData[TRANSMISSION_CONTROL] = getTransmissionControl();
+    lastControlData = controlData;
 }
 
 void ControlViewModel::setSerialPortInformation()
@@ -175,16 +165,16 @@ void ControlViewModel::setSerialPortInformation()
     bool controllerStatus = false;
 
     for (QSerialPortInfo port : QSerialPortInfo::availablePorts()) {
-        qDebug() << port.vendorIdentifier();
         if (port.vendorIdentifier() == 8137) {
             controllerStatus = true;
+            break;
         }
     }
 
     statusBar->showMessage(QString("Controller: " + QString(controllerStatus ? "(Disconnected)" : ("none"))));
 }
 
-void ControlViewModel::loadTrainPosition()
+void ControlViewModel::loadTrainPosition() //REMAKE
 {
     loadTrains->setText("Set current trains position,\n(select highlight rail using mouse)\nTrain 1 -> Train 2 -> Train 3");
     loadTrains->setStandardButtons(QMessageBox::Ok);
@@ -196,8 +186,31 @@ void ControlViewModel::loadTrainPosition()
                 continue;
             rail->graphicsEffect()->setEnabled(true);
         }
-        trainSelectionMode = true;
+        selectionMode = true;
     }
+}
+
+char ControlViewModel::getTransmissionControl()
+{
+    if (lastControlData.isEmpty()) {
+        return -1;
+    }
+
+    char transmissionControl = 0;
+
+    if (lastControlData[LIGHT_CONTROL_1] != controlData[LIGHT_CONTROL_1] || lastControlData[LIGHT_CONTROL_2] != controlData[LIGHT_CONTROL_2])
+        transmissionControl |= LIGHT_TRANSMISSION_CONTROL_1;
+
+    if (lastControlData[LIGHT_CONTROL_3] != controlData[LIGHT_CONTROL_3] || lastControlData[LIGHT_CONTROL_4] != controlData[LIGHT_CONTROL_4])
+        transmissionControl |= LIGHT_TRANSMISSION_CONTROL_2;
+
+    if (lastControlData[LIGHT_CONTROL_5] != controlData[LIGHT_CONTROL_5] || lastControlData[LIGHT_CONTROL_6] != controlData[LIGHT_CONTROL_6])
+        transmissionControl |= LIGHT_TRANSMISSION_CONTROL_3;
+
+    if (lastControlData[SWITCH_CONTROL_1] != controlData[SWITCH_CONTROL_1] || lastControlData[SWITCH_CONTROL_2] != controlData[SWITCH_CONTROL_2])
+        transmissionControl |= SWITCH_TRANSMISSION_CONTROL_1;
+
+    return transmissionControl;
 }
 
 void ControlViewModel::setDataController()
@@ -219,22 +232,18 @@ void ControlViewModel::runTriggered()
 
 void ControlViewModel::aiEnabled(bool state)
 {
-    aiIsEnabled = state;
-    ai->setAiEnabled(state);
+    //TODO
 }
 
 void ControlViewModel::stopAllChannels()
 {
-    QMapIterator<int, ControlSlider*> sliderList(sliders);
-    while (sliderList.hasNext()) {
-        sliderList.next();
-        sliderList.value()->setValue(0);
-    }
+    for (auto slider : sliders)
+        slider->setValue(0);
 }
 
-void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType, int objectID)
-{   
-    if (trainSelectionMode) {
+void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType, int objectID) //REMAKE
+{
+    if (selectionMode) {
         if (objectType == ControlObject::OBJECT_RAIL) {
             if (objectID != ControlRail::RAIL_SECTION_4 && objectID != ControlRail::RAIL_SECTION_7 && objectID != ControlRail::RAIL_SECTION_10) {
                 if (rails.value(objectID)->getTrain() == nullptr) {
@@ -243,7 +252,7 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
                     rails.value(objectID)->setTrain(trains.value(insertedTrains++));
 
                     if (insertedTrains == MAX_TRAINS) {
-                        trainSelectionMode = false;
+                        selectionMode = false;
                         insertedTrains = 0;
                         for (ControlRail *rail : rails) {
                             if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
@@ -272,38 +281,19 @@ void ControlViewModel::controlObjectClicked(ControlObject::ObjectType objectType
 void ControlViewModel::sensorsData(QByteArray data)
 {
     setSensorsData(data);
-    if (aiIsEnabled)
-        ai->run();
     collectControlData();
-    static int counter = 0;
-    if (counter % 100 == 0)
-        qDebug() << counter++;
-    counter++;
     dataController->sendData(controlData);
 }
 
-void ControlViewModel::resetTrainsTriggered()
+void ControlViewModel::resetTrainsTriggered() //REMAKE
 {
-    loadTrains->setText("Reset sensors data? Press Reset \nReset all? Press Yes to All \nReset all and set Trains? Press Ok");
-    loadTrains->setStandardButtons(QMessageBox::Button::Reset | QMessageBox::Button::YesAll | QMessageBox::Button::Ok | QMessageBox::Button::Cancel);
+    loadTrains->setText("Reset all selected trains?");
+    loadTrains->setStandardButtons(QMessageBox::Button::Ok | QMessageBox::Button::Cancel);
     loadTrains->setIcon(QMessageBox::Icon::Question);
 
-    switch (loadTrains->exec()) {
-    case QMessageBox::Reset:
+    if (loadTrains->exec() == QMessageBox::Ok) {
         for (auto rail : rails) {
             rail->getTrain(true);
-        }
-        break;
-    case QMessageBox::YesAll:
-        for (auto rail : rails) {
-            rail->getTrain(true);
-            rail->setReservation(false);
-        }
-        break;
-    case QMessageBox::Ok:
-        for (auto rail : rails) {
-            rail->getTrain(true);
-            rail->setReservation(false);
         }
         for (ControlRail *rail : rails) {
             if (rail->getObjectID() == ControlRail::RAIL_SECTION_4 || rail->getObjectID() == ControlRail::RAIL_SECTION_7 || rail->getObjectID() == ControlRail::RAIL_SECTION_10)
@@ -311,11 +301,7 @@ void ControlViewModel::resetTrainsTriggered()
             rail->graphicsEffect()->setEnabled(true);
         }
         insertedTrains = 0;
-        trainSelectionMode = true;
-
-        break;
-    default:
-        break;
+        selectionMode = true;
     }
 }
 
@@ -324,5 +310,4 @@ void ControlViewModel::controllerConnected()
     statusBar->showMessage("Controller: (connected)");
     collectControlData();
     dataController->sendData(controlData);
-//    loadTrainPosition();
 }

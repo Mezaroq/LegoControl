@@ -140,7 +140,6 @@ void ControlAiViewModel::manageMovingTrains()
 void ControlAiViewModel::manageStopTrains()
 {
     for (auto trainID : stopTrains) {
-        qDebug() << "Stop train ID:" << trainID+1;
         if (trains.value(trainID)->isWaiting())
             continue;
 
@@ -257,10 +256,6 @@ void ControlAiViewModel::manageTrainSpeed(ControlTrain::TrainID trainID, SpeedTy
 
 bool ControlAiViewModel::prepareTrainWay(ControlTrain *train, ControlRail *from, ControlRail *to, ControlTrain::TrainDirection direction, bool isEndLoop, bool ignoreFlag)
 {
-//    qDebug() << "Switches are free:" << switchMap->checkSwitchesAreNotReserved(from->getRailID(), to->getRailID(), direction);
-//    qDebug() << "Rails are free" << checkIfRailsAreNotReseved(direction, from, to, isEndLoop);
-//    qDebug() << "Not Exist Train with higher priority:" << checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority(), ignoreFlag);
-
     if (checkIfNotExistTrainWithHigherPriority(direction, from, train->getTrainPriority(), ignoreFlag)) {
         if (checkIfRailsAreNotReseved(direction, from, to, isEndLoop)) {
             if (switchMap->checkSwitchesAreNotReserved(from->getRailID(), to->getRailID(), direction)) {
@@ -502,6 +497,6 @@ void ControlAiViewModel::stopSensorActivated(ControlTrain::TrainID trainID, Cont
         timetable->increaseLoopCounter();
         stopTrains.insert(trains.value(trainID)->getTrainPriority(), trainID);
     } else {
-        supportManualDriving(trainID, railID);
+//        supportManualDriving(trainID, railID);
     }
 }

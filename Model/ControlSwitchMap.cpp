@@ -131,7 +131,6 @@ bool ControlSwitchMap::checkSwitchesAreNotReserved(ControlRail::RailID from,Cont
 
 void ControlSwitchMap::setSwitchReservationAndState(ControlRail::RailID from, ControlRail::RailID to, ControlTrain::TrainDirection direction)
 {
-    qDebug() << from << to << direction;
     switch (direction) {
     case ControlTrain::DIRECTION_FORWARD:
         switch (from) {

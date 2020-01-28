@@ -68,8 +68,8 @@ ControlRail::TrainFrom ControlRail::getTrainFrom()
 ControlTrain *ControlRail::getTrain(bool remove)
 {
     if (remove) {
-        entryCounter = 0;
         trainFrom = UNDEFINED;
+        entryCounter = 0;
         railReservation = false;
         setOpacity(1);
         ControlTrain *temp = train;
@@ -108,47 +108,63 @@ void ControlRail::sensorChanged(ControlSensor::SensorType sensorType)
 {
     switch (sensorType) {
     case ControlSensor::LAST_ENTRY_SENSOR:
-        if (train == nullptr && entryCounter == 0) {
-            entryCounter = 1;
-            emit trainEnters(getLastRails().first()->getTrain()->getTrainID(), railID);
-        } else if (train == nullptr && entryCounter == 1) {
-            trainFrom = FROM_LAST;
-            setTrain(getLastRails().first()->getTrain(true));
-            emit trainEntered(train->getTrainID(), railID);
-        } else if(train != nullptr && entryCounter == 2) {
-            entryCounter = 1;
-            emit trainLeaving(train->getTrainID(), railID);
-        } else if(train != nullptr && entryCounter == 1) {
-            emit trainLeft(train->getTrainID(), railID);
-            getLastRails().first()->setTrain(getTrain(true));
+        if ((train == nullptr) && (entryCounter == 0)) {
+            if (getLastRails().first()->getTrain() != nullptr) {
+                entryCounter = 1;
+                emit trainEnters(getLastRails().first()->getTrain()->getTrainID(), railID);
+            }
+        } else if ((train == nullptr) && (entryCounter == 1)) {
+            if (getLastRails().first()->getTrain() != nullptr) {
+                trainFrom = FROM_LAST;
+                setTrain(getLastRails().first()->getTrain(true));
+                emit trainEntered(train->getTrainID(), railID);
+            }
+        } else if ((train != nullptr) && (entryCounter == 2)) {
+            if (train != nullptr) {
+                entryCounter = 1;
+                emit trainLeaving(train->getTrainID(), railID);
+            }
+        } else if((train != nullptr) && (entryCounter == 1)) {
+            if (train != nullptr) {
+                emit trainLeft(train->getTrainID(), railID);
+                getLastRails().first()->setTrain(getTrain(true));
+            }
         }
         break;
     case ControlSensor::LAST_STOP_SENSOR:
-        if (train != nullptr && trainFrom == FROM_NEXT) {
+        if ((train != nullptr) && (trainFrom == FROM_NEXT)) {
             trainFrom = UNDEFINED;
             emit trainActivatedStop(train->getTrainID(), railID);
         }
         break;
     case ControlSensor::NEXT_STOP_SENSOR:
-        if (train != nullptr && trainFrom == FROM_LAST) {
+        if ((train != nullptr) && (trainFrom == FROM_LAST)) {
             trainFrom = UNDEFINED;
             emit trainActivatedStop(train->getTrainID(), railID);
         }
         break;
     case ControlSensor::NEXT_ENTRY_SENSOR:
-        if (train == nullptr && entryCounter == 0) {
-            entryCounter = 1;
-            emit trainEnters(getNextRails().first()->getTrain()->getTrainID(), railID);
+        if ((train == nullptr) && (entryCounter == 0)) {
+            if (getNextRails().first()->getTrain() != nullptr) {
+                entryCounter = 1;
+                emit trainEnters(getNextRails().first()->getTrain()->getTrainID(), railID);
+            }
         } else if (train == nullptr && entryCounter == 1) {
-            trainFrom = FROM_NEXT;
-            setTrain(getNextRails().first()->getTrain(true));
-            emit trainEntered(train->getTrainID(), railID);
+            if (getNextRails().first()->getTrain()) {
+                trainFrom = FROM_NEXT;
+                setTrain(getNextRails().first()->getTrain(true));
+                emit trainEntered(train->getTrainID(), railID);
+            }
         } else if(train != nullptr && entryCounter == 2) {
-            entryCounter = 1;
-            emit trainLeaving(train->getTrainID(), railID);
+            if (train != nullptr) {
+                entryCounter = 1;
+                emit trainLeaving(train->getTrainID(), railID);
+            }
         } else if(train != nullptr && entryCounter == 1) {
-            emit trainLeft(train->getTrainID(), railID);
-            getNextRails().first()->setTrain(getTrain(true));
+            if (train != nullptr) {
+                emit trainLeft(train->getTrainID(), railID);
+                getNextRails().first()->setTrain(getTrain(true));
+            }
         }
         break;
     }

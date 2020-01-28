@@ -9,9 +9,12 @@ ControlSensor::ControlSensor(SensorID sensorID, SensorType sensorType, QObject *
 
 void ControlSensor::setState(bool newState)
 {
-    if ((newState == true) && (state != newState)) //ignore 2x true signal
+    if ((newState == true) && (state != newState)) {
+        state = true;
         emit signalChanged(sensorType);
-    state = newState;
+    } else if ((newState == false) && (state != newState)) {
+        state = false;
+    }
 }
 
 void ControlSensor::debugSignal()

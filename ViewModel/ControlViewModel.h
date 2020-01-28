@@ -8,27 +8,24 @@
 #include <Model/ControlRail.h>
 #include <Model/ControlTrain.h>
 #include <Model/ControlSensor.h>
-#include <ViewModel/ControlAiViewModel.h>
 #include <ViewModel/ControlDataController.h>
-#include <QThread>
 #include <QMap>
 #include <QDebug>
 #include <QStatusBar>
 #include <QList>
-#include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QByteArray>
 #include <QMessageBox>
 #include <QMainWindow>
 #include <QGraphicsBlurEffect>
-#include <QMutex>
+#include <QTimer>
 
 class ControlViewModel : public QObject
 {
     Q_OBJECT
 public:
     enum Control{
-        MAIN_CONTROL,
+        TRANSMISSION_CONTROL,
         TRAIN_CONTROL_1,
         TRAIN_CONTROL_2,
         TRAIN_CONTROL_3,
@@ -44,9 +41,15 @@ public:
         LIGHT_CONTROL_3,
         LIGHT_CONTROL_4,
         LIGHT_CONTROL_5,
-        LIGHT_CONTROL_6,
-        LIGHT_CONTROL_7
+        LIGHT_CONTROL_6
     };
+    enum TransmissionControl{
+        LIGHT_TRANSMISSION_CONTROL_1 = 0x01,
+        LIGHT_TRANSMISSION_CONTROL_2 = 0x02,
+        LIGHT_TRANSMISSION_CONTROL_3 = 0x04,
+        SWITCH_TRANSMISSION_CONTROL_1 = 0x08
+    };
+
     explicit ControlViewModel(QMainWindow* mainWindow, QObject *parent = nullptr);
     ~ControlViewModel();
     void setSliders(QMap<int, ControlSlider*> sliders);
@@ -58,17 +61,16 @@ public:
     void setStatusBar(QStatusBar *statusBar);
     void setMainWindow(QMainWindow mainWindow);
     void setSensorsData(QByteArray byteArray);
-    void setAI(ControlAiViewModel* ai);
     void collectControlData();
     void setSerialPortInformation();
     void loadTrainPosition();
+    char getTransmissionControl();
 
 private:
     const int MAX_TRAINS = 3;
     int insertedTrains = 0;
-    bool aiIsEnabled = false;
-    bool trainSelectionMode = false;
-    ControlAiViewModel *ai;
+    bool selectionMode = false;
+    ControlDataController *dataController = nullptr;
     QMap<int, ControlSlider*> sliders;
     QMap<int, ControlLight*> lights;
     QMap<int, ControlSwitch*> switches;
@@ -77,7 +79,7 @@ private:
     QMap<int, ControlSensor*> sensors;
     QStatusBar *statusBar;
     QByteArray controlData;
-    ControlDataController *dataController = nullptr;
+    QByteArray lastControlData;
     QMessageBox* loadTrains;
     QMessageBox* resetTrains;
     QMainWindow* mainWindow;
