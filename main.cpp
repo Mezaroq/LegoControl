@@ -1,10 +1,10 @@
-#include <ViewModel/ControlProvider.h>
+#include <ViewModel/MainProvider.h>
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    ControlProvider p;
+    MainProvider p;
 
     return a.exec();
 }

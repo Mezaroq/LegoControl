@@ -16,49 +16,51 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Model/ControlAction.cpp \
-    Model/ControlButton.cpp \
-    Model/ControlLabel.cpp \
-    Model/ControlLight.cpp \
-    Model/ControlObject.cpp \
-    Model/ControlRail.cpp \
-    Model/ControlSensor.cpp \
-    Model/ControlSlider.cpp \
-    Model/ControlSwitch.cpp \
+    Model/ActionModel.cpp \
+    Model/ButtonModel.cpp \
     Model/ControlSwitchMap.cpp \
     Model/ControlTimetable.cpp \
-    Model/ControlTrain.cpp \
-    View/ControlDebugger.cpp \
-    View/ControlScene.cpp \
-    View/ControlView.cpp \
+    Model/LabelModel.cpp \
+    Model/LightModel.cpp \
+    Model/ObjectModel.cpp \
+    Model/RailModel.cpp \
+    Model/SensorModel.cpp \
+    Model/SliderModel.cpp \
+    Model/StationModel.cpp \
+    Model/SwitchModel.cpp \
+    Model/TrainModel.cpp \
+    View/DebuggerView.cpp \
+    View/GraphicsView.cpp \
     View/MainWindow.cpp \
+    View/SceneView.cpp \
     ViewModel/ControlAiViewModel.cpp \
-    ViewModel/ControlDataController.cpp \
-    ViewModel/ControlProvider.cpp \
-    ViewModel/ControlViewModel.cpp \
+    ViewModel/DataViewModel.cpp \
+    ViewModel/MainProvider.cpp \
+    ViewModel/MainViewModel.cpp \
     main.cpp
 
 HEADERS += \
-    Model/ControlAction.h \
-    Model/ControlButton.h \
-    Model/ControlLabel.h \
-    Model/ControlLight.h \
-    Model/ControlObject.h \
-    Model/ControlRail.h \
-    Model/ControlSensor.h \
-    Model/ControlSlider.h \
-    Model/ControlSwitch.h \
+    Model/ActionModel.h \
+    Model/ButtonModel.h \
     Model/ControlSwitchMap.h \
     Model/ControlTimetable.h \
-    Model/ControlTrain.h \
-    View/ControlDebugger.h \
-    View/ControlScene.h \
-    View/ControlView.h \
+    Model/LabelModel.h \
+    Model/LightModel.h \
+    Model/ObjectModel.h \
+    Model/RailModel.h \
+    Model/SensorModel.h \
+    Model/SliderModel.h \
+    Model/StationModel.h \
+    Model/SwitchModel.h \
+    Model/TrainModel.h \
+    View/DebuggerView.h \
+    View/GraphicsView.h \
     View/MainWindow.h \
+    View/SceneView.h \
     ViewModel/ControlAiViewModel.h \
-    ViewModel/ControlDataController.h \
-    ViewModel/ControlProvider.h \
-    ViewModel/ControlViewModel.h
+    ViewModel/DataViewModel.h \
+    ViewModel/MainProvider.h \
+    ViewModel/MainViewModel.h
 
 FORMS += \
     View/controldebugger.ui \

@@ -1,12 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <Model/ControlLabel.h>
-#include <Model/ControlSlider.h>
-#include <Model/ControlButton.h>
-#include <Model/ControlLabel.h>
-#include <View/ControlView.h>
-#include <ViewModel/ControlViewModel.h>
+#include <Model/LabelModel.h>
+#include <Model/SliderModel.h>
+#include <Model/ButtonModel.h>
+#include <Model/LabelModel.h>
+#include <View/GraphicsView.h>
+#include <ViewModel/MainViewModel.h>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
@@ -23,9 +23,9 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    QMap<int, ControlButton*> getButtons();
-    QMap<int, ControlSlider*> getSliders();
-    QMap<int, ControlLabel*> getLabels();
+    QMap<int, ButtonModel*> getButtons();
+    QMap<int, SliderModel*> getSliders();
+    QMap<int, LabelModel*> getLabels();
     QPushButton* getButtonStopAll();
     QToolBar* getToolBar();
     QStatusBar* getStatusBar();
@@ -33,7 +33,7 @@ public:
     QAction* getActionEnableAI();
     QAction* getActionDebugPanel();
     QAction* getActionReset();
-    ControlView* getControlView();
+    GraphicsView* getControlView();
     ~MainWindow();
 
 private:

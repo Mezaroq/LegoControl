@@ -1,8 +1,8 @@
 #ifndef CONTROLTIMETABLE_H
 #define CONTROLTIMETABLE_H
 
-#include <Model/ControlTrain.h>
-#include <Model/ControlRail.h>
+#include <Model/TrainModel.h>
+#include <Model/RailModel.h>
 
 class ControlTimetable
 {
@@ -14,24 +14,24 @@ public:
         LOOP_4,
         LOOP_5
     };
-    ControlTimetable(ControlTrain::TrainID trainID, ControlRail::RailID destinationRailID, Loop loop, ControlTrain::TrainDirection direction);
+    ControlTimetable(TrainModel::TrainID trainID, RailModel::RailID destinationRailID, Loop loop, TrainModel::TrainDirection direction);
     static qint64 nextConnectionID();
-    static ControlTimetable* generateTimetable(ControlTrain::TrainID trainID, int currentRailID);
-    static ControlRail::RailID generateDestinationPoint(ControlTrain::TrainID trainID, int currentRailID);
+    static ControlTimetable* generateTimetable(TrainModel::TrainID trainID, int currentRailID);
+    static RailModel::RailID generateDestinationPoint(TrainModel::TrainID trainID, int currentRailID);
     void increaseLoop();
-    void setCurrentRailID(ControlRail::RailID currentRailID);
-    void setDirection(ControlTrain::TrainDirection direction);
+    void setCurrentRailID(RailModel::RailID currentRailID);
+    void setDirection(TrainModel::TrainDirection direction);
     void increaseLoopCounter();
     void setIgnoreTrain(bool state);
     bool isIgnoreTrain();
     bool isEndLoop();
     qint64 getConnectionID();
-    ControlTrain::TrainID getTrainID();
-    ControlRail::RailID getDestinationRailID();
-    ControlRail::RailID getCurrentRailID();
+    TrainModel::TrainID getTrainID();
+    RailModel::RailID getDestinationRailID();
+    RailModel::RailID getCurrentRailID();
     Loop getLoop();
     int getCurrentLoop();
-    ControlTrain::TrainDirection getDirection();
+    TrainModel::TrainDirection getDirection();
     int getLoopCounter();
 
 private:
@@ -40,10 +40,10 @@ private:
     int loopCounter = 0;
     int currentLoop = 1;
     qint64 connectionID;
-    ControlTrain::TrainID trainID;
-    ControlRail::RailID currentRailID;
-    ControlRail::RailID destinationRailID;
-    ControlTrain::TrainDirection direction;
+    TrainModel::TrainID trainID;
+    RailModel::RailID currentRailID;
+    RailModel::RailID destinationRailID;
+    TrainModel::TrainDirection direction;
     Loop loop;
 };
 

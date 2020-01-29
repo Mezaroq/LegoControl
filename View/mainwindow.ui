@@ -91,7 +91,7 @@
            <number>4</number>
           </property>
           <item row="1" column="2">
-           <widget class="ControlSlider" name="sliderChannel3">
+           <widget class="SliderModel" name="sliderChannel3">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -122,7 +122,7 @@
            </widget>
           </item>
           <item row="2" column="3">
-           <widget class="ControlButton" name="buttonChannel4">
+           <widget class="ButtonModel" name="buttonChannel4">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -171,7 +171,7 @@
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="ControlLabel" name="labelChannel3">
+           <widget class="LabelModel" name="labelChannel3">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -321,7 +321,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="ControlSlider" name="sliderChannel1">
+           <widget class="SliderModel" name="sliderChannel1">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -352,7 +352,7 @@
            </widget>
           </item>
           <item row="0" column="3">
-           <widget class="ControlLabel" name="labelChannel4">
+           <widget class="LabelModel" name="labelChannel4">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -502,7 +502,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="ControlButton" name="buttonChannel1">
+           <widget class="ButtonModel" name="buttonChannel1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -557,7 +557,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="ControlSlider" name="sliderChannel2">
+           <widget class="SliderModel" name="sliderChannel2">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -588,7 +588,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="ControlLabel" name="labelChannel2">
+           <widget class="LabelModel" name="labelChannel2">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -738,7 +738,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="ControlLabel" name="labelChannel1">
+           <widget class="LabelModel" name="labelChannel1">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -888,7 +888,7 @@
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="ControlButton" name="buttonChannel3">
+           <widget class="ButtonModel" name="buttonChannel3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -937,7 +937,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="ControlButton" name="buttonChannel2">
+           <widget class="ButtonModel" name="buttonChannel2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -986,7 +986,7 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="ControlSlider" name="sliderChannel4">
+           <widget class="SliderModel" name="sliderChannel4">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1053,7 +1053,7 @@
            <number>4</number>
           </property>
           <item row="2" column="1">
-           <widget class="ControlButton" name="buttonChannel6">
+           <widget class="ButtonModel" name="buttonChannel6">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1085,7 +1085,7 @@
            </widget>
           </item>
           <item row="2" column="3">
-           <widget class="ControlButton" name="buttonChannel8">
+           <widget class="ButtonModel" name="buttonChannel8">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1117,7 +1117,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="ControlSlider" name="sliderChannel5">
+           <widget class="SliderModel" name="sliderChannel5">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1148,7 +1148,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="ControlButton" name="buttonChannel5">
+           <widget class="ButtonModel" name="buttonChannel5">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1180,7 +1180,7 @@
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="ControlButton" name="buttonChannel7">
+           <widget class="ButtonModel" name="buttonChannel7">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1212,7 +1212,7 @@
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="ControlSlider" name="sliderChannel7">
+           <widget class="SliderModel" name="sliderChannel7">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1243,7 +1243,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="ControlSlider" name="sliderChannel6">
+           <widget class="SliderModel" name="sliderChannel6">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1274,7 +1274,7 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="ControlSlider" name="sliderChannel8">
+           <widget class="SliderModel" name="sliderChannel8">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1305,7 +1305,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="ControlLabel" name="labelChannel5">
+           <widget class="LabelModel" name="labelChannel5">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1458,7 +1458,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="ControlLabel" name="labelChannel6">
+           <widget class="LabelModel" name="labelChannel6">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1611,7 +1611,7 @@
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="ControlLabel" name="labelChannel7">
+           <widget class="LabelModel" name="labelChannel7">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1764,7 +1764,7 @@
            </widget>
           </item>
           <item row="0" column="3">
-           <widget class="ControlLabel" name="labelChannel8">
+           <widget class="LabelModel" name="labelChannel8">
             <property name="minimumSize">
              <size>
               <width>32</width>
@@ -1920,7 +1920,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="ControlButton" name="buttonStopAll">
+        <widget class="ButtonModel" name="buttonStopAll">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -1978,7 +1978,7 @@ color: rgb(255, 255, 255);</string>
         <number>4</number>
        </property>
        <item>
-        <widget class="ControlView" name="graphicsView">
+        <widget class="GraphicsView" name="graphicsView">
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -2095,24 +2095,24 @@ color: rgb(255, 255, 255);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ControlView</class>
-   <extends>QGraphicsView</extends>
-   <header>View/ControlView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ControlLabel</class>
-   <extends>QLabel</extends>
-   <header>Model/ControlLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ControlSlider</class>
-   <extends>QSlider</extends>
-   <header>Model/ControlSlider.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ControlButton</class>
+   <class>ButtonModel</class>
    <extends>QPushButton</extends>
-   <header>Model/ControlButton.h</header>
+   <header>Model/ButtonModel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LabelModel</class>
+   <extends>QLabel</extends>
+   <header>Model/LabelModel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SliderModel</class>
+   <extends>QSlider</extends>
+   <header>Model/SliderModel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>View/GraphicsView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

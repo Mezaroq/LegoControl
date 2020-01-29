@@ -1,7 +1,7 @@
 #include "ControlTimetable.h"
 #include <QDebug>
 
-ControlTimetable::ControlTimetable(ControlTrain::TrainID trainID, ControlRail::RailID railID, Loop loop, ControlTrain::TrainDirection direction)
+ControlTimetable::ControlTimetable(TrainModel::TrainID trainID, RailModel::RailID railID, Loop loop, TrainModel::TrainDirection direction)
 {
     this->connectionID = nextConnectionID();
     this->trainID = trainID;
@@ -16,14 +16,14 @@ qint64 ControlTimetable::nextConnectionID()
     return connectionID++;
 }
 
-ControlTimetable *ControlTimetable::generateTimetable(ControlTrain::TrainID trainID, int currentRailID)
+ControlTimetable *ControlTimetable::generateTimetable(TrainModel::TrainID trainID, int currentRailID)
 {
     int loops = (qrand() % LOOP_5) + 1;
-    ControlRail::RailID railID = generateDestinationPoint(trainID, currentRailID);
-    ControlTrain::TrainDirection trainDirection;
-    ControlTrain::TrainDirection directions[2] = {ControlTrain::DIRECTION_FORWARD, ControlTrain::DIRECTION_REVERSE};
-    if (trainID == ControlTrain::TRAIN_3) {
-        trainDirection = ControlTrain::DIRECTION_FORWARD;
+    RailModel::RailID railID = generateDestinationPoint(trainID, currentRailID);
+    TrainModel::TrainDirection trainDirection;
+    TrainModel::TrainDirection directions[2] = {TrainModel::DIRECTION_FORWARD, TrainModel::DIRECTION_REVERSE};
+    if (trainID == TrainModel::TRAIN_3) {
+        trainDirection = TrainModel::DIRECTION_FORWARD;
     } else {
         trainDirection = directions[qrand() % 2];
     }
@@ -32,34 +32,34 @@ ControlTimetable *ControlTimetable::generateTimetable(ControlTrain::TrainID trai
     return timetable;
 }
 
-ControlRail::RailID ControlTimetable::generateDestinationPoint(ControlTrain::TrainID trainID, int currentRailID)
+RailModel::RailID ControlTimetable::generateDestinationPoint(TrainModel::TrainID trainID, int currentRailID)
 {
-    QList<ControlRail::RailID> passengerStations;
-    QList<ControlRail::RailID> freightStations;
+    QList<RailModel::RailID> passengerStations;
+    QList<RailModel::RailID> freightStations;
 
-    passengerStations << ControlRail::RAIL_SECTION_2 << ControlRail::RAIL_SECTION_3 << ControlRail::RAIL_SECTION_6 << ControlRail::RAIL_SECTION_8;
-    freightStations << ControlRail::RAIL_SECTION_1 << ControlRail::RAIL_SECTION_5 << ControlRail::RAIL_SECTION_9;
+    passengerStations << RailModel::RAIL_SECTION_2 << RailModel::RAIL_SECTION_3 << RailModel::RAIL_SECTION_6 << RailModel::RAIL_SECTION_8;
+    freightStations << RailModel::RAIL_SECTION_1 << RailModel::RAIL_SECTION_5 << RailModel::RAIL_SECTION_9;
 
     switch (trainID) {
-    case ControlTrain::TRAIN_1:
-    case ControlTrain::TRAIN_2:
+    case TrainModel::TRAIN_1:
+    case TrainModel::TRAIN_2:
         if (currentRailID != -1)
-            passengerStations.removeOne(ControlRail::RailID(currentRailID));
+            passengerStations.removeOne(RailModel::RailID(currentRailID));
         std::random_shuffle(passengerStations.begin(), passengerStations.end());
 
         return passengerStations.takeFirst();
-    case ControlTrain::TRAIN_3:
+    case TrainModel::TRAIN_3:
         if (currentRailID != -1)
-            freightStations.removeOne(ControlRail::RailID(currentRailID));
+            freightStations.removeOne(RailModel::RailID(currentRailID));
         std::random_shuffle(freightStations.begin(), freightStations.end());
 
         return freightStations.takeFirst();
-    case ControlTrain::TRAIN_4:
-    case ControlTrain::TRAIN_5:
-    case ControlTrain::TRAIN_6:
-    case ControlTrain::TRAIN_7:
-    case ControlTrain::TRAIN_8:
-        return ControlRail::RAIL_SECTION_1;
+    case TrainModel::TRAIN_4:
+    case TrainModel::TRAIN_5:
+    case TrainModel::TRAIN_6:
+    case TrainModel::TRAIN_7:
+    case TrainModel::TRAIN_8:
+        return RailModel::RAIL_SECTION_1;
     }
 }
 
@@ -68,12 +68,12 @@ void ControlTimetable::increaseLoop()
     currentLoop++;
 }
 
-void ControlTimetable::setCurrentRailID(ControlRail::RailID currentRailID)
+void ControlTimetable::setCurrentRailID(RailModel::RailID currentRailID)
 {
     this->currentRailID = currentRailID;
 }
 
-void ControlTimetable::setDirection(ControlTrain::TrainDirection direction)
+void ControlTimetable::setDirection(TrainModel::TrainDirection direction)
 {
     this->direction = direction;
 }
@@ -109,17 +109,17 @@ qint64 ControlTimetable::getConnectionID()
     return connectionID;
 }
 
-ControlTrain::TrainID ControlTimetable::getTrainID()
+TrainModel::TrainID ControlTimetable::getTrainID()
 {
     return trainID;
 }
 
-ControlRail::RailID ControlTimetable::getDestinationRailID()
+RailModel::RailID ControlTimetable::getDestinationRailID()
 {
     return destinationRailID;
 }
 
-ControlRail::RailID ControlTimetable::getCurrentRailID()
+RailModel::RailID ControlTimetable::getCurrentRailID()
 {
     return currentRailID;
 }
@@ -134,7 +134,7 @@ int ControlTimetable::getCurrentLoop()
     return currentLoop;
 }
 
-ControlTrain::TrainDirection ControlTimetable::getDirection()
+TrainModel::TrainDirection ControlTimetable::getDirection()
 {
     return direction;
 }
