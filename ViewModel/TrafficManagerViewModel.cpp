@@ -68,8 +68,6 @@ void TrafficManagerViewModel::trafficManagerWaitingTrains()
         }
         train->setTrainSpeed(TrainModel::SPEED_BREAKE);
     }
-    if (trafficManagerInit)
-        trafficManagerInit = false;
 }
 
 void TrafficManagerViewModel::initData()
@@ -81,7 +79,6 @@ void TrafficManagerViewModel::initData()
             waitingTrains.append(rail->getTrain());
         }
     }
-    trafficManagerInit = true;
 }
 
 void TrafficManagerViewModel::deinitData()

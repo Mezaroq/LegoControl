@@ -42,7 +42,6 @@ protected:
     QMap<TrainModel::TrainPriority, TrainModel*> getTrainsByPriority();
 
 private:
-    bool trafficManagerInit = false;
     bool trafficManagerEnabled = false;
     QMap<int, RailModel*> rails;
     QMap<int, TrainModel*> trains;
