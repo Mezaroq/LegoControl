@@ -77,22 +77,22 @@ void RailModel::sensorChanged(SensorModel::SensorType sensorType)
         if ((currentTrain == nullptr) && (entryCounter == 0)) {
             if (rails.value(REVERSE).first()->getTrain() != nullptr) {
                 entryCounter = 1;
-                emit (trainEnters(rails.value(REVERSE).first()->getTrain()->getTrainID(), railID));
+                emit trainEnters(rails.value(REVERSE).first()->getTrain(), this);
             }
         } else if ((currentTrain == nullptr) && (entryCounter == 1)) {
             if (rails.value(REVERSE).first()->getTrain() != nullptr) {
                 trainMove = FORWARD;
                 setTrain(rails.value(REVERSE).first()->getTrain(true));
-                emit trainEntered(currentTrain->getTrainID(), railID);
+                emit trainEnter(currentTrain, this);
             }
         } else if ((currentTrain != nullptr) && (entryCounter == 2)) {
             if (currentTrain != nullptr) {
                 entryCounter = 1;
-                emit trainLeaving(currentTrain->getTrainID(), railID);
+                emit trainLeaves(currentTrain, this);
             }
         } else if((currentTrain != nullptr) && (entryCounter == 1)) {
             if (currentTrain != nullptr) {
-                emit trainLeft(currentTrain->getTrainID(), railID);
+                emit trainLeave(currentTrain, this);
                 rails.value(REVERSE).first()->setTrain(getTrain(true));
             }
         }
@@ -100,35 +100,35 @@ void RailModel::sensorChanged(SensorModel::SensorType sensorType)
     case SensorModel::REVERSE_STOP_SENSOR:
         if ((currentTrain != nullptr) && (trainMove == REVERSE)) {
             trainMove = UNDEFINED;
-            emit trainActivatedStop(currentTrain->getTrainID(), railID);
+            emit trainStop(currentTrain, this);
         }
         break;
     case SensorModel::FORWARD_STOP_SENSOR:
         if ((currentTrain != nullptr) && (trainMove == FORWARD)) {
             trainMove = UNDEFINED;
-            emit trainActivatedStop(currentTrain->getTrainID(), railID);
+            emit trainStop(currentTrain, this);
         }
         break;
     case SensorModel::FORWARD_ENTRY_SENSOR:
         if ((currentTrain == nullptr) && (entryCounter == 0)) {
             if (rails.value(FORWARD).first()->getTrain() != nullptr) {
                 entryCounter = 1;
-                emit trainEnters(rails.value(FORWARD).first()->getTrain()->getTrainID(), railID);
+                emit trainEnters(rails.value(FORWARD).first()->getTrain(), this);
             }
         } else if (currentTrain == nullptr && entryCounter == 1) {
             if (rails.value(FORWARD).first()->getTrain()) {
                 trainMove = REVERSE;
                 setTrain(rails.value(FORWARD).first()->getTrain(true));
-                emit trainEntered(currentTrain->getTrainID(), railID);
+                emit trainEnter(currentTrain, this);
             }
         } else if(currentTrain != nullptr && entryCounter == 2) {
             if (currentTrain != nullptr) {
                 entryCounter = 1;
-                emit trainLeaving(currentTrain->getTrainID(), railID);
+                emit trainLeaves(currentTrain, this);
             }
         } else if(currentTrain != nullptr && entryCounter == 1) {
             if (currentTrain != nullptr) {
-                emit trainLeft(currentTrain->getTrainID(), railID);
+                emit trainLeave(currentTrain, this);
                 rails.value(FORWARD).first()->setTrain(getTrain(true));
             }
         }

@@ -26,16 +26,6 @@ void SwitchModel::setToggle(bool switchState)
     controlAction->setChecked(switchState);
 }
 
-void SwitchModel::setReservation(bool reservation)
-{
-    this->switchReservation = reservation;
-}
-
-bool SwitchModel::isReserved()
-{
-    return switchReservation;
-}
-
 bool SwitchModel::getSwitchState()
 {
     return switchToggle;

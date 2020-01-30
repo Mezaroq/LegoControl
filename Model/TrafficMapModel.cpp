@@ -1,22 +1,27 @@
-#include "ControlSwitchMap.h"
+#include "TrafficMapModel.h"
 #include <QDebug>
 
-ControlSwitchMap::ControlSwitchMap()
+TrafficMapModel::TrafficMapModel(QObject *parent) : QObject(parent)
 {
 
 }
 
-void ControlSwitchMap::setSwitches(QMap<int, SwitchModel *> switches)
-{
-    this->switches = switches;
-}
-
-void ControlSwitchMap::setRails(QMap<int, RailModel *> rails)
+void TrafficMapModel::setRails(QMap<int, RailModel *> rails)
 {
     this->rails = rails;
 }
 
-void ControlSwitchMap::setSwitchReservationAndState(RailModel::RailID from, RailModel::RailID to, TrainModel::TrainDirection direction)
+void TrafficMapModel::setStations(QMap<int, StationModel *> stations)
+{
+    this->stations = stations;
+}
+
+void TrafficMapModel::setSwitches(QMap<int, SwitchModel *> switches)
+{
+    this->switches = switches;
+}
+
+void TrafficMapModel::setSwitch(RailModel::RailID from, RailModel::RailID to, TrainModel::TrainDirection direction)
 {
     switch (direction) {
     case TrainModel::DIRECTION_FORWARD:
@@ -260,5 +265,23 @@ void ControlSwitchMap::setSwitchReservationAndState(RailModel::RailID from, Rail
             break;
         }
         break;
+    }
+}
+
+StationModel *TrafficMapModel::getStationByRail(RailModel::RailID railID)
+{
+    switch (railID) {
+    case RailModel::RAIL_SECTION_1:
+    case RailModel::RAIL_SECTION_2:
+    case RailModel::RAIL_SECTION_3:
+        return stations.value(StationModel::CENTRAL_STATION);
+    case RailModel::RAIL_SECTION_5:
+    case RailModel::RAIL_SECTION_6:
+        return stations.value(StationModel::NORTH_STATION);
+    case RailModel::RAIL_SECTION_8:
+    case RailModel::RAIL_SECTION_9:
+        return stations.value(StationModel::SOUTH_STATION);
+    default:
+        return nullptr;
     }
 }

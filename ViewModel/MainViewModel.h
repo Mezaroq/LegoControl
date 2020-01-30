@@ -9,6 +9,7 @@
 #include <Model/TrainModel.h>
 #include <Model/SensorModel.h>
 #include <ViewModel/DataViewModel.h>
+#include <ViewModel/TrafficManagerViewModel.h>
 #include <QMap>
 #include <QDebug>
 #include <QStatusBar>
@@ -59,6 +60,7 @@ public:
     void setTrains(QMap<int, TrainModel*> trains);
     void setSensors(QMap<int, SensorModel*> sensors);
     void setStatusBar(QStatusBar *statusBar);
+    void setTrafficManager(TrafficManagerViewModel* trafficManager);
     void setMainWindow(QMainWindow mainWindow);
     void setSensorsData(QByteArray byteArray);
     void collectControlData();
@@ -70,6 +72,7 @@ private:
     const int MAX_TRAINS = 3;
     int insertedTrains = 0;
     bool selectionMode = false;
+    TrafficManagerViewModel *trafficManager = nullptr;
     DataViewModel *dataController = nullptr;
     QMap<int, SliderModel*> sliders;
     QMap<int, LightModel*> lights;

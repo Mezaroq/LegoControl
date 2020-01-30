@@ -39,8 +39,6 @@ public:
     void setControlAction(ActionModel* controlAction);
     void toggle();
     void setToggle(bool switchState);
-    void setReservation(bool reservation);
-    bool isReserved();
     bool getSwitchState();
     ActionModel* getControlAction();
     QString getResource();
@@ -52,7 +50,6 @@ private:
     SwitchToggle switchToggle;
     SwitchID switchID;
     SwitchState switchState;
-    bool switchReservation = false;
     ActionModel *controlAction;
 
 signals:

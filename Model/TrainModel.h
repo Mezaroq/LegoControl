@@ -38,30 +38,40 @@ public:
         TRAIN_8,
     };
 
-//    enum TrainPriority{ // move to timetable
-//        PRIORITY_0,
-//        PRIORITY_1,
-//        PRIORITY_2,
-//        PRIORITY_3,
-//        PRIORITY_4,
-//        PRIORITY_5,
-//        PRIORITY_6,
-//        PRIORITY_7
-//    };
+    enum TrainType{
+        FREIGHT_TRAIN,
+        PASSENGER_TRAIN
+    };
+
+    enum TrainPriority{
+        PRIORITY_0,
+        PRIORITY_1,
+        PRIORITY_2,
+        PRIORITY_3,
+        PRIORITY_4,
+        PRIORITY_5,
+        PRIORITY_6,
+        PRIORITY_7
+    };
 
     enum TrainDirection{
         DIRECTION_FORWARD = 1,
         DIRECTION_REVERSE = -1
     };
 
-    explicit TrainModel(TrainID trainID, SliderModel *trainSlider, QObject *parent = nullptr);
+    explicit TrainModel(TrainID trainID, SliderModel *trainSlider, TrainType trainType, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
+    void setTrainPrority(TrainPriority trainPriority);
     TrainID getTrainID();
-    int getTrainSpeed();
+    TrainType getTrainType();
+    TrainPriority getTrainPriority();
     TrainDirection getDirectionMultiplier();
+    int getTrainSpeed();
 
 private:
     TrainID trainID;
+    TrainType trainType;
+    TrainPriority trainPriority;
     SliderModel* trainSlider = nullptr;
 };
 

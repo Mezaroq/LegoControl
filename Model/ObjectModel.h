@@ -6,7 +6,7 @@
 
 class ObjectModel : public QGraphicsPixmapItem, public QObject
 {
-public:
+public:    
     enum ObjectType{
         OBJECT_RAIL,
         OBJECT_SWITCH,

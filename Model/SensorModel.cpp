@@ -11,6 +11,7 @@ void SensorModel::setState(bool newState)
 {
     if ((newState == true) && (state != newState)) {
         state = true;
+        qDebug() << sensorID+1 << ":" << state;
         emit signalChanged(sensorType);
     } else if ((newState == false) && (state != newState)) {
         state = false;

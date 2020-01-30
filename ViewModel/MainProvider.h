@@ -10,12 +10,14 @@
 #include <Model/SwitchModel.h>
 #include <Model/TrainModel.h>
 #include <Model/SensorModel.h>
+#include <Model/StationModel.h>
 #include <Model/ControlSwitchMap.h>
 #include <View/MainWindow.h>
 #include <View/SceneView.h>
 #include <View/GraphicsView.h>
 #include <View/DebuggerView.h>
 #include <ViewModel/MainViewModel.h>
+#include <ViewModel/TrafficManagerViewModel.h>
 #include <QAction>
 #include <QObject>
 #include <QMap>
@@ -27,16 +29,18 @@ class MainProvider : QObject
 public:
     explicit MainProvider();
     void setObjects();
-    void setConnections();
+    void setGlobalConnections();
     void setObjectsData();
-    void prepareButtons();
-    void prepareSliders();
-    void prepareLabels();
-    void prepareSwitches();
-    void prepareLights();
-    void prepareRails();
-    void prepareTrains();
-    void prepareSensors();
+    void prependButtons();
+    void prependSliders();
+    void prependLabels();
+    void prependSwitches();
+    void prependLights();
+    void prependRails();
+    void prependTrains();
+    void prependSensors();
+    void prependStations();
+    void prependTrafficManager();
 
 private:
     MainViewModel *viewModel;
@@ -52,6 +56,7 @@ private:
     QAction *actionDebugPanel;
     QAction *actionReset;
     ControlSwitchMap *switchMap;
+    TrafficManagerViewModel *trafficManager;
     QMap<int, ButtonModel*> buttons;
     QMap<int, SliderModel*> sliders;
     QMap<int, LabelModel*> labels;
@@ -60,6 +65,7 @@ private:
     QMap<int, RailModel*> rails;
     QMap<int, TrainModel*> trains;
     QMap<int, SensorModel*> sensors;
+    QMap<int, StationModel*> stations;
 
 public slots:
     void windowClosed();

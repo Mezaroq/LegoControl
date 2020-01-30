@@ -6,7 +6,6 @@
 #include <Model/RailModel.h>
 #include <Model/SwitchModel.h>
 #include <Model/TrainModel.h>
-#include <Model/ControlTimetable.h>
 #include <ViewModel/ControlAiViewModel.h>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -66,11 +65,11 @@ public:
     void setRails(QMap<int, RailModel*> rails);
     void setTrains(QMap<int, TrainModel*> trains);
     void setSwitches(QMap<int, SwitchModel*> switches);
-    void setTimetables(QMap<TrainModel::TrainID, ControlTimetable *> *timetables);
+//    void setTimetables(QMap<TrainModel::TrainID, ControlTimetable *> *timetables);
     QString getTrainPriority(TrainModel *train);
     QString getTrainIDfromRail(TrainModel *train);
     QString getTrainFrom(RailModel::TrainMove trainFrom);
-    QString getTimetableLoop (ControlTimetable::Loop loop);
+//    QString getTimetableLoop (ControlTimetable::Loop loop);
     QString getSensorID(SensorModel::SensorID id);
     QString getTrainID(TrainModel::TrainID id);
     QString getRailID(RailModel::RailID id);
@@ -86,7 +85,7 @@ private:
     QMap<int, RailModel*> rails;
     QMap<int, TrainModel*> trains;
     QMap<int, SwitchModel*> switches;
-    QMap<TrainModel::TrainID, ControlTimetable *> *timetables;
+//    QMap<TrainModel::TrainID, ControlTimetable *> *timetables;
     QTableWidget *trainTable;
     QTableWidget *railTable;
     QTableWidget *timetableTable;
@@ -95,7 +94,6 @@ private:
 public slots:
     void sensorClicked(int row, int column);
     void switchClicked(int row, int column);
-    void timetableClicked(int row, int column);
 
 private slots:
 //    void debuggerLoop();

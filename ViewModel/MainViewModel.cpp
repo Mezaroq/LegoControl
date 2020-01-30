@@ -48,6 +48,11 @@ void MainViewModel::setStatusBar(QStatusBar *statusBar)
     this->statusBar = statusBar;
 }
 
+void MainViewModel::setTrafficManager(TrafficManagerViewModel *trafficManager)
+{
+    this->trafficManager = trafficManager;
+}
+
 void MainViewModel::setSensorsData(QByteArray byteArray)
 {
     sensors.value(SensorModel::SENSOR_1)->setState(byteArray.at(13));
@@ -222,6 +227,7 @@ void MainViewModel::setDataController()
 
 void MainViewModel::runTriggered()
 {
+    lastControlData.clear();
     for (QSerialPortInfo port : QSerialPortInfo::availablePorts()) {
         if (port.vendorIdentifier() == 8137) {
             dataController->connectController(port);
@@ -232,7 +238,10 @@ void MainViewModel::runTriggered()
 
 void MainViewModel::aiEnabled(bool state)
 {
-    //TODO
+    if (state)
+        trafficManager->enable();
+    else
+        trafficManager->disable();
 }
 
 void MainViewModel::stopAllChannels()
@@ -280,7 +289,9 @@ void MainViewModel::controlObjectClicked(ObjectModel::ObjectType objectType, int
 
 void MainViewModel::sensorsData(QByteArray data)
 {
+//    qDebug() << data.toHex('|');
     setSensorsData(data);
+    trafficManager->run();
     collectControlData();
     dataController->sendData(controlData);
 }

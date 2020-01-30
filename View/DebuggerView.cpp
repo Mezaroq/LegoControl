@@ -14,7 +14,7 @@ DebuggerView::DebuggerView(QWidget *parent) :
     timetableTable = ui->timetableTable;
     switchTable = ui->switchTable;
 
-    timerThread = new QThread(this);
+//    timerThread = new QThread(this);
     debuggerTimer = new QTimer();
     debuggerTimer->setInterval(50);
     debuggerTimer->moveToThread(timerThread);
@@ -75,32 +75,32 @@ void DebuggerView::update()
     for (SwitchModel *cswitch : switches) {
         switchTable->item(row, SWITCH_ID)->setText( getSwitchID(cswitch->getSwitchID()) );
         switchTable->item(row, SWITCH_TOGGLE)->setText( cswitch->getSwitchState() ? "TOGGLED" : "NORMAL" );
-        switchTable->item(row, SWITCH_RESERVATION)->setText( cswitch->isReserved() ? "TRUE" : "FALSE" );
+//        switchTable->item(row, SWITCH_RESERVATION)->setText( cswitch->isReserved() ? "TRUE" : "FALSE" );
         row++;
     }
 
     row = 0;
-    for (ControlTimetable *timetable : *timetables) {
-        timetableTable->item(row, TIMETABLE_ID)->setText( QString::number(timetable->getConnectionID()) );
-        timetableTable->item(row, TIMETABLE_TRAIN_ID)->setText( getTrainID(timetable->getTrainID()) );
-        timetableTable->item(row, TIMETABLE_CURRENT_RAIL_ID)->setText( getRailID(timetable->getCurrentRailID()) );
-        timetableTable->item(row, TIMETABLE_DESTINATION_RAIL_ID)->setText( getRailID(timetable->getDestinationRailID()) );
-        timetableTable->item(row, TIMETABLE_TRAIN_DIRECTION)->setText( timetable->getDirection() == 1 ? "FORWARD" : "REVERSE" );
-        timetableTable->item(row, TIMETABLE_CURRENT_LOOP)->setText( getTimetableLoop(ControlTimetable::Loop(timetable->getCurrentLoop())) );
-        timetableTable->item(row, TIMETABLE_MAX_LOOP)->setText( getTimetableLoop(timetable->getLoop()) );
-        timetableTable->item(row, TIMETABLE_LOOP_COUNTER)->setText( QString::number(timetable->getLoopCounter()) );
-        timetableTable->item(row, TIMETABLE_IGNORE_FLAG)->setText( timetable->isIgnoreTrain() ? QString("TRUE") : QString("FALSE") );
+//    for (ControlTimetable *timetable : *timetables) {
+//        timetableTable->item(row, TIMETABLE_ID)->setText( QString::number(timetable->getConnectionID()) );
+//        timetableTable->item(row, TIMETABLE_TRAIN_ID)->setText( getTrainID(timetable->getTrainID()) );
+//        timetableTable->item(row, TIMETABLE_CURRENT_RAIL_ID)->setText( getRailID(timetable->getCurrentRailID()) );
+//        timetableTable->item(row, TIMETABLE_DESTINATION_RAIL_ID)->setText( getRailID(timetable->getDestinationRailID()) );
+//        timetableTable->item(row, TIMETABLE_TRAIN_DIRECTION)->setText( timetable->getDirection() == 1 ? "FORWARD" : "REVERSE" );
+//        timetableTable->item(row, TIMETABLE_CURRENT_LOOP)->setText( getTimetableLoop(ControlTimetable::Loop(timetable->getCurrentLoop())) );
+//        timetableTable->item(row, TIMETABLE_MAX_LOOP)->setText( getTimetableLoop(timetable->getLoop()) );
+//        timetableTable->item(row, TIMETABLE_LOOP_COUNTER)->setText( QString::number(timetable->getLoopCounter()) );
+//        timetableTable->item(row, TIMETABLE_IGNORE_FLAG)->setText( timetable->isIgnoreTrain() ? QString("TRUE") : QString("FALSE") );
 
-        for (RailModel *rail : rails) {
-            if (rail->getTrain()) {
-                if (rail->getTrain()->getTrainID() == timetable->getTrainID()) {
-                    timetable->setCurrentRailID(rail->getRailID());
-                    break;
-                }
-            }
-        }
-        row++;
-    }
+//        for (RailModel *rail : rails) {
+//            if (rail->getTrain()) {
+//                if (rail->getTrain()->getTrainID() == timetable->getTrainID()) {
+//                    timetable->setCurrentRailID(rail->getRailID());
+//                    break;
+//                }
+//            }
+//        }
+//        row++;
+//    }
 }
 
 void DebuggerView::setDebuggerData()
@@ -152,7 +152,7 @@ void DebuggerView::setDebuggerData()
     for (SwitchModel *cswitch : switches) {
         switchTable->setItem(row, SWITCH_ID, new QTableWidgetItem( getSwitchID(cswitch->getSwitchID()) ));
         switchTable->setItem(row, SWITCH_TOGGLE, new QTableWidgetItem( cswitch->getSwitchState() ? "TOGGLED" : "NORMAL" ));
-        switchTable->setItem(row, SWITCH_RESERVATION, new QTableWidgetItem( cswitch->isReserved() ? "TRUE" : "FALSE" ));
+//        switchTable->setItem(row, SWITCH_RESERVATION, new QTableWidgetItem( cswitch->isReserved() ? "TRUE" : "FALSE" ));
 
         switchTable->item(row, SWITCH_ID)->setTextAlignment(Qt::AlignCenter);
         switchTable->item(row, SWITCH_TOGGLE)->setTextAlignment(Qt::AlignCenter);
@@ -193,10 +193,10 @@ void DebuggerView::setSwitches(QMap<int, SwitchModel *> switches)
     this->switches = switches;
 }
 
-void DebuggerView::setTimetables(QMap<TrainModel::TrainID, ControlTimetable *> *timetables)
-{
-    this->timetables = timetables;
-}
+//void DebuggerView::setTimetables(QMap<TrainModel::TrainID, ControlTimetable *> *timetables)
+//{
+//    this->timetables = timetables;
+//}
 
 QString DebuggerView::getTrainPriority(TrainModel *train)
 {
@@ -223,10 +223,10 @@ QString DebuggerView::getTrainFrom(RailModel::TrainMove trainFrom)
     }
 }
 
-QString DebuggerView::getTimetableLoop(ControlTimetable::Loop loop)
-{
-    return QString("LOOP_") + QString::number(loop);
-}
+//QString DebuggerView::getTimetableLoop(ControlTimetable::Loop loop)
+//{
+//    return QString("LOOP_") + QString::number(loop);
+//}
 
 QString DebuggerView::getSensorID(SensorModel::SensorID id)
 {
@@ -267,22 +267,22 @@ void DebuggerView::switchClicked(int row, int column)
 {
     if (column == 2) {
         SwitchModel *cswitch = switches.value(row);
-        cswitch->setReservation(!cswitch->isReserved());
+//        cswitch->setReservation(!cswitch->isReserved());
     }
 }
 
-void DebuggerView::timetableClicked(int row, int column)
-{
-    if (column == 4) {
-        ControlTimetable *timetable = timetables->value(TrainModel::TrainID(row));
-        if (timetable) {
-            if (timetable->getDirection() == TrainModel::DIRECTION_FORWARD)
-                timetable->setDirection(TrainModel::DIRECTION_REVERSE);
-            else
-                timetable->setDirection(TrainModel::DIRECTION_FORWARD);
-        }
-    }
-}
+//void DebuggerView::timetableClicked(int row, int column)
+//{
+//    if (column == 4) {
+//        ControlTimetable *timetable = timetables->value(TrainModel::TrainID(row));
+//        if (timetable) {
+//            if (timetable->getDirection() == TrainModel::DIRECTION_FORWARD)
+//                timetable->setDirection(TrainModel::DIRECTION_REVERSE);
+//            else
+//                timetable->setDirection(TrainModel::DIRECTION_FORWARD);
+//        }
+//    }
+//}
 
 void DebuggerView::on_debuggerButton_clicked()
 {

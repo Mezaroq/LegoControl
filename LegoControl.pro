@@ -19,7 +19,6 @@ SOURCES += \
     Model/ActionModel.cpp \
     Model/ButtonModel.cpp \
     Model/ControlSwitchMap.cpp \
-    Model/ControlTimetable.cpp \
     Model/LabelModel.cpp \
     Model/LightModel.cpp \
     Model/ObjectModel.cpp \
@@ -28,6 +27,8 @@ SOURCES += \
     Model/SliderModel.cpp \
     Model/StationModel.cpp \
     Model/SwitchModel.cpp \
+    Model/TrafficMapModel.cpp \
+    Model/TrafficTimetableModel.cpp \
     Model/TrainModel.cpp \
     View/DebuggerView.cpp \
     View/GraphicsView.cpp \
@@ -37,13 +38,13 @@ SOURCES += \
     ViewModel/DataViewModel.cpp \
     ViewModel/MainProvider.cpp \
     ViewModel/MainViewModel.cpp \
+    ViewModel/TrafficManagerViewModel.cpp \
     main.cpp
 
 HEADERS += \
     Model/ActionModel.h \
     Model/ButtonModel.h \
     Model/ControlSwitchMap.h \
-    Model/ControlTimetable.h \
     Model/LabelModel.h \
     Model/LightModel.h \
     Model/ObjectModel.h \
@@ -52,6 +53,8 @@ HEADERS += \
     Model/SliderModel.h \
     Model/StationModel.h \
     Model/SwitchModel.h \
+    Model/TrafficMapModel.h \
+    Model/TrafficTimetableModel.h \
     Model/TrainModel.h \
     View/DebuggerView.h \
     View/GraphicsView.h \
@@ -60,7 +63,8 @@ HEADERS += \
     ViewModel/ControlAiViewModel.h \
     ViewModel/DataViewModel.h \
     ViewModel/MainProvider.h \
-    ViewModel/MainViewModel.h
+    ViewModel/MainViewModel.h \
+    ViewModel/TrafficManagerViewModel.h
 
 FORMS += \
     View/controldebugger.ui \

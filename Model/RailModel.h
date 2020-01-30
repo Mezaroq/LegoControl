@@ -55,11 +55,11 @@ private:
 
 signals:
     void objectChanged();
-    void trainEntered(TrainModel::TrainID, RailModel::RailID);
-    void trainEnters(TrainModel::TrainID, RailModel::RailID);
-    void trainLeaving(TrainModel::TrainID, RailModel::RailID);
-    void trainLeft(TrainModel::TrainID, RailModel::RailID);
-    void trainActivatedStop(TrainModel::TrainID, RailModel::RailID);
+    void trainEnter(TrainModel*, RailModel*);
+    void trainLeave(TrainModel*, RailModel*);
+    void trainEnters(TrainModel*, RailModel*);
+    void trainLeaves(TrainModel*, RailModel*);
+    void trainStop(TrainModel*, RailModel*);
 
 public slots:
     void sensorChanged(SensorModel::SensorType sensorType);

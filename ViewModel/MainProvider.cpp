@@ -5,13 +5,14 @@ MainProvider::MainProvider()
 {
     setObjects();
     setObjectsData();
-    setConnections();
+    setGlobalConnections();
     mainWindow.show();
 }
 
 void MainProvider::setObjects()
 {
     viewModel = new MainViewModel(&mainWindow);
+    trafficManager = new TrafficManagerViewModel();
 //    debugger = new ControlDebugger();
     switchMap = new ControlSwitchMap();
     view = mainWindow.getControlView();
@@ -28,7 +29,7 @@ void MainProvider::setObjects()
     labels = mainWindow.getLabels();
 }
 
-void MainProvider::setConnections()
+void MainProvider::setGlobalConnections()
 {
     connect(&mainWindow, SIGNAL(closeWindow()), this, SLOT(windowClosed()));
     connect(buttonStopAll, SIGNAL(clicked()), viewModel, SLOT(stopAllChannels()));
@@ -43,15 +44,17 @@ void MainProvider::setObjectsData()
 {
     scene->setBackgroundBrush(QColor(32, 153, 86));
     view->setScene(scene);
-    prepareLabels();
-    prepareSliders();
-    prepareButtons();
-    prepareSwitches();
+    prependLabels();
+    prependSliders();
+    prependButtons();
+    prependSwitches();
     toolBar->addSeparator();
-    prepareLights();
-    prepareRails();
-    prepareTrains();
-    prepareSensors();
+    prependLights();
+    prependRails();
+    prependTrains();
+    prependSensors();
+    prependStations();
+    prependTrafficManager();
     switchMap->setSwitches(switches); //remove
     switchMap->setRails(rails); //remove
     viewModel->setSliders(sliders);
@@ -61,15 +64,17 @@ void MainProvider::setObjectsData()
     viewModel->setTrains(trains);
     viewModel->setStatusBar(statusBar);
     viewModel->setSensors(sensors);
+    viewModel->setTrafficManager(trafficManager);
     viewModel->setSerialPortInformation();
-//    debugger->setSensors(sensors);
-//    debugger->setRails(rails);
-//    debugger->setTrains(trains);
-//    debugger->setSwitches(switches);
-//    debugger->setDebuggerData();
+    trafficManager->setRails(rails);
+    trafficManager->setTrains(trains);
+    trafficManager->setStations(stations);
+    trafficManager->setSwitches(switches);
+    trafficManager->prependTimetables();
+    trafficManager->prependTrafficMap();
 }
 
-void MainProvider::prepareButtons()
+void MainProvider::prependButtons()
 {
     QMapIterator<int, ButtonModel*> buttonList(buttons);
     while (buttonList.hasNext()) {
@@ -79,7 +84,7 @@ void MainProvider::prepareButtons()
     }
 }
 
-void MainProvider::prepareSliders()
+void MainProvider::prependSliders()
 {
     QMapIterator<int, SliderModel*> sliderList(sliders);
     while (sliderList.hasNext()) {
@@ -89,7 +94,7 @@ void MainProvider::prepareSliders()
     }
 }
 
-void MainProvider::prepareLabels()
+void MainProvider::prependLabels()
 {
     QMapIterator<int, LabelModel*> labelList(labels);
     while (labelList.hasNext()) {
@@ -98,7 +103,7 @@ void MainProvider::prepareLabels()
     }
 }
 
-void MainProvider::prepareSwitches()
+void MainProvider::prependSwitches()
 {
     switches.insert(SwitchModel::SWITCH_1, new SwitchModel(SwitchModel::TYPE_RIGHT, SwitchModel::SWITCH_1));
     switches.insert(SwitchModel::SWITCH_2, new SwitchModel(SwitchModel::TYPE_LEFT, SwitchModel::SWITCH_2));
@@ -121,7 +126,7 @@ void MainProvider::prepareSwitches()
     }
 }
 
-void MainProvider::prepareLights()
+void MainProvider::prependLights()
 {
     lights.insert(LightModel::LIGHT_1, new LightModel(LightModel::LIGHT_1, QPointF(10.95, 690), 180));
     lights.insert(LightModel::LIGHT_2, new LightModel(LightModel::LIGHT_2, QPointF(24.09, 258), 0));
@@ -156,7 +161,7 @@ void MainProvider::prepareLights()
     }
 }
 
-void MainProvider::prepareRails()
+void MainProvider::prependRails()
 {
     rails.insert(RailModel::RAIL_SECTION_1, new RailModel(RailModel::RAIL_SECTION_1));
     rails.insert(RailModel::RAIL_SECTION_2, new RailModel(RailModel::RAIL_SECTION_2));
@@ -199,19 +204,12 @@ void MainProvider::prepareRails()
     rails.value(RailModel::RAIL_SECTION_10)->setRails(RailModel::FORWARD, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_1) << rails.value(RailModel::RAIL_SECTION_2) << rails.value(RailModel::RAIL_SECTION_3));
 
     for (auto rail : rails) {
-        qDebug() << QString::number(rail->getRails(RailModel::REVERSE).size()) + "___";
-        for (auto test : rail->getRails(RailModel::FORWARD)) {
-            qDebug() << test->getRailID();
-        }
-    }
-
-    for (auto rail : rails) {
         connect(rail, SIGNAL(objectChanged()), scene, SLOT(update()));
-//        connect(rail, SIGNAL(trainEnters(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEnters(ControlTrain::TrainID, ControlRail::RailID)));
-//        connect(rail, SIGNAL(trainEntered(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainEntered(ControlTrain::TrainID, ControlRail::RailID)));
-//        connect(rail, SIGNAL(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeaving(ControlTrain::TrainID, ControlRail::RailID)));
-//        connect(rail, SIGNAL(trainLeft(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(trainLeft(ControlTrain::TrainID, ControlRail::RailID)));
-//        connect(rail, SIGNAL(trainActivatedStop(ControlTrain::TrainID, ControlRail::RailID)), ai, SLOT(stopSensorActivated(ControlTrain::TrainID, ControlRail::RailID)));
+        connect(rail, SIGNAL(trainEnter(TrainModel*, RailModel*)), trafficManager, SLOT(trainEnter(TrainModel*, RailModel*)));
+        connect(rail, SIGNAL(trainLeave(TrainModel*, RailModel*)), trafficManager, SLOT(trainLeave(TrainModel*, RailModel*)));
+        connect(rail, SIGNAL(trainEnters(TrainModel*, RailModel*)), trafficManager, SLOT(trainEnters(TrainModel*, RailModel*)));
+        connect(rail, SIGNAL(trainLeaves(TrainModel*, RailModel*)), trafficManager, SLOT(trainLeaves(TrainModel*, RailModel*)));
+        connect(rail, SIGNAL(trainStop(TrainModel*, RailModel*)), trafficManager, SLOT(trainStop(TrainModel*, RailModel*)));
         scene->addItem(rail);
     }
     scene->addItem(new QGraphicsPixmapItem(RailModel::getResource(RailModel::RAIL_SECTION_11)));
@@ -227,19 +225,24 @@ void MainProvider::prepareRails()
     }
 }
 
-void MainProvider::prepareTrains()
+void MainProvider::prependTrains()
 {
-    trains.insert(TrainModel::TRAIN_1, new TrainModel(TrainModel::TRAIN_1, sliders.value(SliderModel::SLIDER_CHANNEL_1)));
-    trains.insert(TrainModel::TRAIN_2, new TrainModel(TrainModel::TRAIN_2, sliders.value(SliderModel::SLIDER_CHANNEL_2)));
-    trains.insert(TrainModel::TRAIN_3, new TrainModel(TrainModel::TRAIN_3, sliders.value(SliderModel::SLIDER_CHANNEL_3)));
-    trains.insert(TrainModel::TRAIN_4, new TrainModel(TrainModel::TRAIN_4, sliders.value(SliderModel::SLIDER_CHANNEL_4)));
-    trains.insert(TrainModel::TRAIN_5, new TrainModel(TrainModel::TRAIN_5, sliders.value(SliderModel::SLIDER_CHANNEL_5)));
-    trains.insert(TrainModel::TRAIN_6, new TrainModel(TrainModel::TRAIN_6, sliders.value(SliderModel::SLIDER_CHANNEL_6)));
-    trains.insert(TrainModel::TRAIN_7, new TrainModel(TrainModel::TRAIN_7, sliders.value(SliderModel::SLIDER_CHANNEL_7)));
-    trains.insert(TrainModel::TRAIN_8, new TrainModel(TrainModel::TRAIN_8, sliders.value(SliderModel::SLIDER_CHANNEL_8)));
+    trains.insert(TrainModel::TRAIN_1, new TrainModel(TrainModel::TRAIN_1, sliders.value(SliderModel::SLIDER_CHANNEL_1), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_2, new TrainModel(TrainModel::TRAIN_2, sliders.value(SliderModel::SLIDER_CHANNEL_2), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_3, new TrainModel(TrainModel::TRAIN_3, sliders.value(SliderModel::SLIDER_CHANNEL_3), TrainModel::FREIGHT_TRAIN));
+    trains.insert(TrainModel::TRAIN_4, new TrainModel(TrainModel::TRAIN_4, sliders.value(SliderModel::SLIDER_CHANNEL_4), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_5, new TrainModel(TrainModel::TRAIN_5, sliders.value(SliderModel::SLIDER_CHANNEL_5), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_6, new TrainModel(TrainModel::TRAIN_6, sliders.value(SliderModel::SLIDER_CHANNEL_6), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_7, new TrainModel(TrainModel::TRAIN_7, sliders.value(SliderModel::SLIDER_CHANNEL_7), TrainModel::PASSENGER_TRAIN));
+    trains.insert(TrainModel::TRAIN_8, new TrainModel(TrainModel::TRAIN_8, sliders.value(SliderModel::SLIDER_CHANNEL_8), TrainModel::PASSENGER_TRAIN));
+
+    int priority = 7;
+    for (auto train : trains) {
+        train->setTrainPrority(TrainModel::TrainPriority(priority--));
+    }
 }
 
-void MainProvider::prepareSensors()
+void MainProvider::prependSensors()
 {
     sensors.insert(SensorModel::SENSOR_1, new SensorModel(SensorModel::SENSOR_1, SensorModel::REVERSE_ENTRY_SENSOR));
     sensors.insert(SensorModel::SENSOR_2, new SensorModel(SensorModel::SENSOR_2, SensorModel::REVERSE_STOP_SENSOR));
@@ -279,6 +282,40 @@ void MainProvider::prepareSensors()
         connect(sensors.value(sensorID++), SIGNAL(signalChanged(SensorModel::SensorType)), rail, SLOT(sensorChanged(SensorModel::SensorType)));
         connect(sensors.value(sensorID++), SIGNAL(signalChanged(SensorModel::SensorType)), rail, SLOT(sensorChanged(SensorModel::SensorType)));
     }
+}
+
+void MainProvider::prependStations()
+{
+    stations.insert(StationModel::CENTRAL_STATION, new StationModel(StationModel::CENTRAL_STATION));
+    stations.insert(StationModel::NORTH_STATION, new StationModel(StationModel::NORTH_STATION));
+    stations.insert(StationModel::SOUTH_STATION, new StationModel(StationModel::SOUTH_STATION));
+
+    stations.value(StationModel::CENTRAL_STATION)->setStations(QList<StationModel*>() << stations.value(StationModel::NORTH_STATION) << stations.value(StationModel::SOUTH_STATION));
+    stations.value(StationModel::NORTH_STATION)->setStations(QList<StationModel*>() << stations.value(StationModel::SOUTH_STATION) << stations.value(StationModel::CENTRAL_STATION));
+    stations.value(StationModel::SOUTH_STATION)->setStations(QList<StationModel*>() << stations.value(StationModel::CENTRAL_STATION) << stations.value(StationModel::NORTH_STATION));
+
+    stations.value(StationModel::CENTRAL_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_2) << rails.value(RailModel::RAIL_SECTION_3));
+    stations.value(StationModel::CENTRAL_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_1));
+    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_5) << rails.value(RailModel::RAIL_SECTION_6));
+    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>());
+    stations.value(StationModel::SOUTH_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_8));
+    stations.value(StationModel::SOUTH_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_9));
+
+    stations.value(StationModel::CENTRAL_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_4) << rails.value(RailModel::RAIL_SECTION_10));
+    stations.value(StationModel::NORTH_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_7) << rails.value(RailModel::RAIL_SECTION_4));
+    stations.value(StationModel::SOUTH_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_10) << rails.value(RailModel::RAIL_SECTION_7));
+
+}
+
+void MainProvider::prependTrafficManager()
+{
+//    for (auto rail : rails) {
+//        connect(rail, SIGNAL(trainEnter(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainEnter(TrainModel::TrainID trainID, RailModel::RailID railID)));
+//        connect(rail, SIGNAL(trainLeave(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainLeave(TrainModel::TrainID trainID, RailModel::RailID railID)));
+//        connect(rail, SIGNAL(trainEnters(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainEnters(TrainModel::TrainID trainID, RailModel::RailID railID)));
+//        connect(rail, SIGNAL(trainLeaves(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainLeaves(TrainModel::TrainID trainID, RailModel::RailID railID)));
+//        connect(rail, SIGNAL(trainStop(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainStop(TrainModel::TrainID trainID, RailModel::RailID railID)));
+//    }
 }
 
 void MainProvider::windowClosed()
