@@ -67,9 +67,14 @@ TrainModel::TrainDirection TrafficTimetableModel::getDirection()
     return direction;
 }
 
-QList<StationModel *> TrafficTimetableModel::getStopStations()
+QList<StationModel *> *TrafficTimetableModel::getStopStations()
 {
-    return stopStations;
+    return &stopStations;
+}
+
+TrafficTimetableModel::WaitingTime TrafficTimetableModel::getWaitingTime()
+{
+    return waitingTime;
 }
 
 bool TrafficTimetableModel::isWaiting()

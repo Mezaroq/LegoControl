@@ -18,7 +18,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Model/ActionModel.cpp \
     Model/ButtonModel.cpp \
-    Model/ControlSwitchMap.cpp \
     Model/LabelModel.cpp \
     Model/LightModel.cpp \
     Model/ObjectModel.cpp \
@@ -27,6 +26,8 @@ SOURCES += \
     Model/SliderModel.cpp \
     Model/StationModel.cpp \
     Model/SwitchModel.cpp \
+    Model/TrafficManagerButtonModel.cpp \
+    Model/TrafficManagerLabelModel.cpp \
     Model/TrafficMapModel.cpp \
     Model/TrafficTimetableModel.cpp \
     Model/TrainModel.cpp \
@@ -34,17 +35,16 @@ SOURCES += \
     View/GraphicsView.cpp \
     View/MainWindow.cpp \
     View/SceneView.cpp \
-    ViewModel/ControlAiViewModel.cpp \
     ViewModel/DataViewModel.cpp \
     ViewModel/MainProvider.cpp \
     ViewModel/MainViewModel.cpp \
+    ViewModel/TrafficManagerPanelViewModel.cpp \
     ViewModel/TrafficManagerViewModel.cpp \
     main.cpp
 
 HEADERS += \
     Model/ActionModel.h \
     Model/ButtonModel.h \
-    Model/ControlSwitchMap.h \
     Model/LabelModel.h \
     Model/LightModel.h \
     Model/ObjectModel.h \
@@ -53,6 +53,8 @@ HEADERS += \
     Model/SliderModel.h \
     Model/StationModel.h \
     Model/SwitchModel.h \
+    Model/TrafficManagerButtonModel.h \
+    Model/TrafficManagerLabelModel.h \
     Model/TrafficMapModel.h \
     Model/TrafficTimetableModel.h \
     Model/TrainModel.h \
@@ -60,10 +62,10 @@ HEADERS += \
     View/GraphicsView.h \
     View/MainWindow.h \
     View/SceneView.h \
-    ViewModel/ControlAiViewModel.h \
     ViewModel/DataViewModel.h \
     ViewModel/MainProvider.h \
     ViewModel/MainViewModel.h \
+    ViewModel/TrafficManagerPanelViewModel.h \
     ViewModel/TrafficManagerViewModel.h
 
 FORMS += \

@@ -33,7 +33,8 @@ public:
     StationModel* getCurrentStation();
     RailModel* getCurrentRail();
     TrainModel::TrainDirection getDirection();
-    QList<StationModel*> getStopStations();
+    QList<StationModel *> *getStopStations();
+    WaitingTime getWaitingTime();
     bool isWaiting();
     bool isSingleStop();
 

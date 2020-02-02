@@ -13,8 +13,7 @@ void MainProvider::setObjects()
 {
     viewModel = new MainViewModel(&mainWindow);
     trafficManager = new TrafficManagerViewModel();
-//    debugger = new ControlDebugger();
-    switchMap = new ControlSwitchMap();
+    trafficManagerPanel = new TrafficManagerPanelViewModel();
     view = mainWindow.getControlView();
     scene = new SceneView();
     buttonStopAll = mainWindow.getButtonStopAll();
@@ -27,6 +26,8 @@ void MainProvider::setObjects()
     buttons = mainWindow.getButtons();
     sliders = mainWindow.getSliders();
     labels = mainWindow.getLabels();
+    trafficManagerlabels = mainWindow.getManagerLabels();
+    trafficManagerButtons = mainWindow.getManagerButtons();
 }
 
 void MainProvider::setGlobalConnections()
@@ -36,7 +37,6 @@ void MainProvider::setGlobalConnections()
     connect(scene, SIGNAL(controlObjectClicked(ObjectModel::ObjectType, int)), viewModel, SLOT(controlObjectClicked(ObjectModel::ObjectType, int)));
     connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
-//    connect(actionDebugPanel, SIGNAL(triggered()), debugger, SLOT(show()));
     connect(actionReset, SIGNAL(triggered()), viewModel, SLOT(resetTrainsTriggered()));
 }
 
@@ -54,9 +54,7 @@ void MainProvider::setObjectsData()
     prependTrains();
     prependSensors();
     prependStations();
-    prependTrafficManager();
-    switchMap->setSwitches(switches); //remove
-    switchMap->setRails(rails); //remove
+    prependTrafficManagerButtons();
     viewModel->setSliders(sliders);
     viewModel->setLights(lights);
     viewModel->setSwitches(switches);
@@ -72,6 +70,16 @@ void MainProvider::setObjectsData()
     trafficManager->setSwitches(switches);
     trafficManager->prependTimetables();
     trafficManager->prependTrafficMap();
+    trafficManagerPanel->setTrains(trains);
+    trafficManagerPanel->setManagerLabels(trafficManagerlabels);
+    trafficManagerPanel->setManagerButtons(trafficManagerButtons);
+    trafficManagerPanel->setTimetables(trafficManager->getTimetables());
+    trafficManagerPanel->setNormalSpeed(trafficManager->getNormalSpeed());
+    trafficManagerPanel->setSlowdownSpeed(trafficManager->getSlowdownSpeed());
+    trafficManagerPanel->setStartSpeed(trafficManager->getStartSpeed());
+    trafficManagerPanel->setStations(stations);
+    trafficManagerPanel->initPanel();
+
 }
 
 void MainProvider::prependButtons()
@@ -236,10 +244,9 @@ void MainProvider::prependTrains()
     trains.insert(TrainModel::TRAIN_7, new TrainModel(TrainModel::TRAIN_7, sliders.value(SliderModel::SLIDER_CHANNEL_7), TrainModel::PASSENGER_TRAIN));
     trains.insert(TrainModel::TRAIN_8, new TrainModel(TrainModel::TRAIN_8, sliders.value(SliderModel::SLIDER_CHANNEL_8), TrainModel::PASSENGER_TRAIN));
 
-    int priority = 7;
-    for (auto train : trains) {
-        train->setTrainPrority(TrainModel::TrainPriority(priority--));
-    }
+    trains.value(TrainModel::TRAIN_1)->setTrainPrority(0);
+    trains.value(TrainModel::TRAIN_2)->setTrainPrority(1);
+    trains.value(TrainModel::TRAIN_3)->setTrainPrority(2);
 }
 
 void MainProvider::prependSensors()
@@ -294,10 +301,10 @@ void MainProvider::prependStations()
     stations.value(StationModel::NORTH_STATION)->setStations(QList<StationModel*>() << stations.value(StationModel::SOUTH_STATION) << stations.value(StationModel::CENTRAL_STATION));
     stations.value(StationModel::SOUTH_STATION)->setStations(QList<StationModel*>() << stations.value(StationModel::CENTRAL_STATION) << stations.value(StationModel::NORTH_STATION));
 
-    stations.value(StationModel::CENTRAL_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_2) << rails.value(RailModel::RAIL_SECTION_3));
+    stations.value(StationModel::CENTRAL_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_3) << rails.value(RailModel::RAIL_SECTION_2));
     stations.value(StationModel::CENTRAL_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_1));
-    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_5) << rails.value(RailModel::RAIL_SECTION_6));
-    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>());
+    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_6) << rails.value(RailModel::RAIL_SECTION_5));
+    stations.value(StationModel::NORTH_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_5));
     stations.value(StationModel::SOUTH_STATION)->setPlatforms(TrainModel::PASSENGER_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_8));
     stations.value(StationModel::SOUTH_STATION)->setPlatforms(TrainModel::FREIGHT_TRAIN, QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_9));
 
@@ -307,15 +314,35 @@ void MainProvider::prependStations()
 
 }
 
-void MainProvider::prependTrafficManager()
+void MainProvider::prependTrafficManagerButtons()
 {
-//    for (auto rail : rails) {
-//        connect(rail, SIGNAL(trainEnter(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainEnter(TrainModel::TrainID trainID, RailModel::RailID railID)));
-//        connect(rail, SIGNAL(trainLeave(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainLeave(TrainModel::TrainID trainID, RailModel::RailID railID)));
-//        connect(rail, SIGNAL(trainEnters(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainEnters(TrainModel::TrainID trainID, RailModel::RailID railID)));
-//        connect(rail, SIGNAL(trainLeaves(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainLeaves(TrainModel::TrainID trainID, RailModel::RailID railID)));
-//        connect(rail, SIGNAL(trainStop(TrainModel::TrainID trainID, RailModel::RailID railID)), trafficManager, SLOT(trainStop(TrainModel::TrainID trainID, RailModel::RailID railID)));
-//    }
+    int index = 0;
+    int type = 0;
+
+    while (index < 6) {
+        trafficManagerButtons.value(index)->setButtonCategory(TrafficManagerButtonModel::BUTTON_GENERAL);
+        trafficManagerButtons.value(index)->setButtonType(TrafficManagerButtonModel::ButtonType(type++));
+        index++;
+    }
+
+    type = 6;
+    while (index < 15) {
+        trafficManagerButtons.value(index)->setButtonCategory(TrafficManagerButtonModel::BUTTON_TRAIN_1);
+        trafficManagerButtons.value(index)->setButtonType(TrafficManagerButtonModel::ButtonType(type));
+
+        trafficManagerButtons.value(index+9)->setButtonCategory(TrafficManagerButtonModel::BUTTON_TRAIN_2);
+        trafficManagerButtons.value(index+9)->setButtonType(TrafficManagerButtonModel::ButtonType(type));
+
+        trafficManagerButtons.value(index+18)->setButtonCategory(TrafficManagerButtonModel::BUTTON_TRAIN_3);
+        trafficManagerButtons.value(index+18)->setButtonType(TrafficManagerButtonModel::ButtonType(type));
+        type++;
+        index++;
+    }
+
+    for (auto button : trafficManagerButtons) {
+        connect(button, SIGNAL(managerButtonClicked(TrafficManagerButtonModel::ButtonCategory, TrafficManagerButtonModel::ButtonType, bool)),
+                trafficManagerPanel, SLOT(managerButtonClicked(TrafficManagerButtonModel::ButtonCategory, TrafficManagerButtonModel::ButtonType, bool)));
+    }
 }
 
 void MainProvider::windowClosed()

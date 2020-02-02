@@ -8,6 +8,8 @@
 #include <Model/StationModel.h>
 #include <Model/TrafficMapModel.h>
 #include <Model/TrafficTimetableModel.h>
+#include <Model/TrafficManagerLabelModel.h>
+#include <Model/TrafficManagerButtonModel.h>
 #include <QMap>
 #include <QList>
 
@@ -36,12 +38,18 @@ public:
     void setTrains(QMap<int, TrainModel*> trains);
     void setStations(QMap<int, StationModel*> stations);
     void setSwitches(QMap<int, SwitchModel*> switches);
-    void debugData();
+    QMap<TrainModel::TrainID, TrafficTimetableModel *> *getTimetables();
+    int *getNormalSpeed();
+    int *getSlowdownSpeed();
+    int *getStartSpeed();
 
 protected:
-    QMap<TrainModel::TrainPriority, TrainModel*> getTrainsByPriority();
+    QMap<unsigned int, TrainModel*> getTrainsByPriority();
 
 private:
+    int normalSpeed = TrainModel::SPEED_FORWARD_5;
+    int slowdownSpeed = TrainModel::SPEED_FORWARD_3;
+    int startSpeed = TrainModel::SPEED_FORWARD_3;
     bool trafficManagerEnabled = false;
     QMap<int, RailModel*> rails;
     QMap<int, TrainModel*> trains;
@@ -50,12 +58,11 @@ private:
     TrafficTimetableModel *timetable;
     RailModel *destinationRail;
     QMap<TrainModel::TrainID, TrafficTimetableModel*> timetables;
-    QMap<TrainModel::TrainPriority, TrainModel*> waitingTrainsBuffor;
+    QMap<unsigned int, TrainModel*> waitingTrainsBuffor;
     QList<TrainModel*> waitingTrains;
     TrafficMapModel *map;
 
 public slots:
-    void testSlot();
     void trainEnter(TrainModel *train, RailModel *rail);
     void trainLeave(TrainModel *train, RailModel *rail);
     void trainEnters(TrainModel *train, RailModel *rail);

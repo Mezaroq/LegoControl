@@ -91,14 +91,14 @@ void MainViewModel::collectControlData()
 {
     controlData.clear();
 
-    controlData[TRAIN_CONTROL_1] = static_cast<char>(trains.value(TrainModel::TRAIN_1)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_2] = static_cast<char>(trains.value(TrainModel::TRAIN_2)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_3] = static_cast<char>(trains.value(TrainModel::TRAIN_3)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_4] = static_cast<char>(trains.value(TrainModel::TRAIN_4)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_5] = static_cast<char>(trains.value(TrainModel::TRAIN_5)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_6] = static_cast<char>(trains.value(TrainModel::TRAIN_6)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_7] = static_cast<char>(trains.value(TrainModel::TRAIN_7)->getTrainSpeed());
-    controlData[TRAIN_CONTROL_8] = static_cast<char>(trains.value(TrainModel::TRAIN_8)->getTrainSpeed());
+    controlData[TRAIN_CONTROL_1] = static_cast<char>(trains.value(TrainModel::TRAIN_1)->getTrainControl());
+    controlData[TRAIN_CONTROL_2] = static_cast<char>(trains.value(TrainModel::TRAIN_2)->getTrainControl());
+    controlData[TRAIN_CONTROL_3] = static_cast<char>(trains.value(TrainModel::TRAIN_3)->getTrainControl());
+    controlData[TRAIN_CONTROL_4] = static_cast<char>(trains.value(TrainModel::TRAIN_4)->getTrainControl());
+    controlData[TRAIN_CONTROL_5] = static_cast<char>(trains.value(TrainModel::TRAIN_5)->getTrainControl());
+    controlData[TRAIN_CONTROL_6] = static_cast<char>(trains.value(TrainModel::TRAIN_6)->getTrainControl());
+    controlData[TRAIN_CONTROL_7] = static_cast<char>(trains.value(TrainModel::TRAIN_7)->getTrainControl());
+    controlData[TRAIN_CONTROL_8] = static_cast<char>(trains.value(TrainModel::TRAIN_8)->getTrainControl());
 
     controlData[SWITCH_CONTROL_1] = static_cast<char>( switches.value(SwitchModel::SWITCH_1)->getSwitchState() +
                                                    2 * !switches.value(SwitchModel::SWITCH_3)->getSwitchState() +
@@ -242,10 +242,12 @@ void MainViewModel::aiEnabled(bool state)
         trafficManager->enable();
     else
         trafficManager->disable();
+    trafficManager->run();
 }
 
 void MainViewModel::stopAllChannels()
 {
+    trafficManager->disable();
     for (auto slider : sliders)
         slider->setValue(0);
 }
@@ -298,21 +300,23 @@ void MainViewModel::sensorsData(QByteArray data)
 
 void MainViewModel::resetTrainsTriggered() //REMAKE
 {
-    loadTrains->setText("Reset all selected trains?");
-    loadTrains->setStandardButtons(QMessageBox::Button::Ok | QMessageBox::Button::Cancel);
-    loadTrains->setIcon(QMessageBox::Icon::Question);
+    if (!selectionMode) {
+        loadTrains->setText("Select rails to insert trains from 1 to 3.");
+        loadTrains->setStandardButtons(QMessageBox::Button::Ok | QMessageBox::Button::Cancel);
+        loadTrains->setIcon(QMessageBox::Icon::Information);
 
-    if (loadTrains->exec() == QMessageBox::Ok) {
-        for (auto rail : rails) {
-            rail->getTrain(true);
+        if (loadTrains->exec() == QMessageBox::Ok) {
+            for (auto rail : rails) {
+                rail->getTrain(true);
+            }
+            for (RailModel *rail : rails) {
+                if (rail->getObjectID() == RailModel::RAIL_SECTION_4 || rail->getObjectID() == RailModel::RAIL_SECTION_7 || rail->getObjectID() == RailModel::RAIL_SECTION_10)
+                    continue;
+                rail->graphicsEffect()->setEnabled(true);
+            }
+            insertedTrains = 0;
+            selectionMode = true;
         }
-        for (RailModel *rail : rails) {
-            if (rail->getObjectID() == RailModel::RAIL_SECTION_4 || rail->getObjectID() == RailModel::RAIL_SECTION_7 || rail->getObjectID() == RailModel::RAIL_SECTION_10)
-                continue;
-            rail->graphicsEffect()->setEnabled(true);
-        }
-        insertedTrains = 0;
-        selectionMode = true;
     }
 }
 

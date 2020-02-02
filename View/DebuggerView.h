@@ -6,7 +6,6 @@
 #include <Model/RailModel.h>
 #include <Model/SwitchModel.h>
 #include <Model/TrainModel.h>
-#include <ViewModel/ControlAiViewModel.h>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QMap>

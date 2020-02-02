@@ -5,6 +5,8 @@
 #include <Model/SliderModel.h>
 #include <Model/ButtonModel.h>
 #include <Model/LabelModel.h>
+#include <Model/TrafficManagerButtonModel.h>
+#include <Model/TrafficManagerLabelModel.h>
 #include <View/GraphicsView.h>
 #include <ViewModel/MainViewModel.h>
 #include <QMainWindow>
@@ -23,6 +25,8 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    QMap<int, TrafficManagerButtonModel*> getManagerButtons();
+    QMap<int, TrafficManagerLabelModel*> getManagerLabels();
     QMap<int, ButtonModel*> getButtons();
     QMap<int, SliderModel*> getSliders();
     QMap<int, LabelModel*> getLabels();

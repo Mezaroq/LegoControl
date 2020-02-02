@@ -9,6 +9,67 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Lego Control");
 }
 
+QMap<int, TrafficManagerButtonModel *> MainWindow::getManagerButtons()
+{
+    int id = 0;
+    QMap<int, TrafficManagerButtonModel *> managerButtons;
+    managerButtons.insert(id++, ui->normalSpeedIncrease);
+    managerButtons.insert(id++, ui->normalSpeedDecrease);
+    managerButtons.insert(id++, ui->slowdownSpeedIncrease);
+    managerButtons.insert(id++, ui->slowdownSpeedDecrease);
+    managerButtons.insert(id++, ui->startSpeedIncrease);
+    managerButtons.insert(id++, ui->startSpeedDecrease);
+
+    managerButtons.insert(id++, ui->priorityIncreaseTrain1);
+    managerButtons.insert(id++, ui->priorityDecreaseTrain1);
+    managerButtons.insert(id++, ui->waitingIncreaseTrain1);
+    managerButtons.insert(id++, ui->waitingDecreaseTrain1);
+    managerButtons.insert(id++, ui->centralStationTrain1);
+    managerButtons.insert(id++, ui->northStationTrain1);
+    managerButtons.insert(id++, ui->southStationTrain1);
+    managerButtons.insert(id++, ui->directionTrain1);
+    managerButtons.insert(id++, ui->inverseSpeed1);
+
+    managerButtons.insert(id++, ui->priorityIncreaseTrain2);
+    managerButtons.insert(id++, ui->priorityDecreaseTrain2);
+    managerButtons.insert(id++, ui->waitingIncreaseTrain2);
+    managerButtons.insert(id++, ui->waitingDecreaseTrain2);
+    managerButtons.insert(id++, ui->centralStationTrain2);
+    managerButtons.insert(id++, ui->northStationTrain2);
+    managerButtons.insert(id++, ui->southStationTrain2);
+    managerButtons.insert(id++, ui->directionTrain2);
+    managerButtons.insert(id++, ui->inverseSpeed2);
+
+    managerButtons.insert(id++, ui->priorityIncreaseTrain3);
+    managerButtons.insert(id++, ui->priorityDecreaseTrain3);
+    managerButtons.insert(id++, ui->waitingIncreaseTrain3);
+    managerButtons.insert(id++, ui->waitingDecreaseTrain3);
+    managerButtons.insert(id++, ui->centralStationTrain3);
+    managerButtons.insert(id++, ui->northStationTrain3);
+    managerButtons.insert(id++, ui->southStationTrain3);
+    managerButtons.insert(id++, ui->directionTrain3);
+    managerButtons.insert(id++, ui->inverseSpeed3);
+
+    return managerButtons;
+}
+
+QMap<int, TrafficManagerLabelModel *> MainWindow::getManagerLabels()
+{
+    int id = 0;
+    QMap<int, TrafficManagerLabelModel *> managerLabels;
+    managerLabels.insert(id++, ui->normalSpeedLabel);
+    managerLabels.insert(id++, ui->slowdownSpeedLabel);
+    managerLabels.insert(id++, ui->startSpeedLabel);
+    managerLabels.insert(id++, ui->priorityTrain1);
+    managerLabels.insert(id++, ui->waitingTrain1);
+    managerLabels.insert(id++, ui->priorityTrain2);
+    managerLabels.insert(id++, ui->waitingTrain2);
+    managerLabels.insert(id++, ui->priorityTrain3);
+    managerLabels.insert(id++, ui->waitingTrain3);
+
+    return managerLabels;
+}
+
 QMap<int, ButtonModel *> MainWindow::getButtons()
 {
     QMap<int, ButtonModel *> buttons;

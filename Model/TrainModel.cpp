@@ -12,9 +12,14 @@ void TrainModel::setTrainSpeed(TrainModel::TrainSpeed trainSpeed)
     trainSpeed == SPEED_BREAKE ? trainSlider->setValue(SPEED_NEUTRAL) : trainSlider->setValue(trainSpeed);
 }
 
-void TrainModel::setTrainPrority(TrainModel::TrainPriority trainPriority)
+void TrainModel::setTrainPrority(unsigned int trainPriority)
 {
     this->trainPriority = trainPriority;
+}
+
+void TrainModel::setInverseSpeed(bool inverseSpeed)
+{
+    this->inverseSpeed = inverseSpeed;
 }
 
 TrainModel::TrainID TrainModel::getTrainID()
@@ -27,7 +32,7 @@ TrainModel::TrainType TrainModel::getTrainType()
     return trainType;
 }
 
-TrainModel::TrainPriority TrainModel::getTrainPriority()
+unsigned int TrainModel::getTrainPriority()
 {
     return trainPriority;
 }
@@ -37,6 +42,17 @@ int TrainModel::getTrainSpeed()
     if (trainSlider->value() == SPEED_NEUTRAL)
         return SPEED_BREAKE;
     return trainSlider->value();
+}
+
+int TrainModel::getTrainControl()
+{
+    int trainSpeed = getTrainSpeed();
+    return inverseSpeed ? ((trainSpeed == SPEED_BREAKE) ? trainSpeed : (trainSpeed * -1)) : trainSpeed;
+}
+
+bool TrainModel::isInverse()
+{
+    return inverseSpeed;
 }
 
 TrainModel::TrainDirection TrainModel::getDirectionMultiplier()

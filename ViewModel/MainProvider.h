@@ -11,13 +11,15 @@
 #include <Model/TrainModel.h>
 #include <Model/SensorModel.h>
 #include <Model/StationModel.h>
-#include <Model/ControlSwitchMap.h>
+#include <Model/TrafficManagerButtonModel.h>
+#include <Model/TrafficManagerLabelModel.h>
 #include <View/MainWindow.h>
 #include <View/SceneView.h>
 #include <View/GraphicsView.h>
 #include <View/DebuggerView.h>
 #include <ViewModel/MainViewModel.h>
 #include <ViewModel/TrafficManagerViewModel.h>
+#include <ViewModel/TrafficManagerPanelViewModel.h>
 #include <QAction>
 #include <QObject>
 #include <QMap>
@@ -40,7 +42,7 @@ public:
     void prependTrains();
     void prependSensors();
     void prependStations();
-    void prependTrafficManager();
+    void prependTrafficManagerButtons();
 
 private:
     MainViewModel *viewModel;
@@ -55,8 +57,8 @@ private:
     QAction *actionEnableAI;
     QAction *actionDebugPanel;
     QAction *actionReset;
-    ControlSwitchMap *switchMap;
     TrafficManagerViewModel *trafficManager;
+    TrafficManagerPanelViewModel *trafficManagerPanel;
     QMap<int, ButtonModel*> buttons;
     QMap<int, SliderModel*> sliders;
     QMap<int, LabelModel*> labels;
@@ -66,6 +68,8 @@ private:
     QMap<int, TrainModel*> trains;
     QMap<int, SensorModel*> sensors;
     QMap<int, StationModel*> stations;
+    QMap<int, TrafficManagerButtonModel*> trafficManagerButtons;
+    QMap<int, TrafficManagerLabelModel*> trafficManagerlabels;
 
 public slots:
     void windowClosed();

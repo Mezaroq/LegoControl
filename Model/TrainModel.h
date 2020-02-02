@@ -44,14 +44,9 @@ public:
     };
 
     enum TrainPriority{
-        PRIORITY_0,
-        PRIORITY_1,
-        PRIORITY_2,
-        PRIORITY_3,
-        PRIORITY_4,
-        PRIORITY_5,
-        PRIORITY_6,
-        PRIORITY_7
+        PRIORITY_MIN = 0U,
+        PRIORITY_MAX = 12U,
+        PRIORITY_NONE = 100U
     };
 
     enum TrainDirection{
@@ -61,17 +56,21 @@ public:
 
     explicit TrainModel(TrainID trainID, SliderModel *trainSlider, TrainType trainType, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
-    void setTrainPrority(TrainPriority trainPriority);
+    void setTrainPrority(unsigned int trainPriority);
+    void setInverseSpeed(bool inverseSpeed);
     TrainID getTrainID();
     TrainType getTrainType();
-    TrainPriority getTrainPriority();
+    unsigned int getTrainPriority();
     TrainDirection getDirectionMultiplier();
     int getTrainSpeed();
+    int getTrainControl();
+    bool isInverse();
 
 private:
     TrainID trainID;
     TrainType trainType;
-    TrainPriority trainPriority;
+    unsigned int trainPriority = PRIORITY_NONE;
+    bool inverseSpeed = false;
     SliderModel* trainSlider = nullptr;
 };
 
