@@ -16,52 +16,57 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Model/ControlAction.cpp \
-    Model/ControlButton.cpp \
-    Model/ControlLabel.cpp \
-    Model/ControlLight.cpp \
-    Model/ControlObject.cpp \
-    Model/ControlRail.cpp \
-    Model/ControlSensor.cpp \
-    Model/ControlSlider.cpp \
-    Model/ControlSwitch.cpp \
-    Model/ControlSwitchMap.cpp \
-    Model/ControlTimetable.cpp \
-    Model/ControlTrain.cpp \
-    View/ControlDebugger.cpp \
-    View/ControlScene.cpp \
-    View/ControlView.cpp \
+    Model/ActionModel.cpp \
+    Model/ButtonModel.cpp \
+    Model/LabelModel.cpp \
+    Model/LightModel.cpp \
+    Model/ObjectModel.cpp \
+    Model/RailModel.cpp \
+    Model/SensorModel.cpp \
+    Model/SliderModel.cpp \
+    Model/StationModel.cpp \
+    Model/SwitchModel.cpp \
+    Model/TrafficManagerButtonModel.cpp \
+    Model/TrafficManagerLabelModel.cpp \
+    Model/TrafficMapModel.cpp \
+    Model/TrafficTimetableModel.cpp \
+    Model/TrainModel.cpp \
+    View/GraphicsView.cpp \
     View/MainWindow.cpp \
-    ViewModel/ControlAiViewModel.cpp \
-    ViewModel/ControlDataProvider.cpp \
-    ViewModel/ControlProvider.cpp \
-    ViewModel/ControlViewModel.cpp \
+    View/SceneView.cpp \
+    ViewModel/DataViewModel.cpp \
+    ViewModel/MainProvider.cpp \
+    ViewModel/MainViewModel.cpp \
+    ViewModel/TrafficManagerPanelViewModel.cpp \
+    ViewModel/TrafficManagerViewModel.cpp \
     main.cpp
 
 HEADERS += \
-    Model/ControlAction.h \
-    Model/ControlButton.h \
-    Model/ControlLabel.h \
-    Model/ControlLight.h \
-    Model/ControlObject.h \
-    Model/ControlRail.h \
-    Model/ControlSensor.h \
-    Model/ControlSlider.h \
-    Model/ControlSwitch.h \
-    Model/ControlSwitchMap.h \
-    Model/ControlTimetable.h \
-    Model/ControlTrain.h \
-    View/ControlDebugger.h \
-    View/ControlScene.h \
-    View/ControlView.h \
+    Model/ActionModel.h \
+    Model/ButtonModel.h \
+    Model/LabelModel.h \
+    Model/LightModel.h \
+    Model/ObjectModel.h \
+    Model/RailModel.h \
+    Model/SensorModel.h \
+    Model/SliderModel.h \
+    Model/StationModel.h \
+    Model/SwitchModel.h \
+    Model/TrafficManagerButtonModel.h \
+    Model/TrafficManagerLabelModel.h \
+    Model/TrafficMapModel.h \
+    Model/TrafficTimetableModel.h \
+    Model/TrainModel.h \
+    View/GraphicsView.h \
     View/MainWindow.h \
-    ViewModel/ControlAiViewModel.h \
-    ViewModel/ControlDataProvider.h \
-    ViewModel/ControlProvider.h \
-    ViewModel/ControlViewModel.h
+    View/SceneView.h \
+    ViewModel/DataViewModel.h \
+    ViewModel/MainProvider.h \
+    ViewModel/MainViewModel.h \
+    ViewModel/TrafficManagerPanelViewModel.h \
+    ViewModel/TrafficManagerViewModel.h
 
 FORMS += \
-    View/controldebugger.ui \
     View/mainwindow.ui
 
 # Default rules for deployment.
