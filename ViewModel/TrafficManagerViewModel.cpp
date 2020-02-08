@@ -1,5 +1,4 @@
 #include "TrafficManagerViewModel.h"
-#include <QDebug>
 
 TrafficManagerViewModel::TrafficManagerViewModel(QObject *parent) : QObject(parent)
 {
@@ -41,7 +40,7 @@ void TrafficManagerViewModel::trafficManagerWaitingTrains()
                 if (nextStationIsStop()) {
                     destinationRail = timetable->getCurrentStation()->getNextStation(timetable->getDirection())->getPlatformByTrainType(train->getTrainType());
                     if (destinationRail != nullptr) {
-                        qDebug() << "Train: " << train->getTrainID()+1 << "Z:" << timetable->getCurrentRail()->getRailID()+1 << "Do:" << destinationRail->getRailID()+1 << "(Przystanek)";
+//                        qDebug() << "Train: " << train->getTrainID()+1 << "Z:" << timetable->getCurrentRail()->getRailID()+1 << "Do:" << destinationRail->getRailID()+1 << "(Przystanek)";
                         timetable->getCurrentStation()->getNextRail(timetable->getDirection())->setReservation(true);
                         destinationRail->setReservation(true);
                         map->setSwitch(timetable->getCurrentRail()->getRailID(), destinationRail->getRailID(), timetable->getDirection());
@@ -53,7 +52,7 @@ void TrafficManagerViewModel::trafficManagerWaitingTrains()
                 } else {
                     destinationRail = timetable->getCurrentStation()->getNextStation(timetable->getDirection())->getFreePlatform();
                     if (destinationRail != nullptr) {
-                        qDebug() << "Train: " << train->getTrainID()+1 << "Z:" << timetable->getCurrentRail()->getRailID()+1 << "Do:" << destinationRail->getRailID()+1 << "(Przejazd)";
+//                        qDebug() << "Train: " << train->getTrainID()+1 << "Z:" << timetable->getCurrentRail()->getRailID()+1 << "Do:" << destinationRail->getRailID()+1 << "(Przejazd)";
                         timetable->getCurrentStation()->getNextRail(timetable->getDirection())->setReservation(true);
                         destinationRail->setReservation(true);
                         map->setSwitch(timetable->getCurrentRail()->getRailID(), destinationRail->getRailID(), timetable->getDirection());

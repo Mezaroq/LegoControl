@@ -1,5 +1,4 @@
 #include "TrafficTimetableModel.h"
-#include <QDebug>
 
 TrafficTimetableModel::TrafficTimetableModel(TrainModel::TrainID trainID)
 {

@@ -1,5 +1,4 @@
 #include "RailModel.h"
-#include <QDebug>
 
 RailModel::RailModel(RailID railID) : ObjectModel(ObjectModel::OBJECT_RAIL, railID)
 {
@@ -46,6 +45,37 @@ void RailModel::setRails(RailModel::TrainMove direction, QList<RailModel *> rail
     this->rails.insert(direction, rails);
 }
 
+bool RailModel::sensorDataCorrect(SensorModel::SensorType type)
+{
+    switch (type) {
+    case SensorModel::REVERSE_ENTRY_SENSOR:
+        if (currentTrain != nullptr && getRails(REVERSE).first()->getTrain() != nullptr)
+            return false;
+        if (currentTrain != nullptr || getRails(REVERSE).first()->getTrain() != nullptr)
+            return true;
+        break;
+    case SensorModel::REVERSE_STOP_SENSOR:
+        if (currentTrain != nullptr && getRails(REVERSE).first()->getTrain() != nullptr)
+            return false;
+        if (currentTrain != nullptr || getRails(REVERSE).first()->getTrain() != nullptr)
+            return true;
+        break;
+    case SensorModel::FORWARD_STOP_SENSOR:
+        if (currentTrain != nullptr && getRails(FORWARD).first()->getTrain() != nullptr)
+            return false;
+        if (currentTrain != nullptr || getRails(FORWARD).first()->getTrain() != nullptr)
+            return true;
+        break;
+    case SensorModel::FORWARD_ENTRY_SENSOR:
+        if (currentTrain != nullptr && getRails(FORWARD).first()->getTrain() != nullptr)
+            return false;
+        if (currentTrain != nullptr || getRails(FORWARD).first()->getTrain() != nullptr)
+            return true;
+        break;
+    }
+    return false;
+}
+
 QList<RailModel *> RailModel::getRails(RailModel::TrainMove direction)
 {
     return rails.value(direction);
@@ -72,6 +102,11 @@ RailModel::RailID RailModel::getRailID()
 
 void RailModel::sensorChanged(SensorModel::SensorType sensorType)
 {
+    if (!sensorDataCorrect(sensorType)) {
+        emit dataCorrupted();
+        return;
+    }
+
     switch (sensorType) {
     case SensorModel::REVERSE_ENTRY_SENSOR:
         if ((currentTrain == nullptr) && (entryCounter == 0)) {
@@ -98,15 +133,19 @@ void RailModel::sensorChanged(SensorModel::SensorType sensorType)
         }
         break;
     case SensorModel::REVERSE_STOP_SENSOR:
-        if ((currentTrain != nullptr) && (trainMove == REVERSE)) {
-            trainMove = UNDEFINED;
-            emit trainStop(currentTrain, this);
+        if (trainMove == REVERSE) {
+            if (currentTrain != nullptr) {
+                trainMove = UNDEFINED;
+                emit trainStop(currentTrain, this);
+            }
         }
         break;
     case SensorModel::FORWARD_STOP_SENSOR:
-        if ((currentTrain != nullptr) && (trainMove == FORWARD)) {
-            trainMove = UNDEFINED;
-            emit trainStop(currentTrain, this);
+        if (trainMove == FORWARD) {
+            if (currentTrain != nullptr) {
+                trainMove = UNDEFINED;
+                emit trainStop(currentTrain, this);
+            }
         }
         break;
     case SensorModel::FORWARD_ENTRY_SENSOR:
@@ -122,15 +161,11 @@ void RailModel::sensorChanged(SensorModel::SensorType sensorType)
                 emit trainEnter(currentTrain, this);
             }
         } else if(currentTrain != nullptr && entryCounter == 2) {
-            if (currentTrain != nullptr) {
-                entryCounter = 1;
-                emit trainLeaves(currentTrain, this);
-            }
+            entryCounter = 1;
+            emit trainLeaves(currentTrain, this);
         } else if(currentTrain != nullptr && entryCounter == 1) {
-            if (currentTrain != nullptr) {
-                emit trainLeave(currentTrain, this);
-                rails.value(FORWARD).first()->setTrain(getTrain(true));
-            }
+            emit trainLeave(currentTrain, this);
+            rails.value(FORWARD).first()->setTrain(getTrain(true));
         }
         break;
     }

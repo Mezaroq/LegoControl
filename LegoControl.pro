@@ -31,7 +31,6 @@ SOURCES += \
     Model/TrafficMapModel.cpp \
     Model/TrafficTimetableModel.cpp \
     Model/TrainModel.cpp \
-    View/DebuggerView.cpp \
     View/GraphicsView.cpp \
     View/MainWindow.cpp \
     View/SceneView.cpp \
@@ -58,7 +57,6 @@ HEADERS += \
     Model/TrafficMapModel.h \
     Model/TrafficTimetableModel.h \
     Model/TrainModel.h \
-    View/DebuggerView.h \
     View/GraphicsView.h \
     View/MainWindow.h \
     View/SceneView.h \
@@ -69,7 +67,6 @@ HEADERS += \
     ViewModel/TrafficManagerViewModel.h
 
 FORMS += \
-    View/controldebugger.ui \
     View/mainwindow.ui
 
 # Default rules for deployment.

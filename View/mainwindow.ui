@@ -11118,7 +11118,8 @@ color: rgb(255, 255, 255);</string>
    <addaction name="separator"/>
    <addaction name="actionEnable_AI"/>
    <addaction name="actionReset"/>
-   <addaction name="actionDebug_Panel"/>
+   <addaction name="actionSaveConfig"/>
+   <addaction name="actionLoadConfig"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionRun">
@@ -11151,15 +11152,6 @@ color: rgb(255, 255, 255);</string>
     <string>Enable AI</string>
    </property>
   </action>
-  <action name="actionDebug_Panel">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/control/resources/icons/icon_bar_debug_panel.svg</normaloff>:/control/resources/icons/icon_bar_debug_panel.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Debug Panel</string>
-   </property>
-  </action>
   <action name="actionReset">
    <property name="icon">
     <iconset resource="../resources.qrc">
@@ -11170,6 +11162,30 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="toolTip">
     <string>Insert Trains</string>
+   </property>
+  </action>
+  <action name="actionLoadConfig">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/control/resources/icons/icon_bar_configuration_save.svg</normaloff>:/control/resources/icons/icon_bar_configuration_save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Load Config</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Config</string>
+   </property>
+  </action>
+  <action name="actionSaveConfig">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/control/resources/icons/icon_bar__configuration_load.svg</normaloff>:/control/resources/icons/icon_bar__configuration_load.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Config</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Config</string>
    </property>
   </action>
  </widget>

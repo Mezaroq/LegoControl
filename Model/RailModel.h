@@ -31,13 +31,13 @@ public:
         REVERSE,
         UNDEFINED
     };
-
     explicit RailModel(RailID railID);
     static QString getResource(RailID railID);
     void setTrain(TrainModel *currentTrain);
     void setReservation(bool reservation);
     void setLights(QList<LightModel*> lights);
     void setRails(TrainMove direction, QList<RailModel*> rails);
+    bool sensorDataCorrect(SensorModel::SensorType type);
     LightModel* getLight(TrainMove direction);
     QList<RailModel*> getRails(TrainMove direction);
     TrainModel* getTrain(bool remove = false);
@@ -60,6 +60,7 @@ signals:
     void trainEnters(TrainModel*, RailModel*);
     void trainLeaves(TrainModel*, RailModel*);
     void trainStop(TrainModel*, RailModel*);
+    void dataCorrupted();
 
 public slots:
     void sensorChanged(SensorModel::SensorType sensorType);

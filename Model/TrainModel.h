@@ -37,23 +37,19 @@ public:
         TRAIN_7,
         TRAIN_8,
     };
-
     enum TrainType{
         FREIGHT_TRAIN,
         PASSENGER_TRAIN
     };
-
     enum TrainPriority{
         PRIORITY_MIN = 0U,
         PRIORITY_MAX = 12U,
         PRIORITY_NONE = 100U
     };
-
     enum TrainDirection{
         DIRECTION_FORWARD = 1,
         DIRECTION_REVERSE = -1
     };
-
     explicit TrainModel(TrainID trainID, SliderModel *trainSlider, TrainType trainType, QObject *parent = nullptr);
     void setTrainSpeed(TrainSpeed trainSpeed);
     void setTrainPrority(unsigned int trainPriority);

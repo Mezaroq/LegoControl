@@ -1,5 +1,4 @@
 #include "LightModel.h"
-#include <QDebug>
 
 LightModel::LightModel(LightID lightID, QPointF lightPosition, qreal lightRotation) : ObjectModel(ObjectModel::OBJECT_LIGHT, lightID)
 {

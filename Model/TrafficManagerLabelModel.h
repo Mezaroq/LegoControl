@@ -20,9 +20,6 @@ public:
         WAITING_TRAIN_3
     };
     explicit TrafficManagerLabelModel(QWidget *parent = nullptr);
-
-signals:
-
 };
 
 #endif // TRAFFICMANAGERLABELMODEL_H

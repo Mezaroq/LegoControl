@@ -23,18 +23,15 @@ public:
         TYPE_LEFT,
         TYPE_RIGHT
     };
-
     enum SwitchState{
         STATE_NORMAL,
         STATE_LEFT,
         STATE_RIGHT
     };
-
     enum SwitchToggle{
         TOGGLE_OFF,
         TOGGLE_ON
     };
-
     SwitchModel(SwitchType switchType, SwitchID switchID);
     void setControlAction(ActionModel* controlAction);
     void toggle();

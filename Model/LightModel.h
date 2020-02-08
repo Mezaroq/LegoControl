@@ -35,7 +35,6 @@ public:
         STATE_RED,
         STATE_GREEN
     };
-
     LightModel(LightID lightID, QPointF lightPosition, qreal lightRotation);
     void setControlAction(ActionModel* controlAction);
     void toggle();

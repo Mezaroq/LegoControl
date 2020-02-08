@@ -26,8 +26,7 @@ void DataViewModel::connectController(QSerialPortInfo port)
 
 void DataViewModel::controllerReady()
 {
-    QByteArray data;
-    uint32_t *buffer = reinterpret_cast<uint32_t*>(controller->readAll().data());
+    buffer = reinterpret_cast<uint32_t*>(controller->readAll().data());
 
     for (int sensor = 0; sensor < SENSORS; sensor++) {
         if (GET_BIT(buffer[0], sensor)) {
@@ -40,7 +39,34 @@ void DataViewModel::controllerReady()
     emit sensorsData(data);
 }
 
+//void DataViewModel::controllerReady()
+//{
+//    buffer = reinterpret_cast<uint32_t*>(controller->readAll().data());
+
+//    for (int sensor = 0; sensor < SENSORS; sensor++) {
+//        if (GET_BIT(buffer[0], sensor)) {
+//            data[sensor] = 1;
+//        } else {
+//            data[sensor] = 0;
+//        }
+//    }
+
+//    emit sensorsData(data);
+//}
+
 void DataViewModel::sendData(QByteArray data)
 {
     controller->write(data);
+}
+
+void DataViewModel::sensorDebug()
+{
+    if (*data != 0) {
+        QString sensors = "";
+        int counter = 1;
+        for (auto hall : data) {
+            sensors += (QString::number(counter++) + ":" + QString::number(int(hall)) + "|");
+        }
+        qDebug() << sensors;
+    }
 }

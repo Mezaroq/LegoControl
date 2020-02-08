@@ -1,5 +1,4 @@
 #include "TrafficManagerButtonModel.h"
-#include <QDebug>
 
 TrafficManagerButtonModel::TrafficManagerButtonModel(QWidget *parent) : QPushButton(parent)
 {

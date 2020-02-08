@@ -1,9 +1,8 @@
 #include "TrafficManagerPanelViewModel.h"
-#include <QDebug>
 
-TrafficManagerPanelViewModel::TrafficManagerPanelViewModel(QObject *parent) : QObject(parent)
+TrafficManagerPanelViewModel::TrafficManagerPanelViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
-
+    this->mainWindow = mainWindow;
 }
 
 void TrafficManagerPanelViewModel::initPanel()
@@ -62,24 +61,7 @@ void TrafficManagerPanelViewModel::initPanel()
 
 void TrafficManagerPanelViewModel::updatePanel()
 {
-    managerLabels.value(TrafficManagerLabelModel::NORMAL_SPEED)->setText(QString::number(*normalSpeed));
-    managerLabels.value(TrafficManagerLabelModel::SLOWDOWN_SPEED)->setText(QString::number(*slowdownSpeed));
-    managerLabels.value(TrafficManagerLabelModel::START_SPEED)->setText(QString::number(*startSpeed));
-
-    managerLabels.value(TrafficManagerLabelModel::PRIORITY_TRAIN_1)->setText(QString::number(trains.value(TrainModel::TRAIN_1)->getTrainPriority()));
-    managerLabels.value(TrafficManagerLabelModel::PRIORITY_TRAIN_2)->setText(QString::number(trains.value(TrainModel::TRAIN_2)->getTrainPriority()));
-    managerLabels.value(TrafficManagerLabelModel::PRIORITY_TRAIN_3)->setText(QString::number(trains.value(TrainModel::TRAIN_3)->getTrainPriority()));
-
-    managerLabels.value(TrafficManagerLabelModel::WAITING_TRAIN_1)->setText(QString::number(timetables->value(TrainModel::TRAIN_1)->getWaitingTime() / TrafficTimetableModel::WAITING_1S) + "s");
-    managerLabels.value(TrafficManagerLabelModel::WAITING_TRAIN_2)->setText(QString::number(timetables->value(TrainModel::TRAIN_2)->getWaitingTime() / TrafficTimetableModel::WAITING_1S) + "s");
-    managerLabels.value(TrafficManagerLabelModel::WAITING_TRAIN_3)->setText(QString::number(timetables->value(TrainModel::TRAIN_3)->getWaitingTime() / TrafficTimetableModel::WAITING_1S) + "s");
-
-    managerButtons.value(TrafficManagerButtonModel::getButtonIndex(TrafficManagerButtonModel::BUTTON_TRAIN_1, TrafficManagerButtonModel::DIRECTION_BUTTON))
-            ->setText(timetables->value(TrainModel::TRAIN_1)->getDirection() == 1 ? "FORWARD" : "REVERSE");
-    managerButtons.value(TrafficManagerButtonModel::getButtonIndex(TrafficManagerButtonModel::BUTTON_TRAIN_2, TrafficManagerButtonModel::DIRECTION_BUTTON))
-            ->setText(timetables->value(TrainModel::TRAIN_2)->getDirection() == 1 ? "FORWARD" : "REVERSE");
-    managerButtons.value(TrafficManagerButtonModel::getButtonIndex(TrafficManagerButtonModel::BUTTON_TRAIN_3, TrafficManagerButtonModel::DIRECTION_BUTTON))
-            ->setText(timetables->value(TrainModel::TRAIN_3)->getDirection() == 1 ? "FORWARD" : "REVERSE");
+    initPanel();
 }
 
 void TrafficManagerPanelViewModel::setTrains(QMap<int, TrainModel *> trains)
@@ -377,4 +359,78 @@ void TrafficManagerPanelViewModel::managerButtonClicked(TrafficManagerButtonMode
 void TrafficManagerPanelViewModel::setManagerButtons(QMap<int, TrafficManagerButtonModel*> managerButtons)
 {
     this->managerButtons = managerButtons;
+}
+
+void TrafficManagerPanelViewModel::saveConfig()
+{
+    QString configFileName = QFileDialog::getSaveFileName(mainWindow, "Save Configuration", QCoreApplication::applicationDirPath(), "Lego Control Config (*.lcc)");
+    if (!configFileName.isNull()) {
+        if (QFile::exists(configFileName))
+            QFile::remove(configFileName);
+
+        QFile file(configFileName);
+        if (file.open(QIODevice::WriteOnly)) {
+            QDataStream out(&file);
+            QList<QList<int>> configuration;
+            QList<int> trainConfig;
+            for (auto timetable : *timetables) {
+                trainConfig.clear();
+                trainConfig.append(timetable->getTrainID());
+                trainConfig.append(signed(trains.value(timetable->getTrainID())->getTrainPriority()));
+                trainConfig.append(timetable->getWaitingTime());
+                trainConfig.append(timetable->getDirection());
+                trainConfig.append(trains.value(timetable->getTrainID())->isInverse());
+                for (auto station : *timetable->getStopStations()) {
+                    trainConfig.append(station->getStationID());
+                }
+                configuration.append(trainConfig);
+            }
+            out << *normalSpeed;
+            out << *slowdownSpeed;
+            out << *startSpeed;
+            out << configuration;
+            file.close();
+        }
+    }
+}
+
+void TrafficManagerPanelViewModel::loadConfig()
+{
+    QString configFileName = QFileDialog::getOpenFileName(mainWindow, "Load Configuration", QCoreApplication::applicationDirPath(), "Lego Control Config (*.lcc)");
+    if (!configFileName.isNull()) {
+        if (QFile::exists(configFileName)) {
+            QFile file(configFileName);
+
+            if (file.open(QIODevice::ReadOnly)) {
+                if (file.size() > 0) {
+                    QDataStream in(&file);
+                    QList<QList<int>> configuration;
+                    in >> *normalSpeed;
+                    in >> *slowdownSpeed;
+                    in >> *startSpeed;
+                    in >> configuration;
+
+                    for (auto timetable : *timetables)
+                        delete timetable;
+                    timetables->clear();
+
+                    for (auto trainConfig : configuration) {
+                        TrainModel::TrainID trainID = TrainModel::TrainID(trainConfig.at(CONFIG_TRAIN_ID));
+                        trains.value(trainID)->setTrainPrority(unsigned(trainConfig.at(CONFIG_PRIORITY)));
+                        trains.value(trainID)->setInverseSpeed(trainConfig.at(CONFIG_INVERSION));
+                        timetables->insert(trainID, new TrafficTimetableModel(trainID));
+                        timetables->value(trainID)->setWaitingTime(TrafficTimetableModel::WaitingTime(trainConfig.at(CONFIG_WAIT_TIME)));
+                        timetables->value(trainID)->setDirection(TrainModel::TrainDirection(trainConfig.at(CONFIG_DIRECTION)));
+                        for (auto stationID : trainConfig.mid(CONFIG_STATIONS)) {
+                            timetables->value(trainID)->setStopStation(stations.value(StationModel::StationID(stationID)));
+                        }
+                    }
+                    updatePanel();
+                    file.close();
+                } else {
+                    file.close();
+                }
+            }
+        }
+    }
 }

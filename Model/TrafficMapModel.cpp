@@ -1,5 +1,4 @@
 #include "TrafficMapModel.h"
-#include <QDebug>
 
 TrafficMapModel::TrafficMapModel(QObject *parent) : QObject(parent)
 {

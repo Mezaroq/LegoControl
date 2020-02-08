@@ -22,7 +22,6 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     QMap<int, TrafficManagerButtonModel*> getManagerButtons();
@@ -35,7 +34,8 @@ public:
     QStatusBar* getStatusBar();
     QAction* getActionRun();
     QAction* getActionEnableAI();
-    QAction* getActionDebugPanel();
+    QAction* getActionLoadConfig();
+    QAction* getActionSaveConfig();
     QAction* getActionReset();
     GraphicsView* getControlView();
     ~MainWindow();

@@ -50,7 +50,6 @@ private:
 
 public slots:
     void waitingEnd();
-
 };
 
 #endif // TRAFFICTIMETABLEMODEL_H

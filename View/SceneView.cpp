@@ -1,5 +1,4 @@
 #include "SceneView.h"
-#include <QDebug>
 
 SceneView::SceneView() : QGraphicsScene()
 {

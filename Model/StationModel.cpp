@@ -1,5 +1,4 @@
 #include "StationModel.h"
-#include <QDebug>
 
 StationModel::StationModel(StationModel::StationID stationID, QObject *parent)
 {

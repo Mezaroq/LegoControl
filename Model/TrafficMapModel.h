@@ -22,9 +22,6 @@ private:
     QMap<int, StationModel*> stations;
     QMap<int, SwitchModel*> switches;
     QMap<StationModel::StationID, QList<RailModel*>> stationRails;
-
-signals:
-
 };
 
 #endif // TRAFFICMAPMODEL_H

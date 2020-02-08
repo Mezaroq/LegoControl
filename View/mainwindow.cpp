@@ -140,9 +140,14 @@ QAction *MainWindow::getActionEnableAI()
     return ui->actionEnable_AI;
 }
 
-QAction *MainWindow::getActionDebugPanel()
+QAction *MainWindow::getActionLoadConfig()
 {
-    return ui->actionDebug_Panel;
+    return ui->actionLoadConfig;
+}
+
+QAction *MainWindow::getActionSaveConfig()
+{
+    return ui->actionSaveConfig;
 }
 
 QAction *MainWindow::getActionReset()

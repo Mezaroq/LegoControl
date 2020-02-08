@@ -1,5 +1,4 @@
 #include "SensorModel.h"
-#include <QDebug>
 
 SensorModel::SensorModel(SensorID sensorID, SensorType sensorType, QObject *parent) : QObject(parent)
 {
@@ -7,18 +6,16 @@ SensorModel::SensorModel(SensorID sensorID, SensorType sensorType, QObject *pare
     this->sensorType = sensorType;
 }
 
-void SensorModel::setState(bool newState)
+void SensorModel::setSensorSignal(bool newState)
 {
-    if ((newState == true) && (state != newState)) {
-        state = true;
-        qDebug() << sensorID+1 << ":" << state;
+    if (state == false && newState == true) {
         emit signalChanged(sensorType);
-    } else if ((newState == false) && (state != newState)) {
-        state = false;
     }
+    state = newState;
 }
 
-void SensorModel::debugSignal()
-{
-    emit signalChanged(sensorType);
-}
+//void SensorModel::setSensorSignal(bool newState)
+//{
+//    if (newState)
+//        emit signalChanged(sensorType);
+//}

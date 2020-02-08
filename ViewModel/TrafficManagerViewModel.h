@@ -10,8 +10,10 @@
 #include <Model/TrafficTimetableModel.h>
 #include <Model/TrafficManagerLabelModel.h>
 #include <Model/TrafficManagerButtonModel.h>
+#include <QFile>
 #include <QMap>
 #include <QList>
+#include <QDebug>
 
 class TrafficManagerViewModel : public QObject
 {
@@ -47,6 +49,7 @@ protected:
     QMap<unsigned int, TrainModel*> getTrainsByPriority();
 
 private:
+    QString configFileName = "configuration.lc";
     int normalSpeed = TrainModel::SPEED_FORWARD_5;
     int slowdownSpeed = TrainModel::SPEED_FORWARD_3;
     int startSpeed = TrainModel::SPEED_FORWARD_3;
@@ -68,7 +71,6 @@ public slots:
     void trainEnters(TrainModel *train, RailModel *rail);
     void trainLeaves(TrainModel *train, RailModel *rail);
     void trainStop(TrainModel *train, RailModel *rail);
-
 };
 
 #endif // TRAFFICMANAGERVIEWMODEL_H

@@ -15,10 +15,13 @@ public:
     ~DataViewModel();
     void connectController(QSerialPortInfo port);
     void sendData(QByteArray data);
+    void sensorDebug();
 
 private:
     const int DATA_SIZE = 4;
     const int SENSORS = 32;
+    QByteArray data;
+    uint32_t *buffer;
     QSerialPort *controller = nullptr;
 
 signals:

@@ -1,5 +1,4 @@
 #include "MainProvider.h"
-#include <QDebug>
 
 MainProvider::MainProvider()
 {
@@ -13,13 +12,14 @@ void MainProvider::setObjects()
 {
     viewModel = new MainViewModel(&mainWindow);
     trafficManager = new TrafficManagerViewModel();
-    trafficManagerPanel = new TrafficManagerPanelViewModel();
+    trafficManagerPanel = new TrafficManagerPanelViewModel(&mainWindow);
     view = mainWindow.getControlView();
     scene = new SceneView();
     buttonStopAll = mainWindow.getButtonStopAll();
     actionRun = mainWindow.getActionRun();
     actionEnableAI = mainWindow.getActionEnableAI();
-    actionDebugPanel = mainWindow.getActionDebugPanel();
+    actionLoadConfig = mainWindow.getActionLoadConfig();
+    actionSaveConfig = mainWindow.getActionSaveConfig();
     actionReset = mainWindow.getActionReset();
     toolBar = mainWindow.getToolBar();
     statusBar = mainWindow.getStatusBar();
@@ -38,6 +38,8 @@ void MainProvider::setGlobalConnections()
     connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
     connect(actionReset, SIGNAL(triggered()), viewModel, SLOT(resetTrainsTriggered()));
+    connect(actionLoadConfig, SIGNAL(triggered()), trafficManagerPanel, SLOT(loadConfig()));
+    connect(actionSaveConfig, SIGNAL(triggered()), trafficManagerPanel, SLOT(saveConfig()));
 }
 
 void MainProvider::setObjectsData()
@@ -79,7 +81,6 @@ void MainProvider::setObjectsData()
     trafficManagerPanel->setStartSpeed(trafficManager->getStartSpeed());
     trafficManagerPanel->setStations(stations);
     trafficManagerPanel->initPanel();
-
 }
 
 void MainProvider::prependButtons()
@@ -218,6 +219,7 @@ void MainProvider::prependRails()
         connect(rail, SIGNAL(trainEnters(TrainModel*, RailModel*)), trafficManager, SLOT(trainEnters(TrainModel*, RailModel*)));
         connect(rail, SIGNAL(trainLeaves(TrainModel*, RailModel*)), trafficManager, SLOT(trainLeaves(TrainModel*, RailModel*)));
         connect(rail, SIGNAL(trainStop(TrainModel*, RailModel*)), trafficManager, SLOT(trainStop(TrainModel*, RailModel*)));
+        connect(rail, SIGNAL(dataCorrupted()), viewModel, SLOT(stopAllChannels()));
         scene->addItem(rail);
     }
     scene->addItem(new QGraphicsPixmapItem(RailModel::getResource(RailModel::RAIL_SECTION_11)));
@@ -311,7 +313,6 @@ void MainProvider::prependStations()
     stations.value(StationModel::CENTRAL_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_4) << rails.value(RailModel::RAIL_SECTION_10));
     stations.value(StationModel::NORTH_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_7) << rails.value(RailModel::RAIL_SECTION_4));
     stations.value(StationModel::SOUTH_STATION)->setNextRails(QList<RailModel*>() << rails.value(RailModel::RAIL_SECTION_10) << rails.value(RailModel::RAIL_SECTION_7));
-
 }
 
 void MainProvider::prependTrafficManagerButtons()

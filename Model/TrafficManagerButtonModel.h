@@ -44,7 +44,6 @@ signals:
 
 public slots:
     void buttonClicked(bool state);
-
 };
 
 #endif // TRAFFICMANAGERBUTTONMODEL_H

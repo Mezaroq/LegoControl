@@ -7,7 +7,11 @@
 #include <Model/TrafficTimetableModel.h>
 #include <Model/StationModel.h>
 #include <Model/TrainModel.h>
+#include <QMainWindow>
+#include <QCoreApplication>
+#include <QFileDialog>
 #include <QMap>
+#include <QDebug>
 
 class TrafficManagerPanelViewModel : public QObject
 {
@@ -26,9 +30,16 @@ public:
         TRAIN_3_NORTH,
         TRAIN_3_SOUTH,
         TRAIN_3_DIRECTION,
-
     };
-    explicit TrafficManagerPanelViewModel(QObject *parent = nullptr);
+    enum ConfigurationFile{
+        CONFIG_TRAIN_ID,
+        CONFIG_PRIORITY,
+        CONFIG_WAIT_TIME,
+        CONFIG_DIRECTION,
+        CONFIG_INVERSION,
+        CONFIG_STATIONS
+    };
+    explicit TrafficManagerPanelViewModel(QMainWindow *mainWindow, QObject *parent = nullptr);
     void initPanel();
     void updatePanel();
     void setManagerButtons(QMap<int, TrafficManagerButtonModel *> managerButtons);
@@ -41,7 +52,9 @@ public:
     void setStartSpeed(int *startSpeed);
     bool getStopStationSelected(StationModel *station, TrainModel *train);
     void setPriorities();
+
 private:
+    QMainWindow *mainWindow;
     QMap<int, TrainModel *> trains;
     QMap<int, StationModel *> stations;
     QMap<int, TrafficManagerButtonModel*> managerButtons;
@@ -53,10 +66,10 @@ private:
     int *slowdownSpeed;
     int *startSpeed;
 
-signals:
-
 public slots:
     void managerButtonClicked(TrafficManagerButtonModel::ButtonCategory buttonCategory, TrafficManagerButtonModel::ButtonType buttonType, bool toggled);
+    void saveConfig();
+    void loadConfig();
 };
 
 #endif // TRAFFICMANAGERPANELVIEWMODEL_H

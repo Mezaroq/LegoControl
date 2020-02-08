@@ -20,7 +20,6 @@ public:
         FORWARD,
         REVERSE
     };
-
     explicit StationModel(StationID stationID, QObject *parent = nullptr);
     void setStations(QList<StationModel*> nextStations);
     void setPlatforms(TrainModel::TrainType trainType, QList<RailModel*> rails);
@@ -37,10 +36,6 @@ private:
     QMap<NextStation, StationModel*> nextStations;
     QMap<TrainModel::TrainType, QList<RailModel*>> platforms;
     QMap<NextStation, RailModel*> nextRails;
-
-
-signals:
-
 };
 
 #endif // CONTROLSTATION_H

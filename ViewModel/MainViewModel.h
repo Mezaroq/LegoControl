@@ -50,7 +50,6 @@ public:
         LIGHT_TRANSMISSION_CONTROL_3 = 0x04,
         SWITCH_TRANSMISSION_CONTROL_1 = 0x08
     };
-
     explicit MainViewModel(QMainWindow* mainWindow, QObject *parent = nullptr);
     ~MainViewModel();
     void setSliders(QMap<int, SliderModel*> sliders);

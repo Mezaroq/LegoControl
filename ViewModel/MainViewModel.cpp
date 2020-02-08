@@ -1,4 +1,5 @@
 #include "MainViewModel.h"
+#include <QTimer>
 
 MainViewModel::MainViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
@@ -55,36 +56,36 @@ void MainViewModel::setTrafficManager(TrafficManagerViewModel *trafficManager)
 
 void MainViewModel::setSensorsData(QByteArray byteArray)
 {
-    sensors.value(SensorModel::SENSOR_1)->setState(byteArray.at(13));
-    sensors.value(SensorModel::SENSOR_4)->setState(byteArray.at(10));
-    sensors.value(SensorModel::SENSOR_5)->setState(byteArray.at(4));
-    sensors.value(SensorModel::SENSOR_8)->setState(byteArray.at(2));
-    sensors.value(SensorModel::SENSOR_9)->setState(byteArray.at(9));
-    sensors.value(SensorModel::SENSOR_12)->setState(byteArray.at(3));
-    sensors.value(SensorModel::SENSOR_13)->setState(byteArray.at(24));
-    sensors.value(SensorModel::SENSOR_16)->setState(byteArray.at(27));
-    sensors.value(SensorModel::SENSOR_17)->setState(byteArray.at(28));
-    sensors.value(SensorModel::SENSOR_20)->setState(byteArray.at(31));
-    sensors.value(SensorModel::SENSOR_21)->setState(byteArray.at(16));
-    sensors.value(SensorModel::SENSOR_24)->setState(byteArray.at(18));
-    sensors.value(SensorModel::SENSOR_25)->setState(byteArray.at(21));
-    sensors.value(SensorModel::SENSOR_28)->setState(byteArray.at(23));
+    sensors.value(SensorModel::SENSOR_1)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_1]);
+    sensors.value(SensorModel::SENSOR_4)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_4]);
+    sensors.value(SensorModel::SENSOR_5)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_5]);
+    sensors.value(SensorModel::SENSOR_8)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_8]);
+    sensors.value(SensorModel::SENSOR_9)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_9]);
+    sensors.value(SensorModel::SENSOR_12)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_12]);
+    sensors.value(SensorModel::SENSOR_13)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_13]);
+    sensors.value(SensorModel::SENSOR_16)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_16]);
+    sensors.value(SensorModel::SENSOR_17)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_17]);
+    sensors.value(SensorModel::SENSOR_20)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_20]);
+    sensors.value(SensorModel::SENSOR_21)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_21]);
+    sensors.value(SensorModel::SENSOR_24)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_24]);
+    sensors.value(SensorModel::SENSOR_25)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_25]);
+    sensors.value(SensorModel::SENSOR_28)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_28]);
 
 
-    sensors.value(SensorModel::SENSOR_2)->setState(byteArray.at(12));
-    sensors.value(SensorModel::SENSOR_3)->setState(byteArray.at(11));
-    sensors.value(SensorModel::SENSOR_6)->setState(byteArray.at(8));
-    sensors.value(SensorModel::SENSOR_7)->setState(byteArray.at(7));
-    sensors.value(SensorModel::SENSOR_10)->setState(byteArray.at(5));
-    sensors.value(SensorModel::SENSOR_11)->setState(byteArray.at(6));
-    sensors.value(SensorModel::SENSOR_14)->setState(byteArray.at(25));
-    sensors.value(SensorModel::SENSOR_15)->setState(byteArray.at(26));
-    sensors.value(SensorModel::SENSOR_18)->setState(byteArray.at(29));
-    sensors.value(SensorModel::SENSOR_19)->setState(byteArray.at(30));
-    sensors.value(SensorModel::SENSOR_22)->setState(byteArray.at(17));
-    sensors.value(SensorModel::SENSOR_23)->setState(byteArray.at(19));
-    sensors.value(SensorModel::SENSOR_26)->setState(byteArray.at(20));
-    sensors.value(SensorModel::SENSOR_27)->setState(byteArray.at(22));
+    sensors.value(SensorModel::SENSOR_2)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_2]);
+    sensors.value(SensorModel::SENSOR_3)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_3]);
+    sensors.value(SensorModel::SENSOR_6)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_6]);
+    sensors.value(SensorModel::SENSOR_7)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_7]);
+    sensors.value(SensorModel::SENSOR_10)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_10]);
+    sensors.value(SensorModel::SENSOR_11)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_11]);
+    sensors.value(SensorModel::SENSOR_14)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_14]);
+    sensors.value(SensorModel::SENSOR_15)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_15]);
+    sensors.value(SensorModel::SENSOR_18)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_18]);
+    sensors.value(SensorModel::SENSOR_19)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_19]);
+    sensors.value(SensorModel::SENSOR_22)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_22]);
+    sensors.value(SensorModel::SENSOR_23)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_23]);
+    sensors.value(SensorModel::SENSOR_26)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_26]);
+    sensors.value(SensorModel::SENSOR_27)->setSensorSignal(byteArray[SensorModel::POSITION_SENSOR_27]);
 }
 
 void MainViewModel::collectControlData()
@@ -101,65 +102,66 @@ void MainViewModel::collectControlData()
     controlData[TRAIN_CONTROL_8] = static_cast<char>(trains.value(TrainModel::TRAIN_8)->getTrainControl());
 
     controlData[SWITCH_CONTROL_1] = static_cast<char>( switches.value(SwitchModel::SWITCH_1)->getSwitchState() +
-                                                   2 * !switches.value(SwitchModel::SWITCH_3)->getSwitchState() +
-                                                   4 * switches.value(SwitchModel::SWITCH_4)->getSwitchState() +
-                                                   8 * !switches.value(SwitchModel::SWITCH_2)->getSwitchState() +
+                                                   2 * !switches.value(SwitchModel::SWITCH_2)->getSwitchState() +
+                                                   4 * !switches.value(SwitchModel::SWITCH_3)->getSwitchState() +
+                                                   8 * switches.value(SwitchModel::SWITCH_4)->getSwitchState() +
                                                   16 * switches.value(SwitchModel::SWITCH_5)->getSwitchState() +
-                                                  32 * !switches.value(SwitchModel::SWITCH_9)->getSwitchState() +
-                                                  64 * !switches.value(SwitchModel::SWITCH_6)->getSwitchState() +
-                                                 128 * switches.value(SwitchModel::SWITCH_7)->getSwitchState() );
-    controlData[SWITCH_CONTROL_2] = static_cast<char>( switches.value(SwitchModel::SWITCH_8)->getSwitchState() );
+                                                  32 * !switches.value(SwitchModel::SWITCH_6)->getSwitchState() +
+                                                  64 * switches.value(SwitchModel::SWITCH_7)->getSwitchState() +
+                                                 128 * switches.value(SwitchModel::SWITCH_8)->getSwitchState() );
+    controlData[SWITCH_CONTROL_2] = static_cast<char>( !switches.value(SwitchModel::SWITCH_9)->getSwitchState() );
 
-    controlData[LIGHT_CONTROL_1] = static_cast<char>( lights.value( LightModel::LIGHT_17)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_17)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_15)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_15)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_14)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_14)->getLightState() +
+    controlData[LIGHT_CONTROL_1] = static_cast<char>( !lights.value( LightModel::LIGHT_7)->getLightState() +
+                                                  2 * lights.value( LightModel::LIGHT_7)->getLightState() +
+                                                  4 * !lights.value( LightModel::LIGHT_2)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_2)->getLightState() +
+                                                 16 * !lights.value( LightModel::LIGHT_4)->getLightState() +
+                                                 32 * lights.value( LightModel::LIGHT_4)->getLightState() +
+                                                 64 * !lights.value( LightModel::LIGHT_6)->getLightState() +
+                                                128 * lights.value( LightModel::LIGHT_6)->getLightState() );
+
+    controlData[LIGHT_CONTROL_2] = static_cast<char>( !lights.value( LightModel::LIGHT_5)->getLightState() +
+                                                  2 * lights.value( LightModel::LIGHT_5)->getLightState() +
+                                                  4 * !lights.value( LightModel::LIGHT_3)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_3)->getLightState() +
+                                                 16 * !lights.value( LightModel::LIGHT_1)->getLightState() +
+                                                 32 * lights.value( LightModel::LIGHT_1)->getLightState() +
+                                                 64 * !lights.value( LightModel::LIGHT_21)->getLightState() +
+                                                128 * lights.value( LightModel::LIGHT_21)->getLightState() );
+
+    controlData[LIGHT_CONTROL_3] = static_cast<char>( !lights.value( LightModel::LIGHT_12)->getLightState() +
+                                                  2 * lights.value( LightModel::LIGHT_12)->getLightState() +
+                                                  4 * !lights.value( LightModel::LIGHT_10)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_10)->getLightState() +
+                                                 16 * !lights.value( LightModel::LIGHT_13)->getLightState() +
+                                                 32 * lights.value( LightModel::LIGHT_13)->getLightState() +
+                                                 64 * !lights.value( LightModel::LIGHT_15)->getLightState() +
+                                                128 * lights.value( LightModel::LIGHT_15)->getLightState() );
+    controlData[LIGHT_CONTROL_4] = static_cast<char>( !lights.value( LightModel::LIGHT_14)->getLightState() +
+                                                  2 * lights.value( LightModel::LIGHT_14)->getLightState() +
+                                                  4 * !lights.value( LightModel::LIGHT_17)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_17)->getLightState() +
+                                                 16 * 0 +
+                                                 32 * 0 +
                                                  64 * 0 +
                                                 128 * 0 );
-    controlData[LIGHT_CONTROL_2] = static_cast<char>( lights.value( LightModel::LIGHT_10)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_10)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_12)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_12)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_13)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_13)->getLightState() +
-                                                 64 * 0 +
-                                                128 * 0 );
 
-    controlData[LIGHT_CONTROL_3] = static_cast<char>( lights.value( LightModel::LIGHT_20)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_20)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_18)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_18)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_16)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_16)->getLightState() +
-                                                 64 * lights.value( LightModel::LIGHT_19)->getLightState() +
-                                                128 * !lights.value( LightModel::LIGHT_19)->getLightState() );
-    controlData[LIGHT_CONTROL_4] = static_cast<char>( lights.value( LightModel::LIGHT_8)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_8)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_9)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_9)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_11)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_11)->getLightState() +
-                                                 64 * 0 +
-                                                128 * 0 );
-
-    controlData[LIGHT_CONTROL_5] = static_cast<char>( lights.value( LightModel::LIGHT_21)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_21)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_1)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_1)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_3)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_3)->getLightState() +
-                                                 64 * lights.value( LightModel::LIGHT_5)->getLightState() +
-                                                128 * !lights.value( LightModel::LIGHT_5)->getLightState() );
-    controlData[LIGHT_CONTROL_6] = static_cast<char>( lights.value( LightModel::LIGHT_6)->getLightState() +
-                                                  2 * !lights.value( LightModel::LIGHT_6)->getLightState() +
-                                                  4 * lights.value( LightModel::LIGHT_4)->getLightState() +
-                                                  8 * !lights.value( LightModel::LIGHT_4)->getLightState() +
-                                                 16 * lights.value( LightModel::LIGHT_2)->getLightState() +
-                                                 32 * !lights.value( LightModel::LIGHT_2)->getLightState() +
-                                                 64 * lights.value( LightModel::LIGHT_7)->getLightState() +
-                                                128 * !lights.value( LightModel::LIGHT_7)->getLightState() );
+    controlData[LIGHT_CONTROL_5] = static_cast<char>( 0 +
+                                                  2 * 0 +
+                                                  4 * !lights.value( LightModel::LIGHT_9)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_9)->getLightState() +
+                                                 16 * !lights.value( LightModel::LIGHT_11)->getLightState() +
+                                                 32 * lights.value( LightModel::LIGHT_11)->getLightState() +
+                                                 64 * !lights.value( LightModel::LIGHT_8)->getLightState() +
+                                                128 * lights.value( LightModel::LIGHT_8)->getLightState() );
+    controlData[LIGHT_CONTROL_6] = static_cast<char>( !lights.value( LightModel::LIGHT_19)->getLightState() +
+                                                  2 * lights.value( LightModel::LIGHT_19)->getLightState() +
+                                                  4 * !lights.value( LightModel::LIGHT_18)->getLightState() +
+                                                  8 * lights.value( LightModel::LIGHT_18)->getLightState() +
+                                                 16 * !lights.value( LightModel::LIGHT_20)->getLightState() +
+                                                 32 * lights.value( LightModel::LIGHT_20)->getLightState() +
+                                                 64 * !lights.value( LightModel::LIGHT_16)->getLightState() +
+                                                128 * lights.value( LightModel::LIGHT_16)->getLightState() );
 
     controlData[TRANSMISSION_CONTROL] = getTransmissionControl();
     lastControlData = controlData;
@@ -291,7 +293,6 @@ void MainViewModel::controlObjectClicked(ObjectModel::ObjectType objectType, int
 
 void MainViewModel::sensorsData(QByteArray data)
 {
-//    qDebug() << data.toHex('|');
     setSensorsData(data);
     trafficManager->run();
     collectControlData();

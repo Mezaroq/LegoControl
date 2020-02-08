@@ -16,7 +16,6 @@
 #include <View/MainWindow.h>
 #include <View/SceneView.h>
 #include <View/GraphicsView.h>
-#include <View/DebuggerView.h>
 #include <ViewModel/MainViewModel.h>
 #include <ViewModel/TrafficManagerViewModel.h>
 #include <ViewModel/TrafficManagerPanelViewModel.h>
@@ -46,7 +45,6 @@ public:
 
 private:
     MainViewModel *viewModel;
-    DebuggerView *debugger;
     MainWindow mainWindow;
     GraphicsView *view;
     SceneView *scene;
@@ -55,8 +53,9 @@ private:
     QPushButton *buttonStopAll;
     QAction *actionRun;
     QAction *actionEnableAI;
-    QAction *actionDebugPanel;
     QAction *actionReset;
+    QAction *actionLoadConfig;
+    QAction *actionSaveConfig;
     TrafficManagerViewModel *trafficManager;
     TrafficManagerPanelViewModel *trafficManagerPanel;
     QMap<int, ButtonModel*> buttons;
