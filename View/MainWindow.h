@@ -9,6 +9,7 @@
 #include <Model/TrafficManagerLabelModel.h>
 #include <View/GraphicsView.h>
 #include <ViewModel/MainViewModel.h>
+#include <QShortcut>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>

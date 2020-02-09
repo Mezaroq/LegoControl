@@ -6,7 +6,6 @@ MainViewModel::MainViewModel(QMainWindow *mainWindow, QObject *parent) : QObject
     setDataController();
 
     loadTrains = new QMessageBox(mainWindow);
-    resetTrains = new QMessageBox(mainWindow);
 }
 
 MainViewModel::~MainViewModel()
@@ -181,7 +180,7 @@ void MainViewModel::setSerialPortInformation()
     statusBar->showMessage(QString("Controller: " + QString(controllerStatus ? "(Disconnected)" : ("none"))));
 }
 
-void MainViewModel::loadTrainPosition() //REMAKE
+void MainViewModel::loadTrainPosition()
 {
     loadTrains->setText("Set current trains position,\n(select highlight rail using mouse)\nTrain 1 -> Train 2 -> Train 3");
     loadTrains->setStandardButtons(QMessageBox::Ok);
@@ -249,12 +248,12 @@ void MainViewModel::aiEnabled(bool state)
 
 void MainViewModel::stopAllChannels()
 {
-    trafficManager->disable();
+    emit stopTrafficManager(false);
     for (auto slider : sliders)
         slider->setValue(0);
 }
 
-void MainViewModel::controlObjectClicked(ObjectModel::ObjectType objectType, int objectID) //REMAKE
+void MainViewModel::controlObjectClicked(ObjectModel::ObjectType objectType, int objectID)
 {
     if (selectionMode) {
         if (objectType == ObjectModel::OBJECT_RAIL) {
@@ -299,7 +298,7 @@ void MainViewModel::sensorsData(QByteArray data)
     dataController->sendData(controlData);
 }
 
-void MainViewModel::resetTrainsTriggered() //REMAKE
+void MainViewModel::resetTrainsTriggered()
 {
     if (!selectionMode) {
         loadTrains->setText("Select rails to insert trains from 1 to 3.");
@@ -309,6 +308,7 @@ void MainViewModel::resetTrainsTriggered() //REMAKE
         if (loadTrains->exec() == QMessageBox::Ok) {
             for (auto rail : rails) {
                 rail->getTrain(true);
+                rail->clearStatus();
             }
             for (RailModel *rail : rails) {
                 if (rail->getObjectID() == RailModel::RAIL_SECTION_4 || rail->getObjectID() == RailModel::RAIL_SECTION_7 || rail->getObjectID() == RailModel::RAIL_SECTION_10)

@@ -45,30 +45,28 @@ void RailModel::setRails(RailModel::TrainMove direction, QList<RailModel *> rail
     this->rails.insert(direction, rails);
 }
 
+void RailModel::clearStatus()
+{
+    entryCounter = 0;
+    trainMove = UNDEFINED;
+}
+
 bool RailModel::sensorDataCorrect(SensorModel::SensorType type)
 {
     switch (type) {
     case SensorModel::REVERSE_ENTRY_SENSOR:
-        if (currentTrain != nullptr && getRails(REVERSE).first()->getTrain() != nullptr)
-            return false;
         if (currentTrain != nullptr || getRails(REVERSE).first()->getTrain() != nullptr)
             return true;
         break;
     case SensorModel::REVERSE_STOP_SENSOR:
-        if (currentTrain != nullptr && getRails(REVERSE).first()->getTrain() != nullptr)
-            return false;
         if (currentTrain != nullptr || getRails(REVERSE).first()->getTrain() != nullptr)
             return true;
         break;
     case SensorModel::FORWARD_STOP_SENSOR:
-        if (currentTrain != nullptr && getRails(FORWARD).first()->getTrain() != nullptr)
-            return false;
         if (currentTrain != nullptr || getRails(FORWARD).first()->getTrain() != nullptr)
             return true;
         break;
     case SensorModel::FORWARD_ENTRY_SENSOR:
-        if (currentTrain != nullptr && getRails(FORWARD).first()->getTrain() != nullptr)
-            return false;
         if (currentTrain != nullptr || getRails(FORWARD).first()->getTrain() != nullptr)
             return true;
         break;

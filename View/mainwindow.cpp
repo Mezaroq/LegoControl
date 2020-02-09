@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("Lego Control");
+
+    QShortcut *shortcut = new QShortcut(QKeySequence("Space"), this);
+    QObject::connect(shortcut, SIGNAL(activated()), ui->buttonStopAll, SLOT(click()));
 }
 
 QMap<int, TrafficManagerButtonModel *> MainWindow::getManagerButtons()

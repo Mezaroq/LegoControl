@@ -1,7 +1,7 @@
 #ifndef DATACONTROLLER_H
 #define DATACONTROLLER_H
 
-#define GET_BIT(k, n) (k & (1 << (n)))
+#define GET_BIT(byte, bit) (byte & (1 << (bit)))
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>

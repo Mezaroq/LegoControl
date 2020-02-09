@@ -83,14 +83,13 @@ private:
     QByteArray controlData;
     QByteArray lastControlData;
     QMessageBox* loadTrains;
-    QMessageBox* resetTrains;
     QMainWindow* mainWindow;
 
 protected:
     void setDataController();
 
 signals:
-    void controlDataCollected(QByteArray controlData);
+    void stopTrafficManager(bool);
 
 public slots:
     void runTriggered();

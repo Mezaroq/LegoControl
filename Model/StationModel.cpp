@@ -1,6 +1,6 @@
 #include "StationModel.h"
 
-StationModel::StationModel(StationModel::StationID stationID, QObject *parent)
+StationModel::StationModel(StationModel::StationID stationID, QObject *parent) : QObject(parent)
 {
     this->stationID = stationID;
 }

@@ -38,6 +38,7 @@ void MainProvider::setGlobalConnections()
     connect(actionRun, SIGNAL(triggered()), viewModel, SLOT(runTriggered()));
     connect(actionEnableAI, SIGNAL(toggled(bool)), viewModel, SLOT(aiEnabled(bool)));
     connect(actionReset, SIGNAL(triggered()), viewModel, SLOT(resetTrainsTriggered()));
+    connect(viewModel, SIGNAL(stopTrafficManager(bool)), actionEnableAI, SLOT(setChecked(bool)));
     connect(actionLoadConfig, SIGNAL(triggered()), trafficManagerPanel, SLOT(loadConfig()));
     connect(actionSaveConfig, SIGNAL(triggered()), trafficManagerPanel, SLOT(saveConfig()));
 }

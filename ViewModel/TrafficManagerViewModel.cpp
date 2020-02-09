@@ -72,10 +72,15 @@ void TrafficManagerViewModel::initData()
 {
     for (auto rail : rails) {
         if (rail->getTrain() != nullptr) {
+            rail->clearStatus();
             timetables.value(rail->getTrain()->getTrainID())->setCurrentRail(rail);
             timetables.value(rail->getTrain()->getTrainID())->setCurrentStation(map->getStationByRail(rail->getRailID()));
             waitingTrains.append(rail->getTrain());
         }
+    }
+
+    for (auto cswitch : switches) {
+        cswitch->setToggle(false);
     }
 }
 
@@ -87,10 +92,6 @@ void TrafficManagerViewModel::deinitData()
         if (rail->getTrain() == nullptr) {
             rail->setReservation(false);
         }
-    }
-
-    for (auto cswitch : switches) {
-        cswitch->setToggle(false);
     }
 
     for (auto train : trains) {
@@ -115,7 +116,7 @@ bool TrafficManagerViewModel::currentStationIsStop()
     return timetable->getStopStations()->contains(timetable->getCurrentStation());
 }
 
-void TrafficManagerViewModel::trafficManagerMovingTrains(TrainModel *train, TrainState trainState) //DONE
+void TrafficManagerViewModel::trafficManagerMovingTrains(TrainModel *train, TrainState trainState)
 {
     if (trafficManagerEnabled) {
         if (trainState == TRAIN_ENTERS) {

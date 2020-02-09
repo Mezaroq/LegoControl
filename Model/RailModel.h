@@ -37,6 +37,7 @@ public:
     void setReservation(bool reservation);
     void setLights(QList<LightModel*> lights);
     void setRails(TrainMove direction, QList<RailModel*> rails);
+    void clearStatus();
     bool sensorDataCorrect(SensorModel::SensorType type);
     LightModel* getLight(TrainMove direction);
     QList<RailModel*> getRails(TrainMove direction);
