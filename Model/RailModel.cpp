@@ -45,12 +45,6 @@ void RailModel::setRails(RailModel::TrainMove direction, QList<RailModel *> rail
     this->rails.insert(direction, rails);
 }
 
-void RailModel::clearStatus()
-{
-    entryCounter = 0;
-    trainMove = UNDEFINED;
-}
-
 bool RailModel::sensorDataCorrect(SensorModel::SensorType type)
 {
     switch (type) {

@@ -15,7 +15,6 @@ public:
     ~DataViewModel();
     void connectController(QSerialPortInfo port);
     void sendData(QByteArray data);
-    void sensorDebug();
 
 private:
     const int DATA_SIZE = 4;

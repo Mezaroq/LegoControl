@@ -1,5 +1,4 @@
 #include "MainViewModel.h"
-#include <QTimer>
 
 MainViewModel::MainViewModel(QMainWindow *mainWindow, QObject *parent) : QObject(parent)
 {
@@ -243,12 +242,14 @@ void MainViewModel::aiEnabled(bool state)
         trafficManager->enable();
     else
         trafficManager->disable();
-    trafficManager->run();
 }
 
 void MainViewModel::stopAllChannels()
 {
-    emit stopTrafficManager(false);
+    if (trafficManager->isEnabled()) {
+        trafficManager->setBreake();
+        emit stopTrafficManager(false);
+    }
     for (auto slider : sliders)
         slider->setValue(0);
 }
@@ -308,7 +309,6 @@ void MainViewModel::resetTrainsTriggered()
         if (loadTrains->exec() == QMessageBox::Ok) {
             for (auto rail : rails) {
                 rail->getTrain(true);
-                rail->clearStatus();
             }
             for (RailModel *rail : rails) {
                 if (rail->getObjectID() == RailModel::RAIL_SECTION_4 || rail->getObjectID() == RailModel::RAIL_SECTION_7 || rail->getObjectID() == RailModel::RAIL_SECTION_10)

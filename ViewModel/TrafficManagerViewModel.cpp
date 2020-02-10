@@ -70,17 +70,13 @@ void TrafficManagerViewModel::trafficManagerWaitingTrains()
 
 void TrafficManagerViewModel::initData()
 {
+    waitingTrains.clear();
     for (auto rail : rails) {
         if (rail->getTrain() != nullptr) {
-            rail->clearStatus();
             timetables.value(rail->getTrain()->getTrainID())->setCurrentRail(rail);
             timetables.value(rail->getTrain()->getTrainID())->setCurrentStation(map->getStationByRail(rail->getRailID()));
             waitingTrains.append(rail->getTrain());
         }
-    }
-
-    for (auto cswitch : switches) {
-        cswitch->setToggle(false);
     }
 }
 
@@ -96,6 +92,14 @@ void TrafficManagerViewModel::deinitData()
 
     for (auto train : trains) {
         train->setTrainSpeed(TrainModel::SPEED_BREAKE);
+    }
+
+    if (!breakeEnabled) {
+        for (auto cswitch : switches) {
+            cswitch->setToggle(false);
+        }
+    } else {
+        breakeEnabled = false;
     }
 
     waitingTrains.clear();
@@ -114,6 +118,11 @@ bool TrafficManagerViewModel::nextStationIsStop()
 bool TrafficManagerViewModel::currentStationIsStop()
 {
     return timetable->getStopStations()->contains(timetable->getCurrentStation());
+}
+
+bool TrafficManagerViewModel::isEnabled()
+{
+    return trafficManagerEnabled;
 }
 
 void TrafficManagerViewModel::trafficManagerMovingTrains(TrainModel *train, TrainState trainState)
@@ -188,6 +197,11 @@ void TrafficManagerViewModel::setStations(QMap<int, StationModel *> stations)
 void TrafficManagerViewModel::setSwitches(QMap<int, SwitchModel *> switches)
 {
     this->switches = switches;
+}
+
+void TrafficManagerViewModel::setBreake()
+{
+    this->breakeEnabled = true;
 }
 
 QMap<TrainModel::TrainID, TrafficTimetableModel *> *TrafficManagerViewModel::getTimetables()

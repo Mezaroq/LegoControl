@@ -13,9 +13,3 @@ void SensorModel::setSensorSignal(bool newState)
     }
     state = newState;
 }
-
-//void SensorModel::setSensorSignal(bool newState)
-//{
-//    if (newState)
-//        emit signalChanged(sensorType);
-//}

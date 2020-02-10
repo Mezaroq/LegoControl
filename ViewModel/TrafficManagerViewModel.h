@@ -33,6 +33,7 @@ public:
     bool nextRailFree();
     bool nextStationIsStop();
     bool currentStationIsStop();
+    bool isEnabled();
     void trafficManagerMovingTrains(TrainModel *train, TrainState trainState);
     void prependTimetables();
     void prependTrafficMap();
@@ -40,6 +41,7 @@ public:
     void setTrains(QMap<int, TrainModel*> trains);
     void setStations(QMap<int, StationModel*> stations);
     void setSwitches(QMap<int, SwitchModel*> switches);
+    void setBreake();
     QMap<TrainModel::TrainID, TrafficTimetableModel *> *getTimetables();
     int *getNormalSpeed();
     int *getSlowdownSpeed();
@@ -49,10 +51,10 @@ protected:
     QMap<unsigned int, TrainModel*> getTrainsByPriority();
 
 private:
-    QString configFileName = "configuration.lc";
     int normalSpeed = TrainModel::SPEED_FORWARD_5;
     int slowdownSpeed = TrainModel::SPEED_FORWARD_3;
     int startSpeed = TrainModel::SPEED_FORWARD_3;
+    bool breakeEnabled = false;
     bool trafficManagerEnabled = false;
     QMap<int, RailModel*> rails;
     QMap<int, TrainModel*> trains;
